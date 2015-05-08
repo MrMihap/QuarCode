@@ -89,18 +89,21 @@
       // 
       // QrImgWrapperPanel
       // 
+      this.QrImgWrapperPanel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.QrImgWrapperPanel.AutoScroll = true;
       this.QrImgWrapperPanel.Controls.Add(this.qrImgPictureBox);
       this.QrImgWrapperPanel.Location = new System.Drawing.Point(13, 70);
       this.QrImgWrapperPanel.Name = "QrImgWrapperPanel";
-      this.QrImgWrapperPanel.Size = new System.Drawing.Size(535, 412);
+      this.QrImgWrapperPanel.Size = new System.Drawing.Size(537, 414);
       this.QrImgWrapperPanel.TabIndex = 3;
       // 
       // FimgView
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(555, 483);
+      this.ClientSize = new System.Drawing.Size(557, 485);
       this.Controls.Add(this.QrImgWrapperPanel);
       this.Controls.Add(this.groupBox1);
       this.Name = "FimgView";

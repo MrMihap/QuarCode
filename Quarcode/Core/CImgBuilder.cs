@@ -11,8 +11,15 @@ namespace Quarcode.Core
   {
     public static Bitmap GenQRfromMatrix(CPointsMatrix matrix)
     {
-      
-      return new Bitmap(matrix.Width, matrix.Heigt);
+      Bitmap bmp = new Bitmap(matrix.Width, matrix.Heigt);
+      using (Graphics gr = Graphics.FromImage(bmp))
+      {
+        Brush redline = new SolidBrush(Color.Red);
+        Pen fatPen = new Pen(redline, 5);
+        gr.DrawLine(fatPen, 0, 0, bmp.Width, bmp.Height);
+        gr.DrawLine(fatPen, 0, bmp.Height, bmp.Width, 0);
+      }
+      return bmp;
     }
   }
 }

@@ -40,8 +40,8 @@ namespace Quarcode.Core
     }
     public CPointsMatrix()
     {
-      Width = 400;
-      Heigt = 400;
+      Width = 600;
+      Heigt = 600;
     }
     void InitMatrix()
     {
