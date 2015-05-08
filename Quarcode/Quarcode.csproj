@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="Core\CApplicationController.cs" />
     <Compile Include="Core\delegates.cs" />
+    <Compile Include="Core\CImgBuilder.cs" />
     <Compile Include="Core\Types.cs" />
     <Compile Include="FimgView.cs">
       <SubType>Form</SubType>
@@ -53,7 +54,7 @@
     <Compile Include="FimgView.Designer.cs">
       <DependentUpon>FimgView.cs</DependentUpon>
     </Compile>
-    <Compile Include="imgProc\CPointsMatrix.cs" />
+    <Compile Include="Core\CPointsMatrix.cs" />
     <Compile Include="IViewInterfaces.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

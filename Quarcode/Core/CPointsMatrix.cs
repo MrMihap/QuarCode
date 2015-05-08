@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Quarcode.Core;
-namespace Quarcode.imgProc
+
+namespace Quarcode.Core
 {
-  public class CPointsMatrix
+  public class  CPointsMatrix
   {
     List<Vector> Points;
     int _Width;
     int _Height;
-
+    // Сводка:
     // Changing make matrix uptodate
-    int Width
+    public int Width
     {
       get
       {
@@ -26,7 +26,7 @@ namespace Quarcode.imgProc
       }
     }
     // Changing make matrix uptodate
-    int Heigt
+    public int Heigt
     {
       get
       {
@@ -40,9 +40,8 @@ namespace Quarcode.imgProc
     }
     public CPointsMatrix()
     {
-      Points = new List<Vector>();
-
-      this.InitMatrix();
+      Width = 400;
+      Heigt = 400;
     }
     void InitMatrix()
     {

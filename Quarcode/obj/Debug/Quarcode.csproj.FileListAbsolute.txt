@@ -4,3 +4,11 @@ c:\users\михаил\documents\visual studio 2012\Projects\Quarcode\Quarcode\ob
 c:\users\михаил\documents\visual studio 2012\Projects\Quarcode\Quarcode\obj\Debug\Quarcode.Properties.Resources.resources
 c:\users\михаил\documents\visual studio 2012\Projects\Quarcode\Quarcode\obj\Debug\Quarcode.csproj.GenerateResource.Cache
 C:\Users\Михаил\Documents\GitHub\QuarCode\Quarcode\bin\Debug\Quarcode.exe.config
+C:\Users\Михаил\Documents\GitHub\QuarCode\Quarcode\obj\Debug\Quarcode.csprojResolveAssemblyReference.cache
+C:\Users\Михаил\Documents\GitHub\QuarCode\Quarcode\obj\Debug\Quarcode.FimgView.resources
+C:\Users\Михаил\Documents\GitHub\QuarCode\Quarcode\obj\Debug\Quarcode.Properties.Resources.resources
+C:\Users\Михаил\Documents\GitHub\QuarCode\Quarcode\obj\Debug\Quarcode.csproj.GenerateResource.Cache
+C:\Users\Михаил\Documents\GitHub\QuarCode\Quarcode\bin\Debug\Quarcode.exe
+C:\Users\Михаил\Documents\GitHub\QuarCode\Quarcode\bin\Debug\Quarcode.pdb
+C:\Users\Михаил\Documents\GitHub\QuarCode\Quarcode\obj\Debug\Quarcode.exe
+C:\Users\Михаил\Documents\GitHub\QuarCode\Quarcode\obj\Debug\Quarcode.pdb
