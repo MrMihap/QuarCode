@@ -8,8 +8,11 @@ namespace Quarcode.Core
 {
   class CApplicationController
   {
+    private FimgView viewForm;
     public CApplicationController()
     {
+      viewForm = new FimgView();
+
     }
   }
 }

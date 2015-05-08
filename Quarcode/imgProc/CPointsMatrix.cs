@@ -11,6 +11,8 @@ namespace Quarcode.imgProc
     List<Vector> Points;
     int _Width;
     int _Height;
+
+    // Changing make matrix uptodate
     int Width
     {
       get
@@ -23,6 +25,7 @@ namespace Quarcode.imgProc
         this.InitMatrix();
       }
     }
+    // Changing make matrix uptodate
     int Heigt
     {
       get
@@ -43,7 +46,7 @@ namespace Quarcode.imgProc
     }
     void InitMatrix()
     {
-
+      // TODO calc Algorithm
     }
   }
 }
