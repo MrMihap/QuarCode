@@ -18,8 +18,18 @@ namespace Quarcode
     {
       InitializeComponent();
     }
-    public void IViewInterfaces.RecieveImg(Bitmap bmp)
+    void IViewInterfaces.RecieveImg(Bitmap bmp)
     {
+      
+      if (qrImgPictureBox.InvokeRequired)
+        qrImgPictureBox.BeginInvoke(new Action<Bitmap>((x) => qrImgPictureBox.Image = x), bmp);
+      else
+        qrImgPictureBox.Image = bmp;
+    }
+
+    private void GenerateQRButton_Click(object sender, EventArgs e)
+    {
+      if (OnMsgGenerateQuery != null) OnMsgGenerateQuery(qrMessageTextBox.Text);
     }
 
   }
