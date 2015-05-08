@@ -14,10 +14,10 @@ namespace Quarcode
     [STAThread]
     static void Main()
     {
-      CApplicationController appController = new CApplicationController();
       Application.EnableVisualStyles();
       Application.SetCompatibleTextRenderingDefault(false);
-      Application.Run(new FimgView());
+      CApplicationController appController = new CApplicationController();
+      Application.Run(appController.viewForm);
     }
   }
 }

@@ -8,7 +8,7 @@ namespace Quarcode.Core
 {
   class CApplicationController
   {
-    private FimgView viewForm;
+    public FimgView viewForm;
     private CPointsMatrix pointsMatrix;
     private IViewInterfaces View;
     public CApplicationController()
