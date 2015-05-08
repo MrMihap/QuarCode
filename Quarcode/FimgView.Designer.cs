@@ -31,9 +31,9 @@
       this.RandomStringButton = new System.Windows.Forms.Button();
       this.qrImgPictureBox = new System.Windows.Forms.PictureBox();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
-      this.QrImgWrapperPanel = new System.Windows.Forms.Panel();
       this.qrMessageTextBox = new System.Windows.Forms.TextBox();
       this.GenerateQRButton = new System.Windows.Forms.Button();
+      this.QrImgWrapperPanel = new System.Windows.Forms.Panel();
       ((System.ComponentModel.ISupportInitialize)(this.qrImgPictureBox)).BeginInit();
       this.groupBox1.SuspendLayout();
       this.QrImgWrapperPanel.SuspendLayout();
@@ -56,6 +56,7 @@
       this.qrImgPictureBox.Size = new System.Drawing.Size(526, 406);
       this.qrImgPictureBox.TabIndex = 1;
       this.qrImgPictureBox.TabStop = false;
+      this.qrImgPictureBox.Paint += new System.Windows.Forms.PaintEventHandler(this.qrImgPictureBox_Paint);
       // 
       // groupBox1
       // 
@@ -68,15 +69,6 @@
       this.groupBox1.TabIndex = 2;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Generate QR";
-      // 
-      // QrImgWrapperPanel
-      // 
-      this.QrImgWrapperPanel.AutoScroll = true;
-      this.QrImgWrapperPanel.Controls.Add(this.qrImgPictureBox);
-      this.QrImgWrapperPanel.Location = new System.Drawing.Point(13, 70);
-      this.QrImgWrapperPanel.Name = "QrImgWrapperPanel";
-      this.QrImgWrapperPanel.Size = new System.Drawing.Size(535, 412);
-      this.QrImgWrapperPanel.TabIndex = 3;
       // 
       // qrMessageTextBox
       // 
@@ -94,6 +86,15 @@
       this.GenerateQRButton.Text = "Generate";
       this.GenerateQRButton.UseVisualStyleBackColor = true;
       this.GenerateQRButton.Click += new System.EventHandler(this.GenerateQRButton_Click);
+      // 
+      // QrImgWrapperPanel
+      // 
+      this.QrImgWrapperPanel.AutoScroll = true;
+      this.QrImgWrapperPanel.Controls.Add(this.qrImgPictureBox);
+      this.QrImgWrapperPanel.Location = new System.Drawing.Point(13, 70);
+      this.QrImgWrapperPanel.Name = "QrImgWrapperPanel";
+      this.QrImgWrapperPanel.Size = new System.Drawing.Size(535, 412);
+      this.QrImgWrapperPanel.TabIndex = 3;
       // 
       // FimgView
       // 
