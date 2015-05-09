@@ -24,6 +24,10 @@ namespace Quarcode.Core
   public struct GexBlock
   {
     Vector ParentVector;
-    Vector[] Points = new Vector[19];
+    Vector[] Points;
+    void init(double height, double width)
+    {
+      Points = new Vector[19];
+    }
   }
 }

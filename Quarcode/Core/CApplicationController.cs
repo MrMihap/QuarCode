@@ -16,7 +16,7 @@ namespace Quarcode.Core
       pointsMatrix = new CPointsMatrix();
       viewForm = new FimgView();
       View = viewForm as IViewInterfaces;
-      viewForm.OnMsgGenerateQuery += RecieveMessage;
+      View.OnMsgGenerateQuery += RecieveMessage;
       
     }
     void RecieveMessage(string Query)
