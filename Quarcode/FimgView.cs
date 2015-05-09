@@ -47,5 +47,31 @@ namespace Quarcode
       MessageBox.Show("functinal will be implemented soon");
     }
 
+    private void RandomStringButton_Click(object sender, EventArgs e)
+    {
+      qrMessageTextBox.Text = genMsg();
+    }
+    String genMsg()
+    {
+      // lowChars 97-122
+      // highChars 65 - 90
+      // nums 48 - 57
+      String k = "";
+      Random rnd = new Random();
+      int l = 0;
+      l = rnd.Next(0, 3);
+
+      for (int i = 0; i < 12; i++)
+      {
+        switch (l)
+        {
+          case 0: k = k + (char)(rnd.Next(48, 58)); break;
+          case 1: k = k + (char)(rnd.Next(97, 123)); break;
+          case 2: k = k + (char)(rnd.Next(65, 91)); break;
+        }
+        l = rnd.Next(0, 3);
+      }
+      return k;
+    }
   }
 }
