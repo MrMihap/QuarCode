@@ -28,15 +28,19 @@
     /// </summary>
     private void InitializeComponent()
     {
+      this.components = new System.ComponentModel.Container();
       this.RandomStringButton = new System.Windows.Forms.Button();
       this.qrImgPictureBox = new System.Windows.Forms.PictureBox();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
       this.qrMessageTextBox = new System.Windows.Forms.TextBox();
       this.GenerateQRButton = new System.Windows.Forms.Button();
       this.QrImgWrapperPanel = new System.Windows.Forms.Panel();
+      this.PicBoxContext = new System.Windows.Forms.ContextMenuStrip(this.components);
+      this.SaveToBMPButton = new System.Windows.Forms.ToolStripMenuItem();
       ((System.ComponentModel.ISupportInitialize)(this.qrImgPictureBox)).BeginInit();
       this.groupBox1.SuspendLayout();
       this.QrImgWrapperPanel.SuspendLayout();
+      this.PicBoxContext.SuspendLayout();
       this.SuspendLayout();
       // 
       // RandomStringButton
@@ -51,6 +55,7 @@
       // qrImgPictureBox
       // 
       this.qrImgPictureBox.BackColor = System.Drawing.SystemColors.ButtonHighlight;
+      this.qrImgPictureBox.ContextMenuStrip = this.PicBoxContext;
       this.qrImgPictureBox.Location = new System.Drawing.Point(6, 3);
       this.qrImgPictureBox.Name = "qrImgPictureBox";
       this.qrImgPictureBox.Size = new System.Drawing.Size(526, 406);
@@ -99,6 +104,20 @@
       this.QrImgWrapperPanel.Size = new System.Drawing.Size(537, 414);
       this.QrImgWrapperPanel.TabIndex = 3;
       // 
+      // PicBoxContext
+      // 
+      this.PicBoxContext.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.SaveToBMPButton});
+      this.PicBoxContext.Name = "PicBoxContext";
+      this.PicBoxContext.Size = new System.Drawing.Size(141, 26);
+      // 
+      // SaveToBMPButton
+      // 
+      this.SaveToBMPButton.Name = "SaveToBMPButton";
+      this.SaveToBMPButton.Size = new System.Drawing.Size(174, 22);
+      this.SaveToBMPButton.Text = "Save to BMP";
+      this.SaveToBMPButton.Click += new System.EventHandler(this.SaveToBMPButton_Click);
+      // 
       // FimgView
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -112,6 +131,7 @@
       this.groupBox1.ResumeLayout(false);
       this.groupBox1.PerformLayout();
       this.QrImgWrapperPanel.ResumeLayout(false);
+      this.PicBoxContext.ResumeLayout(false);
       this.ResumeLayout(false);
 
     }
@@ -124,6 +144,8 @@
     private System.Windows.Forms.TextBox qrMessageTextBox;
     private System.Windows.Forms.Button GenerateQRButton;
     private System.Windows.Forms.Panel QrImgWrapperPanel;
+    private System.Windows.Forms.ContextMenuStrip PicBoxContext;
+    private System.Windows.Forms.ToolStripMenuItem SaveToBMPButton;
   }
 }
 

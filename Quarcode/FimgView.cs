@@ -42,5 +42,10 @@ namespace Quarcode
       qrImgPictureBox.Height = qrImgPictureBox.Image.Height;
     }
 
+    private void SaveToBMPButton_Click(object sender, EventArgs e)
+    {
+      MessageBox.Show("functinal will be implemented soon");
+    }
+
   }
 }

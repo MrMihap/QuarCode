@@ -21,4 +21,9 @@ namespace Quarcode.Core
       y = _y;
     }
   }
+  public struct GexBlock
+  {
+    Vector ParentVector;
+    Vector[] Points = new Vector[19];
+  }
 }

@@ -49,6 +49,7 @@ namespace Quarcode.Core
     {
       Points = new List<Vector>();
       // TODO calc Algorithm
+
     }
     Vector VectorAt(int i)
     {
