@@ -47,6 +47,7 @@
       this.RandomStringButton.TabIndex = 0;
       this.RandomStringButton.Text = "Random";
       this.RandomStringButton.UseVisualStyleBackColor = true;
+      this.RandomStringButton.Click += new System.EventHandler(this.RandomStringButton_Click);
       // 
       // qrImgPictureBox
       // 
@@ -63,9 +64,9 @@
       this.groupBox1.Controls.Add(this.qrMessageTextBox);
       this.groupBox1.Controls.Add(this.GenerateQRButton);
       this.groupBox1.Controls.Add(this.RandomStringButton);
-      this.groupBox1.Location = new System.Drawing.Point(13, 13);
+      this.groupBox1.Location = new System.Drawing.Point(3, 2);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(351, 51);
+      this.groupBox1.Size = new System.Drawing.Size(272, 51);
       this.groupBox1.TabIndex = 2;
       this.groupBox1.TabStop = false;
       this.groupBox1.Text = "Generate QR";
@@ -94,7 +95,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
       this.QrImgWrapperPanel.AutoScroll = true;
       this.QrImgWrapperPanel.Controls.Add(this.qrImgPictureBox);
-      this.QrImgWrapperPanel.Location = new System.Drawing.Point(13, 70);
+      this.QrImgWrapperPanel.Location = new System.Drawing.Point(9, 59);
       this.QrImgWrapperPanel.Name = "QrImgWrapperPanel";
       this.QrImgWrapperPanel.Size = new System.Drawing.Size(537, 414);
       this.QrImgWrapperPanel.TabIndex = 3;

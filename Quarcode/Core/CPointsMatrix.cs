@@ -11,8 +11,11 @@ namespace Quarcode.Core
     List<Vector> Points;
     int _Width;
     int _Height;
-    // Сводка:
-    // Changing make matrix uptodate
+
+    ///<summary>
+    ///Changing makes matrix uptodate
+    ///</summary>
+   
     public int Width
     {
       get
@@ -25,7 +28,9 @@ namespace Quarcode.Core
         this.InitMatrix();
       }
     }
-    // Changing make matrix uptodate
+    ///<summary>
+    ///Changing makes matrix uptodate
+    ///</summary>
     public int Heigt
     {
       get
