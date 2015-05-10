@@ -12,3 +12,4 @@ C:\Users\Михаил\Documents\GitHub\QuarCode\Quarcode\bin\Debug\Quarcode.exe
 C:\Users\Михаил\Documents\GitHub\QuarCode\Quarcode\bin\Debug\Quarcode.pdb
 C:\Users\Михаил\Documents\GitHub\QuarCode\Quarcode\obj\Debug\Quarcode.exe
 C:\Users\Михаил\Documents\GitHub\QuarCode\Quarcode\obj\Debug\Quarcode.pdb
+C:\Users\Михаил\Documents\GitHub\QuarCode\Quarcode\obj\Debug\Quarcode.View.FimgView.resources

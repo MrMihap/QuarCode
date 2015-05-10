@@ -8,10 +8,9 @@ namespace Quarcode.Core
 {
   public class  CPointsMatrix
   {
-    List<Vector> Points;
+    public List<Vector> Points;
     int _Width;
     int _Height;
-    // Сводка:
     // Changing make matrix uptodate
     public int Width
     {
@@ -25,7 +24,9 @@ namespace Quarcode.Core
         this.InitMatrix();
       }
     }
-    // Changing make matrix uptodate
+    /// <summary>
+    /// Changing make matrix uptodate
+    /// </summary>
     public int Heigt
     {
       get
@@ -48,7 +49,10 @@ namespace Quarcode.Core
     void InitMatrix()
     {
       Points = new List<Vector>();
-      // TODO calc Algorithm
+      // debug
+      GexBlock smallgex = new GexBlock(new Vector(300, 300), 90);
+      Points.AddRange(smallgex.AsArray());
+      //end debug
 
     }
     Vector VectorAt(int i)
@@ -57,6 +61,10 @@ namespace Quarcode.Core
         return Points.ElementAt(i);
       else
         throw new ArgumentOutOfRangeException();
+    }
+    int indexAtVector(Vector r)
+    {
+      return 0;
     }
   }
 }

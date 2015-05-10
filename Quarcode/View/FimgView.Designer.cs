@@ -1,4 +1,4 @@
-﻿namespace Quarcode
+﻿namespace Quarcode.View
 {
   partial class FimgView
   {

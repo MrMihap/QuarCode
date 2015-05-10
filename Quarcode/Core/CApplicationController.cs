@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Quarcode.View;
+using Quarcode.Interfaces;
 namespace Quarcode.Core
 {
   class CApplicationController

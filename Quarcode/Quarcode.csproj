@@ -48,17 +48,17 @@
     <Compile Include="Core\delegates.cs" />
     <Compile Include="Core\CImgBuilder.cs" />
     <Compile Include="Core\Types.cs" />
-    <Compile Include="FimgView.cs">
+    <Compile Include="View\FimgView.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FimgView.Designer.cs">
+    <Compile Include="View\FimgView.Designer.cs">
       <DependentUpon>FimgView.cs</DependentUpon>
     </Compile>
     <Compile Include="Core\CPointsMatrix.cs" />
-    <Compile Include="IViewInterfaces.cs" />
+    <Compile Include="Interfaces\IViewInterfaces.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="FimgView.resx">
+    <EmbeddedResource Include="View\FimgView.resx">
       <DependentUpon>FimgView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">

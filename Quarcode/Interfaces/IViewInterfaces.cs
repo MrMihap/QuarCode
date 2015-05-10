@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Drawing;
 using Quarcode.Core;
 
-namespace Quarcode
+namespace Quarcode.Interfaces
 {
   public interface IViewInterfaces
   {

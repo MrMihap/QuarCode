@@ -22,6 +22,24 @@ namespace Quarcode.Core
         }
       else
       {
+        using (Graphics gr = Graphics.FromImage(bmp))
+        {
+          Brush redline = new SolidBrush(Color.Blue);
+          Pen fatPen = new Pen(redline, 2);
+          for (int i = 0; i < matrix.Points.Count; i++)
+          {
+            gr.DrawLine(fatPen, 
+              (int)matrix.Points[i].x,
+              (int)matrix.Points[i].y, 
+              (int)matrix.Points[i].x + 1, 
+              (int)matrix.Points[i].y + 1);
+            gr.DrawString(i.ToString(),
+              new Font("Sans Serif", 10f),
+              new SolidBrush(Color.Black),
+             (int)matrix.Points[i].x,
+             (int)matrix.Points[i].y);
+          }
+        }
       }
       return bmp;
     }

@@ -8,8 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Quarcode.Core;
-
-namespace Quarcode
+using Quarcode.Interfaces;
+  
+namespace Quarcode.View
 {
   public partial class FimgView : Form, IViewInterfaces
   {
