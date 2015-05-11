@@ -37,29 +37,86 @@ namespace Quarcode.Core
         v.x * Math.Cos(Angle) - v.y * Math.Sin(Angle),
         v.x * Math.Sin(Angle) + v.y * Math.Cos(Angle));
     }
-    public static Vector operator + (Vector a, Vector b)
+    public static Vector operator +(Vector a, Vector b)
     {
       return new Vector(a.x + b.x, a.y + b.y);
     }
 
   }
-  public struct GexBlock
+  public struct externalGexBlock
+  {
+    public Vector ParentVector;
+    private List<Vector> _Points;
+    public Vector[] Points
+    {
+      get
+      {
+        if (_Points == null) return null;
+        return _Points.ToArray();
+      }
+    }
+    public externalGexBlock(double borderLength, int position)
+    {
+      ParentVector = new Vector(0, 0);
+      _Points = new List<Vector>();
+      init(borderLength, position);
+    }
+    public externalGexBlock(Vector parent, double borderLength, int position)
+    {
+      ParentVector = parent;
+      _Points = new List<Vector>();
+      init(borderLength, position);
+    }
+    public externalGexBlock(Vector parent, Vector[] existsPoints)
+    {
+      ParentVector = parent;
+      _Points = new List<Vector>();
+      existsPoints.CopyTo(Points, 0);
+    }
+    public void init(double borderLength, int position)
+    {
+      double TriangleLength = borderLength / (Math.Sqrt(3) + 1);
+      // Zero 
+      switch (position)
+      {
+        case 0:
+          //all points
+          Vector defaultRing = new Vector(borderLength, 0);
+          for (int i = 0; i < 6; i++)
+          {
+            _Points.Add(Vector.Rotate(defaultRing, i * Math.PI / 3));
+          }
+          break;
+      }
+    }
+    public Vector[] AsArray()
+    {
+      Vector[] result = _Points.ToArray();
+      for (int i = 0; i < result.Length; i++)
+      {
+        result[i] += ParentVector;
+      }
+      return result;
+    }
+
+  }
+  public struct internalGexBlock
   {
     public Vector ParentVector;
     public Vector[] Points;
-    public GexBlock(double borderLength)
+    public internalGexBlock(double borderLength)
     {
       ParentVector = new Vector(0, 0);
       Points = new Vector[19];
       init(borderLength);
     }
-    public GexBlock(Vector parent, double borderLength)
+    public internalGexBlock(Vector parent, double borderLength)
     {
       ParentVector = parent;
       Points = new Vector[19];
       init(borderLength);
     }
-    public GexBlock(Vector parent, Vector[] existsPoints)
+    public internalGexBlock(Vector parent, Vector[] existsPoints)
     {
       ParentVector = parent;
       Points = new Vector[19];
@@ -75,15 +132,15 @@ namespace Quarcode.Core
 
       DefaultFirstRing.Init(TriangleLength * Math.Sqrt(3) / 2, TriangleLength * 1 / 2);
       DefaultSecondRingPos.Init(TriangleLength * (Math.Sqrt(3) / 2 + 1), TriangleLength * 1 / 2);
-      DefaultSecondRingNeg.Init(TriangleLength * (Math.Sqrt(3) / 2 + 1),  - TriangleLength * 1 / 2);
+      DefaultSecondRingNeg.Init(TriangleLength * (Math.Sqrt(3) / 2 + 1), -TriangleLength * 1 / 2);
 
       Points = new Vector[19];
       Points[0] = new Vector(0, 0);
       for (int i = 0; i < 6; i++)
       {
-        Points[i + 1] = Vector.Rotate(DefaultFirstRing,i *  Math.PI/3);
+        Points[i + 1] = Vector.Rotate(DefaultFirstRing, i * Math.PI / 3);
         Points[7 + 2 * i + 1] = Vector.Rotate(DefaultSecondRingPos, i * Math.PI / 3);
-        Points[7 + 2 * i + 0] = Vector.Rotate(DefaultSecondRingNeg, i * Math.PI / 3 );
+        Points[7 + 2 * i + 0] = Vector.Rotate(DefaultSecondRingNeg, i * Math.PI / 3);
       }
     }
     public Vector[] AsArray()
@@ -93,7 +150,7 @@ namespace Quarcode.Core
       {
         result[i] = Points[i] + ParentVector;
       }
-        return result;
+      return result;
     }
   }
   /// <summary>
@@ -101,17 +158,23 @@ namespace Quarcode.Core
   /// </summary>
   public struct mainGexBlock
   {
-    GexBlock[] Gexses;
+    internalGexBlock[] internalGexses;
+    externalGexBlock[] externalGexses;
     public mainGexBlock(double Height)
     {
+      internalGexses = new internalGexBlock[6];
+      externalGexses = new externalGexBlock[6];
+      
       double l = Height / (3 * Math.Sqrt(3));
-      Gexses = new GexBlock[6];
       Vector Center = new Vector(Height / 2, Height / 2);
-      Gexses[0] = new GexBlock(Center, l);
-      Vector mainGexRingDefault = new Vector(-l * 1.5, l * Math.Sqrt(3) / 2);
+      Vector mainGexRingDefault = new Vector(-l * 1.5, l * Math.Sqrt(3) / 2);      
+      
+      internalGexses[0] = new internalGexBlock(Center, l);
+      externalGexses[0] = new externalGexBlock(Center, l, 0);
       for (int i = 0; i < 5; i++)
       {
-        Gexses[i + 1] = new GexBlock(Center + Vector.Rotate(mainGexRingDefault, - Math.PI / 3 * i), Gexses[0].Points);
+        internalGexses[i + 1] = new internalGexBlock(Center + Vector.Rotate(mainGexRingDefault, -Math.PI / 3 * i), internalGexses[0].Points);
+        externalGexses[i + 1] = new externalGexBlock(Center + Vector.Rotate(mainGexRingDefault, -Math.PI / 3 * i), l, i + 1);
       }
     }
     public Vector[] AsArray()
@@ -119,7 +182,8 @@ namespace Quarcode.Core
       List<Vector> ResultArray = new List<Vector>();
       for (int i = 0; i < 6; i++)
       {
-        ResultArray.AddRange(Gexses[i].AsArray());
+        ResultArray.AddRange(internalGexses[i].AsArray());
+        ResultArray.AddRange(externalGexses[i].AsArray());
       }
       return ResultArray.ToArray();
     }

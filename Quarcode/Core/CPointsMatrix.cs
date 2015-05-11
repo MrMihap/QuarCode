@@ -53,8 +53,7 @@ namespace Quarcode.Core
       mainGexBlock gex = new mainGexBlock(600);
       Points.AddRange(gex.AsArray());
       //end debug
-
-    }
+    } 
     Vector VectorAt(int i)
     {
       if (i < Points.Count)
