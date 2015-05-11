@@ -31,11 +31,21 @@ namespace Quarcode.Core
       x = v.x;
       y = v.y;
     }
+
     public static Vector Rotate(Vector v, double Angle)
     {
       return new Vector(
         v.x * Math.Cos(Angle) - v.y * Math.Sin(Angle),
         v.x * Math.Sin(Angle) + v.y * Math.Cos(Angle));
+    }
+    public static Vector[] Rotate(Vector[] v, double Angle)
+    {
+      Vector[] result = new Vector[v.Length];
+      for (int i = 0; i < result.Length; i++)
+      {
+        result[i] = Vector.Rotate(v[i], Angle);
+      }
+      return result;
     }
     public static Vector operator +(Vector a, Vector b)
     {
@@ -77,17 +87,33 @@ namespace Quarcode.Core
     {
       double TriangleLength = borderLength / (Math.Sqrt(3) + 1);
       // Zero 
-      switch (position)
+      if (position == 0)
       {
-        case 0:
-          //all points
-          Vector defaultRing = new Vector(borderLength, 0);
-          for (int i = 0; i < 6; i++)
-          {
-            _Points.Add(Vector.Rotate(defaultRing, i * Math.PI / 3));
-          }
-          break;
+        //all points
+        Vector defaultRing = new Vector(borderLength, 0);
+        for (int i = 0; i < 6; i++)
+        {
+          _Points.Add(Vector.Rotate(defaultRing, i * Math.PI / 3));
+        }
       }
+      else if (position < 6)
+      {
+        int PointsCount = 3;
+        Vector defaultRing = new Vector(-borderLength, 0);
+        if (position == 5)
+        {
+          defaultRing = Vector.Rotate(defaultRing, -Math.PI / 3);
+          PointsCount = 4;
+        }
+        Vector[] extPoints = new Vector[PointsCount];
+
+        for (int i = 0; i < PointsCount; i++)
+        {
+           extPoints[i] = Vector.Rotate(defaultRing, (i - 1) * Math.PI/3);
+        }
+        _Points.AddRange(Vector.Rotate(extPoints, Math.PI * (1 - position)/3));
+      }
+
     }
     public Vector[] AsArray()
     {
@@ -165,8 +191,8 @@ namespace Quarcode.Core
       internalGexses = new internalGexBlock[6];
       externalGexses = new externalGexBlock[6];
       
-      double l = Height / (3 * Math.Sqrt(3));
-      Vector Center = new Vector(Height / 2, Height / 2);
+      double l = Height / (3 * Math.Sqrt(3)) - 10;
+      Vector Center = new Vector(Height / 2 , Height / 2);
       Vector mainGexRingDefault = new Vector(-l * 1.5, l * Math.Sqrt(3) / 2);      
       
       internalGexses[0] = new internalGexBlock(Center, l);

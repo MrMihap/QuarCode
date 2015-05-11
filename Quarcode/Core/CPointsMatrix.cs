@@ -50,7 +50,7 @@ namespace Quarcode.Core
     {
       Points = new List<Vector>();
       // debug
-      mainGexBlock gex = new mainGexBlock(600);
+      mainGexBlock gex = new mainGexBlock(500);
       Points.AddRange(gex.AsArray());
       //end debug
     } 
