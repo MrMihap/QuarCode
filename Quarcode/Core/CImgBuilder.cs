@@ -30,14 +30,14 @@ namespace Quarcode.Core
           {
             gr.DrawLine(fatPen, 
               (int)matrix.Points[i].x,
-              (int)matrix.Points[i].y, 
-              (int)matrix.Points[i].x + 1, 
-              (int)matrix.Points[i].y + 1);
+              (int)matrix.Heigt - (int)matrix.Points[i].y, 
+              (int)matrix.Points[i].x + 1,
+              (int)matrix.Heigt - (int)matrix.Points[i].y + 1);
             gr.DrawString(i.ToString(),
               new Font("Sans Serif", 10f),
               new SolidBrush(Color.Black),
              (int)matrix.Points[i].x,
-             (int)matrix.Points[i].y);
+             (int)matrix.Heigt - (int)matrix.Points[i].y);
           }
         }
       }
