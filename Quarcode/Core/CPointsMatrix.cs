@@ -50,8 +50,8 @@ namespace Quarcode.Core
     {
       Points = new List<Vector>();
       // debug
-      GexBlock smallgex = new GexBlock(new Vector(300, 300), 90);
-      Points.AddRange(smallgex.AsArray());
+      mainGexBlock gex = new mainGexBlock(400);
+      Points.AddRange(gex.AsArray());
       //end debug
 
     }
