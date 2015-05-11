@@ -45,7 +45,7 @@ namespace Quarcode.Core
   }
   public struct GexBlock
   {
-    Vector ParentVector;
+    public Vector ParentVector;
     public Vector[] Points;
     public GexBlock(double borderLength)
     {
