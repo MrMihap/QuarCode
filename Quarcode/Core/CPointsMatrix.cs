@@ -9,6 +9,7 @@ namespace Quarcode.Core
   public class  CPointsMatrix
   {
     public List<Vector> Points;
+    public List<Vector> BorderPoints;
     int _Width;
     int _Height;
     // Changing make matrix uptodate
@@ -49,9 +50,11 @@ namespace Quarcode.Core
     void InitMatrix()
     {
       Points = new List<Vector>();
+      BorderPoints = new List<Vector>();
       // debug
       mainGexBlock gex = new mainGexBlock(500);
       Points.AddRange(gex.AsArray());
+      BorderPoints.AddRange(gex.AsArrayBorder());
       //end debug
     } 
     Vector VectorAt(int i)

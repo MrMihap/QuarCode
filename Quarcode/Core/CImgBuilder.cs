@@ -25,10 +25,13 @@ namespace Quarcode.Core
         using (Graphics gr = Graphics.FromImage(bmp))
         {
           Brush redline = new SolidBrush(Color.Blue);
-          Pen fatPen = new Pen(redline, 3);
+          Brush blueline = new SolidBrush(Color.Red);
+          Pen innerPointsPen = new Pen(redline, 3);
+          Pen borderPointsPen = new Pen(blueline, 3);
+          
           for (int i = 0; i < matrix.Points.Count; i++)
           {
-            gr.DrawLine(fatPen, 
+            gr.DrawLine(innerPointsPen, 
               (int)matrix.Points[i].x,
               (int)matrix.Heigt - (int)matrix.Points[i].y, 
               (int)matrix.Points[i].x + 2,
@@ -39,6 +42,20 @@ namespace Quarcode.Core
              (int)matrix.Points[i].x,
              (int)matrix.Heigt - (int)matrix.Points[i].y);
           }
+          for (int i = 0; i < matrix.BorderPoints.Count; i++)
+          {
+            gr.DrawLine(borderPointsPen,
+              (int)matrix.BorderPoints[i].x,
+              (int)matrix.Heigt - (int)matrix.BorderPoints[i].y,
+              (int)matrix.BorderPoints[i].x + 2,
+              (int)matrix.Heigt - (int)matrix.BorderPoints[i].y + 2);
+            gr.DrawString(i.ToString(),
+              new Font("Sans Serif", 16f),
+              new SolidBrush(Color.Red),
+             (int)matrix.BorderPoints[i].x,
+             (int)matrix.Heigt - (int)matrix.BorderPoints[i].y);
+          }
+
         }
       }
       return bmp;

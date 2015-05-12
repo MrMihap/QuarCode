@@ -231,30 +231,30 @@ namespace Quarcode.Core
      if (position < 6)
       {
         int PointsCount = 10;
-        Vector defaultsmallRing1 = new Vector(-borderLength, -TriangleLength);
-        Vector defaultsmallRing2 = defaultsmallRing1 + new Vector(TriangleLength * 1 / 2, - TriangleLength);
+        Vector defaultsmallRing2 = new Vector(-borderLength, -TriangleLength);
+        Vector defaultsmallRing1 = defaultsmallRing2 + new Vector(TriangleLength * 1 / 2, - TriangleLength);
         Vector defaultbigRing1 = new Vector(-borderLength - TriangleLength * Math.Sqrt(3) / 2, -TriangleLength * 1 / 2);
         Vector defaultbigRing2 = new Vector(-borderLength - TriangleLength * Math.Sqrt(3) / 2, +TriangleLength * 1 / 2);
         Vector[] extPoints = new Vector[PointsCount];
 
         for (int i = 0; i < 3; i++)
         {
-          extPoints[2 * i + 1] =  Vector.Rotate(defaultsmallRing1, (1 - i) * Math.PI / 3);
-          extPoints[2 * i + 0] =  Vector.Rotate(defaultsmallRing2, (1 - i) * Math.PI / 3);
+          extPoints[2 * i + 0] =  Vector.Rotate(defaultsmallRing1, (1 - i) * Math.PI / 3);
+          extPoints[2 * i + 1] =  Vector.Rotate(defaultsmallRing2, (1 - i) * Math.PI / 3);
         }
         for (int i = 0; i < 2; i++)
         {
-          extPoints[6 + 2 * i + 0] = Vector.Rotate(defaultsmallRing1, (3 - i) * Math.PI / 3);
-          extPoints[6 + 2 * i + 1] = Vector.Rotate(defaultsmallRing2, (3 - i) * Math.PI / 3);
+          extPoints[6 + 2 * i + 0] = Vector.Rotate(defaultbigRing1, (1 - i) * Math.PI / 3);
+          extPoints[6 + 2 * i + 1] = Vector.Rotate(defaultbigRing2, (1 - i) * Math.PI / 3);
         }
-        _Points.AddRange(Vector.Rotate(extPoints, Math.PI * (3 - position) / 3));
+        _Points.AddRange(Vector.Rotate(extPoints, Math.PI * (5 - position) / 3));
       }
 
     }
     public Vector[] AsArray()
     {
       Vector[] result = _Points.ToArray();
-      for (int i = result.Length - 1 ; i >=0;i--)
+      for (int i = 0; i < result.Length; i++)
       {
         result[i] += ParentVector;
       }
@@ -277,7 +277,7 @@ namespace Quarcode.Core
       externalBorders = new extrenalBorder[5];
 
       double l = Height / (3 * Math.Sqrt(3)) - 10;
-      Vector Center = new Vector(Height / 2, Height / 2);
+      Vector Center = new Vector(Height / 2 + 30, Height / 2 + 30);
       Vector mainGexRingDefault = new Vector(-l * 1.5, l * Math.Sqrt(3) / 2);
 
       internalGexses[0] = new internalGexBlock(Center, l);
