@@ -232,9 +232,9 @@ namespace Quarcode.Core
       {
         int PointsCount = 10;
         Vector defaultsmallRing2 = new Vector(-borderLength, -TriangleLength);
-        Vector defaultsmallRing1 = defaultsmallRing2 + new Vector(TriangleLength * 1 / 2, - TriangleLength);
-        Vector defaultbigRing1 = new Vector(-borderLength - TriangleLength * Math.Sqrt(3) / 2, -TriangleLength * 1 / 2);
-        Vector defaultbigRing2 = new Vector(-borderLength - TriangleLength * Math.Sqrt(3) / 2, +TriangleLength * 1 / 2);
+        Vector defaultsmallRing1 = defaultsmallRing2 + new Vector(TriangleLength * 1 / 2, - TriangleLength * Math.Sqrt(3) / 2);
+        Vector defaultbigRing1 = new Vector(-borderLength - TriangleLength * Math.Sqrt(3) / 2, - TriangleLength * 1 / 2);
+        Vector defaultbigRing2 = new Vector(-borderLength - TriangleLength * Math.Sqrt(3) / 2, + TriangleLength * 1 / 2);
         Vector[] extPoints = new Vector[PointsCount];
 
         for (int i = 0; i < 3; i++)
