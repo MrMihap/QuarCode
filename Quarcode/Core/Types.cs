@@ -31,7 +31,12 @@ namespace Quarcode.Core
       x = v.x;
       y = v.y;
     }
-
+    /// <summary>
+    /// Вращает вектор относительно нуля
+    /// </summary>
+    /// <param name="v">вектор</param>
+    /// <param name="Angle">Угол поворота, в радианах</param>
+    /// <returns></returns>
     public static Vector Rotate(Vector v, double Angle)
     {
       return new Vector(

@@ -64,9 +64,30 @@ namespace Quarcode.Core
       else
         throw new ArgumentOutOfRangeException();
     }
+    public int[] sixNearest(int idx)
+    {
+      return new int[0];
+    }
     int indexAtVector(Vector r)
     {
+      throw new NotImplementedException("nod needed now");
       return 0;
+    }
+
+    List<int> BitweenLines(double k1, double k2, double b1, double b2)
+    {
+      List<int> result = new List<int>();
+      for (int i = 0; i < Points.Count; i++)
+      {
+        if (Points[i].y >= k1 * Points[i].x + b1 && Points[i].y < k2 * Points[i].x + b2)
+        result.Add(i);
+      }
+      for (int i = 0; i < BorderPoints.Count; i++)
+      {
+        if (BorderPoints[i].y >= k1 * BorderPoints[i].x + b1 && BorderPoints[i].y < k2 * BorderPoints[i].x + b2)
+          result.Add(i + Points.Count);
+      }
+      return result;
     }
   }
 }
