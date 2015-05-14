@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace Quarcode.Core
 {
-  public class  CPointsMatrix
+  public class CPointsMatrix
   {
     public List<Vector> Points;
+    public List<Vector> NoisedPoints;
     public List<Vector> BorderPoints;
     int _Width;
     int _Height;
@@ -50,7 +51,7 @@ namespace Quarcode.Core
       Width = 600;
       Heigt = 600;
     }
-    void InitMatrix()
+    private void InitMatrix()
     {
       Points = new List<Vector>();
       BorderPoints = new List<Vector>();
@@ -59,8 +60,34 @@ namespace Quarcode.Core
       Points.AddRange(gex.AsArray());
       BorderPoints.AddRange(gex.AsArrayBorder());
       //end debug
-    } 
-    Vector VectorAt(int i)
+    }
+
+    public Vector[] AroundGexAt(int idx)
+    {
+      Vector[] result = new Vector[6];
+      Vector center = VectorAt(idx);
+      int[] surround = sixNearest(idx);
+      for (int i = 0; i < 6; i++)
+      {
+        if (i == 5)
+        {
+          result[i] = new Vector(
+            (center.x + VectorAt(surround[5]).x + VectorAt(surround[0]).x) / 2,
+            (center.y + VectorAt(surround[5]).y + VectorAt(surround[0]).y) / 2
+           );
+        }
+        else
+        {
+          result[i] = new Vector(
+            (center.x + VectorAt(surround[i]).x + VectorAt(surround[i + 1]).x) / 2,
+            (center.y + VectorAt(surround[i]).y + VectorAt(surround[i + 1]).y) / 2
+           );
+        }
+      }
+      return result;
+    }
+
+    public Vector VectorAt(int i)
     {
       if (i < Points.Count)
         return Points.ElementAt(i);
@@ -81,15 +108,20 @@ namespace Quarcode.Core
         k2 = Math.Tan(angle + Math.PI / 3);
         b1 = center.y - k1 * center.x;
         b2 = center.y - k2 * center.x;
-        
-        List<int> candidates = BitweenLines(k1, k2, b1, b2);
-
-
+        int Sign1 = 1;
+        int Sign2 = 1;
+        if (angle >= Math.PI / 2 && angle < Math.PI * 3 / 2)
+          Sign1 = -1;
+        if (angle + Math.PI / 3 >= Math.PI / 2 && angle + Math.PI / 3 < Math.PI * 3 / 2)
+          Sign2 = -1;
+        List<int> candidates = BitweenLines(k1, k2, b1, b2, Sign1, Sign2);
+        candidates.OrderBy(x => Vector.Distance(center, this.VectorAt(x)));
+        result[i] = candidates[0];
       }
       return result;
     }
 
-    int indexAtVector(Vector r)
+    public int indexAtVector(Vector r)
     {
       throw new NotImplementedException("nod needed now");
       return 0;
@@ -100,14 +132,14 @@ namespace Quarcode.Core
       List<int> result = new List<int>();
       for (int i = 0; i < Points.Count; i++)
       {
-        if ( sign1 * Points[i].y >= sign1 * (k1 * Points[i].x + b1) 
-          && sign2 * Points[i].y < sign2 * ( k2 * Points[i].x + b2))
-        result.Add(i);
+        if (sign1 * Points[i].y >= sign1 * (k1 * Points[i].x + b1)
+          && sign2 * Points[i].y < sign2 * (k2 * Points[i].x + b2))
+          result.Add(i);
       }
       for (int i = 0; i < BorderPoints.Count; i++)
       {
-        if ( sign1 * BorderPoints[i].y >= sign1 * (k1 * BorderPoints[i].x + b1)
-          && sign2 * BorderPoints[i].y < sign2 * ( k2 * BorderPoints[i].x + b2))
+        if (sign1 * BorderPoints[i].y >= sign1 * (k1 * BorderPoints[i].x + b1)
+          && sign2 * BorderPoints[i].y < sign2 * (k2 * BorderPoints[i].x + b2))
           result.Add(i + Points.Count);
       }
       return result;
