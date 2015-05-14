@@ -12,7 +12,10 @@ namespace Quarcode.Core
     public List<Vector> BorderPoints;
     int _Width;
     int _Height;
-    // Changing make matrix uptodate
+    // 
+    /// <summary>
+    /// Changing makes matrix up to date
+    /// </summary>
     public int Width
     {
       get
@@ -26,7 +29,7 @@ namespace Quarcode.Core
       }
     }
     /// <summary>
-    /// Changing make matrix uptodate
+    /// Changing makes matrix up to date
     /// </summary>
     public int Heigt
     {
@@ -66,25 +69,45 @@ namespace Quarcode.Core
     }
     public int[] sixNearest(int idx)
     {
-      return new int[0];
+      int[] result = new int[6];
+      Vector center = VectorAt(idx);
+      //ищем ближайшие точки по кругу в секторах по 60 градусов
+      //для обхода проблемных мест начальный угол будет -Pi/30;
+      for (int i = 0; i < 6; i++)
+      {
+        double angle = -Math.PI / 30 + i * Math.PI / 3;
+        double k1, k2, b1, b2;
+        k1 = Math.Tan(angle);
+        k2 = Math.Tan(angle + Math.PI / 3);
+        b1 = center.y - k1 * center.x;
+        b2 = center.y - k2 * center.x;
+        
+        List<int> candidates = BitweenLines(k1, k2, b1, b2);
+
+
+      }
+      return result;
     }
+
     int indexAtVector(Vector r)
     {
       throw new NotImplementedException("nod needed now");
       return 0;
     }
 
-    List<int> BitweenLines(double k1, double k2, double b1, double b2)
+    private List<int> BitweenLines(double k1, double k2, double b1, double b2, int sign1, int sign2)
     {
       List<int> result = new List<int>();
       for (int i = 0; i < Points.Count; i++)
       {
-        if (Points[i].y >= k1 * Points[i].x + b1 && Points[i].y < k2 * Points[i].x + b2)
+        if ( sign1 * Points[i].y >= sign1 * (k1 * Points[i].x + b1) 
+          && sign2 * Points[i].y < sign2 * ( k2 * Points[i].x + b2))
         result.Add(i);
       }
       for (int i = 0; i < BorderPoints.Count; i++)
       {
-        if (BorderPoints[i].y >= k1 * BorderPoints[i].x + b1 && BorderPoints[i].y < k2 * BorderPoints[i].x + b2)
+        if ( sign1 * BorderPoints[i].y >= sign1 * (k1 * BorderPoints[i].x + b1)
+          && sign2 * BorderPoints[i].y < sign2 * ( k2 * BorderPoints[i].x + b2))
           result.Add(i + Points.Count);
       }
       return result;
