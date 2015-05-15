@@ -18,7 +18,6 @@ namespace Quarcode.Core
       viewForm = new FimgView();
       View = viewForm as IViewInterfaces;
       View.OnMsgGenerateQuery += RecieveMessage;
-      
     }
     void RecieveMessage(string Query)
     {

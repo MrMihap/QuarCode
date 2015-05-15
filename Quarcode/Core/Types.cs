@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
 
 namespace Quarcode.Core
 {
@@ -74,6 +75,20 @@ namespace Quarcode.Core
         result[i] = a[i] + b;
       }
       return result;
+    }
+    public static PointF[] ToSystemPointsF(Vector[] a)
+    {
+      PointF[] result = new PointF[a.Length];
+      for (int i = 0; i < result.Length; i++)
+      {
+        result[i].X = (float)a[i].x;
+        result[i].Y = (float)a[i].y;
+      }
+      return result;
+    }
+    public static PointF ToSystemPointF(Vector a)
+    {
+      return new PointF((float)a.x, (float)a.y);
     }
   }
 
@@ -244,19 +259,19 @@ namespace Quarcode.Core
         Vector defaultsmallRing1 = defaultsmallRing2 + new Vector(TriangleLength * 1 / 2, - TriangleLength * Math.Sqrt(3) / 2);
         Vector defaultbigRing1 = new Vector(-borderLength - TriangleLength * Math.Sqrt(3) / 2, - TriangleLength * 1 / 2);
         Vector defaultbigRing2 = new Vector(-borderLength - TriangleLength * Math.Sqrt(3) / 2, + TriangleLength * 1 / 2);
-        Vector[] extPoints = new Vector[PointsCount];
+        List<Vector> extPoints = new List<Vector>();
 
         for (int i = 0; i < 3; i++)
         {
-          extPoints[2 * i + 0] =  Vector.Rotate(defaultsmallRing1, (1 - i) * Math.PI / 3);
-          extPoints[2 * i + 1] =  Vector.Rotate(defaultsmallRing2, (1 - i) * Math.PI / 3);
+          extPoints.Add(Vector.Rotate(defaultsmallRing1, (1 - i) * Math.PI / 3));
+          extPoints.Add(Vector.Rotate(defaultsmallRing2, (1 - i) * Math.PI / 3));
+          if (i < 2)
+          {
+            extPoints.Add(Vector.Rotate(defaultbigRing1, (1 - i) * Math.PI / 3));
+            extPoints.Add(Vector.Rotate(defaultbigRing2, (1 - i) * Math.PI / 3));
+          }
         }
-        for (int i = 0; i < 2; i++)
-        {
-          extPoints[6 + 2 * i + 0] = Vector.Rotate(defaultbigRing1, (1 - i) * Math.PI / 3);
-          extPoints[6 + 2 * i + 1] = Vector.Rotate(defaultbigRing2, (1 - i) * Math.PI / 3);
-        }
-        _Points.AddRange(Vector.Rotate(extPoints, Math.PI * (5 - position) / 3));
+        _Points.AddRange(Vector.Rotate(extPoints.ToArray(), Math.PI * (5 - position) / 3));
       }
 
     }

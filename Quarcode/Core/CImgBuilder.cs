@@ -29,6 +29,14 @@ namespace Quarcode.Core
           Pen innerPointsPen = new Pen(redline, 3);
           Pen borderPointsPen = new Pen(blueline, 3);
 
+              gr.FillPolygon(new SolidBrush(rndclr), Vector.ToSystemPointsF(aroundgex));
+              gr.DrawLine(new Pen(new SolidBrush(Color.Green), 3),
+                (int)aroundgex[j].x,
+                (int)(int)aroundgex[j].y,
+                (int)aroundgex[j].x + 2,
+                (int)(int)aroundgex[j].y + 2);
+            }
+          }
           for (int i = 0; i < matrix.Points.Count; i++)
           {
             gr.DrawLine(innerPointsPen,

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 namespace Quarcode.Core
 {
   public class CPointsMatrix
@@ -48,8 +47,8 @@ namespace Quarcode.Core
     public bool IsInited { get { if (Points.Count > 0) return true; else return false; } }
     public CPointsMatrix()
     {
-      Width = 800;
-      Heigt = 800;
+      Width = 700;
+      Heigt = 700;
     }
     private void InitMatrix()
     {
@@ -144,15 +143,15 @@ namespace Quarcode.Core
         if (angle + Math.PI / 3 >= Math.PI / 2 && angle + Math.PI / 3 < Math.PI * 3 / 2)
           Sign2 = -1;
         List<int> candidates = BitweenLines(k1, k2, b1, b2, Sign1, Sign2);
-    
-        int coolindex = (from x in candidates orderby Vector.Distance(center, this.VectorAt(x)) select x).First();
 
-        
-          if (candidates.Count > 0)
-            result[i] = (from x in candidates orderby Vector.Distance(center, this.VectorAt(x)) select x).First();
+        if (candidates.Count > 0)
+          result[i] = (from x 
+                         in candidates
+                       where Vector.Distance(center, this.VectorAt(x)) > 0.1
+                       orderby Vector.Distance(center, this.VectorAt(x)) select x).First();
 
-          else
-            result[i] = -1;
+        else
+          result[i] = -1;
       }
       return result;
     }
