@@ -53,7 +53,7 @@ namespace Quarcode.Core
       }
       return result;
     }
-    public static Vector operator + (Vector a, Vector b)
+    public static Vector operator +(Vector a, Vector b)
     {
       return new Vector(a.x + b.x, a.y + b.y);
     }
@@ -251,14 +251,14 @@ namespace Quarcode.Core
     public void init(double borderLength, int position)
     {
       double TriangleLength = borderLength / (Math.Sqrt(3) + 1);
-    
-     if (position < 6)
+
+      if (position < 6)
       {
         int PointsCount = 10;
         Vector defaultsmallRing2 = new Vector(-borderLength, -TriangleLength);
-        Vector defaultsmallRing1 = defaultsmallRing2 + new Vector(TriangleLength * 1 / 2, - TriangleLength * Math.Sqrt(3) / 2);
-        Vector defaultbigRing1 = new Vector(-borderLength - TriangleLength * Math.Sqrt(3) / 2, - TriangleLength * 1 / 2);
-        Vector defaultbigRing2 = new Vector(-borderLength - TriangleLength * Math.Sqrt(3) / 2, + TriangleLength * 1 / 2);
+        Vector defaultsmallRing1 = defaultsmallRing2 + new Vector(TriangleLength * 1 / 2, -TriangleLength * Math.Sqrt(3) / 2);
+        Vector defaultbigRing1 = new Vector(-borderLength - TriangleLength * Math.Sqrt(3) / 2, -TriangleLength * 1 / 2);
+        Vector defaultbigRing2 = new Vector(-borderLength - TriangleLength * Math.Sqrt(3) / 2, +TriangleLength * 1 / 2);
         List<Vector> extPoints = new List<Vector>();
 
         for (int i = 0; i < 3; i++)
@@ -294,6 +294,7 @@ namespace Quarcode.Core
     internalGexBlock[] internalGexses;
     externalGexBlock[] externalGexses;
     extrenalBorder[] externalBorders;
+    externalGexBlock Logo;
     public mainGexBlock(double Height)
     {
       internalGexses = new internalGexBlock[6];
@@ -306,6 +307,8 @@ namespace Quarcode.Core
 
       internalGexses[0] = new internalGexBlock(Center, l);
       externalGexses[0] = new externalGexBlock(Center, l, 0);
+      Logo = new externalGexBlock(Center + Vector.Rotate(mainGexRingDefault, -Math.PI / 3 * 5), l, 0);
+
       for (int i = 0; i < 5; i++)
       {
         internalGexses[i + 1] = new internalGexBlock(Center + Vector.Rotate(mainGexRingDefault, -Math.PI / 3 * i), internalGexses[0].Points);
@@ -321,17 +324,24 @@ namespace Quarcode.Core
         ResultArray.AddRange(internalGexses[i].AsArray());
         ResultArray.AddRange(externalGexses[i].AsArray());
       }
-     
+
       return ResultArray.ToArray();
     }
+
     public Vector[] AsArrayBorder()
     {
       List<Vector> ResultArray = new List<Vector>();
-     
       for (int i = 0; i < 5; i++)
       {
         ResultArray.AddRange(externalBorders[i].AsArray());
       }
+      return ResultArray.ToArray();
+    }
+
+    public Vector[] AsArrayLogoBorder()
+    {
+      List<Vector> ResultArray = new List<Vector>();
+      ResultArray.AddRange(Logo.AsArray());
       return ResultArray.ToArray();
     }
   }

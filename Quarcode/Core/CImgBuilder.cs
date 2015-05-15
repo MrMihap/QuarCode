@@ -11,6 +11,7 @@ namespace Quarcode.Core
   {
     public static Bitmap GenQRfromMatrix(CPointsMatrix matrix)
     {
+      matrix.GenNoise();
       Bitmap bmp = new Bitmap(matrix.Width, matrix.Heigt);
       if (!matrix.IsInited)
         using (Graphics gr = Graphics.FromImage(bmp))
@@ -30,14 +31,15 @@ namespace Quarcode.Core
           Pen borderPointsPen = new Pen(blueline, 3);
           Random rand = new Random();
           Color rndclr = Color.Black;
-          for (int i = 0; i < matrix.BorderPoints.Count - 1; i++)
-          {
-            PointF[] a = new PointF[3];
-            a[0] = Vector.ToSystemPointF(new Vector(matrix.Width/2, matrix.Heigt/2));
-            a[1] = Vector.ToSystemPointF(matrix.BorderPoints[i]);
-            a[2] = Vector.ToSystemPointF(matrix.BorderPoints[i + 1]);
-            gr.FillPolygon(new SolidBrush(rndclr), a);
-          }
+          gr.FillPolygon(new SolidBrush(rndclr), Vector.ToSystemPointsF(matrix.BorderPoints.ToArray()));
+          //for (int i = 0; i < matrix.BorderPoints.Count - 1; i++)
+          //{
+          //  PointF[] a = new PointF[3];
+          //  a[0] = Vector.ToSystemPointF(new Vector(matrix.Width/2, matrix.Heigt/2));
+          //  a[1] = Vector.ToSystemPointF(matrix.BorderPoints[i]);
+          //  a[2] = Vector.ToSystemPointF(matrix.BorderPoints[i + 1]);
+          //  gr.FillPolygon(new SolidBrush(rndclr), a);
+          //}
           for (int i = 0; i < matrix.Points.Count; i++)
           {
 #if DEBUG
@@ -63,44 +65,45 @@ namespace Quarcode.Core
             {
 
               gr.FillPolygon(new SolidBrush(rndclr), Vector.ToSystemPointsF(aroundgex));
-              gr.DrawLine(new Pen(new SolidBrush(Color.Green), 3),
-                (int)aroundgex[j].x,
-                (int)(int)aroundgex[j].y,
-                (int)aroundgex[j].x + 2,
-                (int)(int)aroundgex[j].y + 2);
+              gr.DrawPolygon(new Pen(new SolidBrush(Color.Black)), Vector.ToSystemPointsF(aroundgex));
+              //gr.DrawLine(new Pen(new SolidBrush(Color.Green), 3),
+              //  (int)aroundgex[j].x,
+              //  (int)(int)aroundgex[j].y,
+              //  (int)aroundgex[j].x + 2,
+              //  (int)(int)aroundgex[j].y + 2);
             }
           }
           for (int i = 0; i < matrix.Points.Count; i++)
           {
-            gr.DrawLine(innerPointsPen,
-              (int)matrix.Points[i].x,
-              (int)(int)matrix.Points[i].y,
-              (int)matrix.Points[i].x + 2,
-              (int)(int)matrix.Points[i].y + 2);
-            gr.DrawString(i.ToString(),
-              new Font("Sans Serif", 10f),
-              new SolidBrush(Color.Black),
-             (int)matrix.Points[i].x,
-             (int)(int)matrix.Points[i].y);
+            //gr.DrawLine(innerPointsPen,
+            //  (int)matrix.Points[i].x,
+            //  (int)(int)matrix.Points[i].y,
+            //  (int)matrix.Points[i].x + 2,
+            //  (int)(int)matrix.Points[i].y + 2);
+            //gr.DrawString(i.ToString(),
+            //  new Font("Sans Serif", 10f),
+            //  new SolidBrush(Color.Black),
+            // (int)matrix.Points[i].x,
+            // (int)(int)matrix.Points[i].y);
           }
           for (int i = 0; i < matrix.BorderPoints.Count; i++)
           {
-            gr.DrawLine(borderPointsPen,
-              (int)matrix.BorderPoints[i].x,
-              (int)(int)matrix.BorderPoints[i].y,
-              (int)matrix.BorderPoints[i].x + 2,
-              (int)(int)matrix.BorderPoints[i].y + 2);
-            gr.DrawString(i.ToString(),
-              new Font("Sans Serif", 16f),
-              new SolidBrush(Color.Red),
-             (int)matrix.BorderPoints[i].x,
-             (int)(int)matrix.BorderPoints[i].y);
+            //gr.DrawLine(borderPointsPen,
+            //  (int)matrix.BorderPoints[i].x,
+            //  (int)(int)matrix.BorderPoints[i].y,
+            //  (int)matrix.BorderPoints[i].x + 2,
+            //  (int)(int)matrix.BorderPoints[i].y + 2);
+            //gr.DrawString(i.ToString(),
+            //  new Font("Sans Serif", 16f),
+            //  new SolidBrush(Color.Red),
+            // (int)matrix.BorderPoints[i].x,
+            // (int)(int)matrix.BorderPoints[i].y);
           }
-
+          gr.FillPolygon(new SolidBrush(Color.WhiteSmoke), Vector.ToSystemPointsF(matrix.LogoBorderPoints.ToArray()));
+#if DEBUG
           //DEBUG
           for (int i = 0; i < matrix.Points.Count; i++)
           {
-#if DEBUG
             if (i != 5) continue;
             int[] points = matrix.sixNearest(i);
             for (int jj = 0; jj < points.Length; jj++)
@@ -124,9 +127,9 @@ namespace Quarcode.Core
                 // do nothing
               }
             }
-#endif
           }
           //END DEBUG
+#endif
 
         }
       }

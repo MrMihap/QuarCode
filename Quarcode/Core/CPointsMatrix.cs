@@ -10,6 +10,7 @@ namespace Quarcode.Core
     public List<Vector> Points;
     public List<Vector> NoisedPoints;
     public List<Vector> BorderPoints;
+    public List<Vector> LogoBorderPoints;
     int _Width;
     int _Height;
     // 
@@ -45,26 +46,29 @@ namespace Quarcode.Core
     }
 
     public bool IsInited { get { if (Points.Count > 0) return true; else return false; } }
+
     public CPointsMatrix()
     {
       Width = 700;
       Heigt = 700;
     }
+
     private void InitMatrix()
     {
       Points = new List<Vector>();
       BorderPoints = new List<Vector>();
-      // debug
+      LogoBorderPoints = new List<Vector>();
       mainGexBlock gex = new mainGexBlock(500);
       Points.AddRange(gex.AsArray());
       BorderPoints.AddRange(gex.AsArrayBorder());
-      //end debug
+      LogoBorderPoints.AddRange(gex.AsArrayLogoBorder());
+      GenNoise();
     }
 
     public Vector[] AroundGexAt(int idx)
     {
       Vector[] result = new Vector[6];
-      Vector center = VectorAt(idx);
+      Vector center = NoisedPoints[idx];
       int[] surround = sixNearest(idx);
       Vector r1;
       Vector r2;
@@ -83,7 +87,7 @@ namespace Quarcode.Core
         }
         if (surround[idx1] == -1 && surround[idx2] != -1)
         {
-          r1 = VectorAt(surround[idx2]);
+          r1 = NoisedPoints[surround[idx2]];
           result[i] = new Vector(
            (center.x + r1.x) / 2,
            (center.y + r1.y) / 2
@@ -91,7 +95,7 @@ namespace Quarcode.Core
         }
         if (surround[idx1] != -1 && surround[idx2] == -1)
         {
-          r1 = VectorAt(surround[idx1]);
+          r1 = NoisedPoints[surround[idx1]];
           result[i] = new Vector(
            (center.x + r1.x) / 2,
            (center.y + r1.y) / 2
@@ -99,8 +103,8 @@ namespace Quarcode.Core
         }
         if (surround[idx1] != -1 && surround[idx2] != -1)
         {
-          r1 = VectorAt(surround[idx1]);
-          r2 = VectorAt(surround[idx2]);
+          r1 = NoisedPoints[surround[idx1]];
+          r2 = NoisedPoints[surround[idx2]];
           result[i] = new Vector(
            (center.x + r1.x + r2.x) / 3,
            (center.y + r1.y + r2.y) / 3
@@ -120,6 +124,31 @@ namespace Quarcode.Core
       }
       else
         throw new ArgumentOutOfRangeException();
+    }
+
+    public void GenNoise()
+    {
+      double l = _Height / (3 * Math.Sqrt(3)) - 10;
+      GenNoise(l/7);
+    }
+
+    public void GenNoise(double r)
+    {
+      NoisedPoints = new List<Vector>();
+      Random rand = new Random(DateTime.Now.Millisecond);
+      for (int i = 0; i < Points.Count; i++)
+      {
+        double distance = r * (rand.Next() % 5 + 5) / 10.0;
+        double Angle = Math.PI * 2 * rand.Next() % 60 / 60.0;
+        Vector shift = new Vector(-distance, 0);
+        shift = Vector.Rotate(shift, Angle);
+        shift.x += distance;
+        NoisedPoints.Add(Points[i] + shift);
+      }
+      for (int i = 0; i < BorderPoints.Count; i++)
+      {
+        NoisedPoints.Add(BorderPoints[i]);
+      }
     }
 
     public int[] sixNearest(int idx)
@@ -145,10 +174,11 @@ namespace Quarcode.Core
         List<int> candidates = BitweenLines(k1, k2, b1, b2, Sign1, Sign2);
 
         if (candidates.Count > 0)
-          result[i] = (from x 
+          result[i] = (from x
                          in candidates
                        where Vector.Distance(center, this.VectorAt(x)) > 0.1
-                       orderby Vector.Distance(center, this.VectorAt(x)) select x).First();
+                       orderby Vector.Distance(center, this.VectorAt(x))
+                       select x).First();
 
         else
           result[i] = -1;
