@@ -76,34 +76,32 @@ namespace Quarcode.Core
         if (i == 5)
         {
           idx1 = 5; idx2 = 0;
-          
         }
         if (surround[idx1] == -1 && surround[idx2] == -1)
         {
           //не найдено окружающи точек
-
           result[i] = center;
         }
         if (surround[idx1] == -1 && surround[idx2] != -1)
         {
-          r1 = VectorAt(idx2);
+          r1 = VectorAt(surround[idx2]);
           result[i] = new Vector(
            (center.x + r1.x) / 2,
            (center.y + r1.y) / 2
           );
         }
-        if (surround[idx] != -1 && surround[idx2] == -1)
+        if (surround[idx1] != -1 && surround[idx2] == -1)
         {
-          r1 = VectorAt(idx1);
+          r1 = VectorAt(surround[idx1]);
           result[i] = new Vector(
            (center.x + r1.x) / 2,
            (center.y + r1.y) / 2
           );
         }
-        if (surround[idx] != -1 && surround[idx2] != -1)
+        if (surround[idx1] != -1 && surround[idx2] != -1)
         {
-          r1 = VectorAt(idx1);
-          r2 = VectorAt(idx2);
+          r1 = VectorAt(surround[idx1]);
+          r2 = VectorAt(surround[idx2]);
           result[i] = new Vector(
            (center.x + r1.x + r2.x) / 3,
            (center.y + r1.y + r2.y) / 3
@@ -124,6 +122,7 @@ namespace Quarcode.Core
       else
         throw new ArgumentOutOfRangeException();
     }
+
     public int[] sixNearest(int idx)
     {
       int[] result = new int[6];
@@ -145,20 +144,13 @@ namespace Quarcode.Core
         if (angle + Math.PI / 3 >= Math.PI / 2 && angle + Math.PI / 3 < Math.PI * 3 / 2)
           Sign2 = -1;
         List<int> candidates = BitweenLines(k1, k2, b1, b2, Sign1, Sign2);
-#if DEBUG 
-        List<double> distances = new List<double>();
-        for (int j = 0; j < candidates.Count; j++)
-        {
-          distances.Add(Vector.Distance(center, this.VectorAt(candidates[j])));
-        }
-        double min_length = distances.Min();
+    
         int coolindex = (from x in candidates orderby Vector.Distance(center, this.VectorAt(x)) select x).First();
-        candidates.OrderBy(x => Vector.Distance(center, this.VectorAt(x)));
 
-#endif
         
           if (candidates.Count > 0)
-            result[i] = candidates[0];
+            result[i] = (from x in candidates orderby Vector.Distance(center, this.VectorAt(x)) select x).First();
+
           else
             result[i] = -1;
       }

@@ -57,7 +57,9 @@ namespace Quarcode.Core
           }
           for (int i = 0; i < matrix.BorderPoints.Count; i++)
           {
-            if (i != 1) continue;
+#if DEBUG
+            if (i != 0) continue;
+#endif
             Vector[] aroundgex = matrix.AroundGexAt(i);
             for (int j = 0; j < 6; j++)
             {
@@ -71,7 +73,9 @@ namespace Quarcode.Core
           //DEBUG
           for (int i = 0; i < matrix.Points.Count; i++)
           {
-            if (i != 1) continue;
+#if DEBUG
+            if (i != 0) continue;
+#endif
             int[] points = matrix.sixNearest(i);
             for (int jj = 0; jj < points.Length; jj++)
             {
