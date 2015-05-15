@@ -69,22 +69,22 @@ namespace Quarcode.Core
             }
           }
           //DEBUG
-          for (int i = 0; i < matrix.BorderPoints.Count; i++)
+          for (int i = 0; i < matrix.Points.Count; i++)
           {
             if (i != 1) continue;
-            int[] points = matrix.sixNearest(0);
+            int[] points = matrix.sixNearest(i);
             for (int jj = 0; jj < points.Length; jj++)
             {
               gr.DrawLine(new Pen(new SolidBrush(Color.Green)),
-                (int)matrix.VectorAt(points[jj]).x,
-                (int)matrix.Heigt - (int)matrix.VectorAt(points[jj]).y,
                 (int)matrix.VectorAt(points[jj]).x + 2,
-                (int)matrix.Heigt - (int)matrix.VectorAt(points[jj]).y + 2);
+                (int)matrix.Heigt - (int)matrix.VectorAt(points[jj]).y + 2,
+                (int)matrix.VectorAt(points[jj]).x + 4,
+                (int)matrix.Heigt - (int)matrix.VectorAt(points[jj]).y + 4);
               gr.DrawString(jj.ToString(),
                 new Font("Sans Serif", 16f),
-                new SolidBrush(Color.Red),
-               (int)matrix.VectorAt(points[jj]).x,
-               (int)matrix.Heigt - (int)matrix.VectorAt(points[jj]).y);
+                new SolidBrush(Color.Green),
+               (int)matrix.VectorAt(points[jj]).x + 5,
+               (int)matrix.Heigt - (int)matrix.VectorAt(points[jj]).y - 5);
             }
           }
           //END DEBUG

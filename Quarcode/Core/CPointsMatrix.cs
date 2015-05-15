@@ -48,8 +48,8 @@ namespace Quarcode.Core
     public bool IsInited { get { if (Points.Count > 0) return true; else return false; } }
     public CPointsMatrix()
     {
-      Width = 600;
-      Heigt = 600;
+      Width = 800;
+      Heigt = 800;
     }
     private void InitMatrix()
     {
@@ -145,11 +145,22 @@ namespace Quarcode.Core
         if (angle + Math.PI / 3 >= Math.PI / 2 && angle + Math.PI / 3 < Math.PI * 3 / 2)
           Sign2 = -1;
         List<int> candidates = BitweenLines(k1, k2, b1, b2, Sign1, Sign2);
+#if DEBUG 
+        List<double> distances = new List<double>();
+        for (int j = 0; j < candidates.Count; j++)
+        {
+          distances.Add(Vector.Distance(center, this.VectorAt(candidates[j])));
+        }
+        double min_length = distances.Min();
+        int coolindex = (from x in candidates orderby Vector.Distance(center, this.VectorAt(x)) select x).First();
         candidates.OrderBy(x => Vector.Distance(center, this.VectorAt(x)));
-        if (candidates.Count > 0)
-          result[i] = candidates[0];
-        else
-          result[i] = -1;
+
+#endif
+        
+          if (candidates.Count > 0)
+            result[i] = candidates[0];
+          else
+            result[i] = -1;
       }
       return result;
     }
