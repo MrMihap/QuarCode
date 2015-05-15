@@ -55,25 +55,40 @@ namespace Quarcode.Core
              (int)matrix.BorderPoints[i].x,
              (int)matrix.Heigt - (int)matrix.BorderPoints[i].y);
           }
+          for (int i = 0; i < matrix.BorderPoints.Count; i++)
+          {
+            if (i != 1) continue;
+            Vector[] aroundgex = matrix.AroundGexAt(i);
+            for (int j = 0; j < 6; j++)
+            {
+              gr.DrawLine(borderPointsPen,
+                (int)aroundgex[j].x,
+                (int)matrix.Heigt - (int)aroundgex[j].y,
+                (int)aroundgex[j].x + 2,
+                (int)matrix.Heigt - (int)aroundgex[j].y + 2);
+            }
+          }
           //DEBUG
-          int[] points = matrix.sixNearest(0);
-
+          for (int i = 0; i < matrix.BorderPoints.Count; i++)
+          {
+            if (i != 1) continue;
+            int[] points = matrix.sixNearest(0);
+            for (int jj = 0; jj < points.Length; jj++)
+            {
+              gr.DrawLine(new Pen(new SolidBrush(Color.Green)),
+                (int)matrix.VectorAt(points[jj]).x,
+                (int)matrix.Heigt - (int)matrix.VectorAt(points[jj]).y,
+                (int)matrix.VectorAt(points[jj]).x + 2,
+                (int)matrix.Heigt - (int)matrix.VectorAt(points[jj]).y + 2);
+              gr.DrawString(jj.ToString(),
+                new Font("Sans Serif", 16f),
+                new SolidBrush(Color.Red),
+               (int)matrix.VectorAt(points[jj]).x,
+               (int)matrix.Heigt - (int)matrix.VectorAt(points[jj]).y);
+            }
+          }
           //END DEBUG
 
-          for (int i = 0; i < points.Length; i++)
-          {
-            gr.DrawLine(borderPointsPen,
-              (int)matrix.VectorAt(points[i]).x,
-              (int)matrix.Heigt - (int)matrix.VectorAt(points[i]).y,
-              (int)matrix.VectorAt(points[i]).x + 2,
-              (int)matrix.Heigt - (int)matrix.VectorAt(points[i]).y + 2);
-            gr.DrawString(i.ToString(),
-              new Font("Sans Serif", 16f),
-              new SolidBrush(Color.Red),
-             (int)matrix.VectorAt(points[i]).x,
-             (int)matrix.Heigt - (int)matrix.VectorAt(points[i]).y);
-           
-          }
         }
       }
       return bmp;
