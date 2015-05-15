@@ -28,6 +28,39 @@ namespace Quarcode.Core
           Brush blueline = new SolidBrush(Color.Red);
           Pen innerPointsPen = new Pen(redline, 3);
           Pen borderPointsPen = new Pen(blueline, 3);
+          Random rand = new Random();
+          Color rndclr = Color.Black;
+          for (int i = 0; i < matrix.BorderPoints.Count - 1; i++)
+          {
+            PointF[] a = new PointF[3];
+            a[0] = Vector.ToSystemPointF(new Vector(matrix.Width/2, matrix.Heigt/2));
+            a[1] = Vector.ToSystemPointF(matrix.BorderPoints[i]);
+            a[2] = Vector.ToSystemPointF(matrix.BorderPoints[i + 1]);
+            gr.FillPolygon(new SolidBrush(rndclr), a);
+          }
+          for (int i = 0; i < matrix.Points.Count; i++)
+          {
+#if DEBUG
+            if (i != 5) continue;
+#endif
+            switch (rand.Next() % 4)
+            {
+              case 0:
+                rndclr = Color.DeepSkyBlue;
+                break;
+              case 1:
+                rndclr = Color.DeepPink;
+                break;
+              case 2:
+                rndclr = Color.Aquamarine;
+                break;
+              case 3:
+                rndclr = Color.BlueViolet;
+                break;
+            }
+            Vector[] aroundgex = matrix.AroundGexAt(i);
+            for (int j = 0; j < 6; j++)
+            {
 
               gr.FillPolygon(new SolidBrush(rndclr), Vector.ToSystemPointsF(aroundgex));
               gr.DrawLine(new Pen(new SolidBrush(Color.Green), 3),
@@ -41,63 +74,57 @@ namespace Quarcode.Core
           {
             gr.DrawLine(innerPointsPen,
               (int)matrix.Points[i].x,
-              (int)matrix.Heigt - (int)matrix.Points[i].y,
+              (int)(int)matrix.Points[i].y,
               (int)matrix.Points[i].x + 2,
-              (int)matrix.Heigt - (int)matrix.Points[i].y + 2);
+              (int)(int)matrix.Points[i].y + 2);
             gr.DrawString(i.ToString(),
               new Font("Sans Serif", 10f),
               new SolidBrush(Color.Black),
              (int)matrix.Points[i].x,
-             (int)matrix.Heigt - (int)matrix.Points[i].y);
+             (int)(int)matrix.Points[i].y);
           }
           for (int i = 0; i < matrix.BorderPoints.Count; i++)
           {
             gr.DrawLine(borderPointsPen,
               (int)matrix.BorderPoints[i].x,
-              (int)matrix.Heigt - (int)matrix.BorderPoints[i].y,
+              (int)(int)matrix.BorderPoints[i].y,
               (int)matrix.BorderPoints[i].x + 2,
-              (int)matrix.Heigt - (int)matrix.BorderPoints[i].y + 2);
+              (int)(int)matrix.BorderPoints[i].y + 2);
             gr.DrawString(i.ToString(),
               new Font("Sans Serif", 16f),
               new SolidBrush(Color.Red),
              (int)matrix.BorderPoints[i].x,
-             (int)matrix.Heigt - (int)matrix.BorderPoints[i].y);
+             (int)(int)matrix.BorderPoints[i].y);
           }
-          for (int i = 0; i < matrix.BorderPoints.Count; i++)
-          {
-#if DEBUG
-            if (i != 0) continue;
-#endif
-            Vector[] aroundgex = matrix.AroundGexAt(i);
-            for (int j = 0; j < 6; j++)
-            {
-              gr.DrawLine(borderPointsPen,
-                (int)aroundgex[j].x,
-                (int)matrix.Heigt - (int)aroundgex[j].y,
-                (int)aroundgex[j].x + 2,
-                (int)matrix.Heigt - (int)aroundgex[j].y + 2);
-            }
-          }
+
           //DEBUG
           for (int i = 0; i < matrix.Points.Count; i++)
           {
 #if DEBUG
-            if (i != 0) continue;
-#endif
+            if (i != 5) continue;
             int[] points = matrix.sixNearest(i);
             for (int jj = 0; jj < points.Length; jj++)
             {
-              gr.DrawLine(new Pen(new SolidBrush(Color.Green)),
-                (int)matrix.VectorAt(points[jj]).x + 2,
-                (int)matrix.Heigt - (int)matrix.VectorAt(points[jj]).y + 2,
-                (int)matrix.VectorAt(points[jj]).x + 4,
-                (int)matrix.Heigt - (int)matrix.VectorAt(points[jj]).y + 4);
-              gr.DrawString(jj.ToString(),
-                new Font("Sans Serif", 16f),
-                new SolidBrush(Color.Green),
-               (int)matrix.VectorAt(points[jj]).x + 5,
-               (int)matrix.Heigt - (int)matrix.VectorAt(points[jj]).y - 5);
+              try
+              {
+                gr.DrawLine(new Pen(new SolidBrush(Color.Green)),
+                  (int)matrix.VectorAt(points[jj]).x + 2,
+                  (int)matrix.Heigt - (int)matrix.VectorAt(points[jj]).y + 2,
+                  (int)matrix.VectorAt(points[jj]).x + 4,
+                  (int)matrix.Heigt - (int)matrix.VectorAt(points[jj]).y + 4);
+                gr.DrawString(jj.ToString(),
+                  new Font("Sans Serif", 16f),
+                  new SolidBrush(Color.Green),
+                 (int)matrix.VectorAt(points[jj]).x + 5,
+                 (int)matrix.Heigt - (int)matrix.VectorAt(points[jj]).y - 5);
+              
+              }
+              catch (Exception e)
+              {
+                // do nothing
+              }
             }
+#endif
           }
           //END DEBUG
 
