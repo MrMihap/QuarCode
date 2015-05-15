@@ -67,21 +67,47 @@ namespace Quarcode.Core
       Vector[] result = new Vector[6];
       Vector center = VectorAt(idx);
       int[] surround = sixNearest(idx);
+      Vector r1;
+      Vector r2;
       for (int i = 0; i < 6; i++)
       {
+        int idx1 = i, idx2 = i + 1;
+
         if (i == 5)
         {
-          result[i] = new Vector(
-            (center.x + VectorAt(surround[5]).x + VectorAt(surround[0]).x) / 2,
-            (center.y + VectorAt(surround[5]).y + VectorAt(surround[0]).y) / 2
-           );
+          idx1 = 5; idx2 = 0;
+          
         }
-        else
+        if (surround[idx1] == -1 && surround[idx2] == -1)
         {
+          //не найдено окружающи точек
+
+          result[i] = center;
+        }
+        if (surround[idx1] == -1 && surround[idx2] != -1)
+        {
+          r1 = VectorAt(idx2);
           result[i] = new Vector(
-            (center.x + VectorAt(surround[i]).x + VectorAt(surround[i + 1]).x) / 2,
-            (center.y + VectorAt(surround[i]).y + VectorAt(surround[i + 1]).y) / 2
-           );
+           (center.x + r1.x) / 2,
+           (center.y + r1.y) / 2
+          );
+        }
+        if (surround[idx] != -1 && surround[idx2] == -1)
+        {
+          r1 = VectorAt(idx1);
+          result[i] = new Vector(
+           (center.x + r1.x) / 2,
+           (center.y + r1.y) / 2
+          );
+        }
+        if (surround[idx] != -1 && surround[idx2] != -1)
+        {
+          r1 = VectorAt(idx1);
+          r2 = VectorAt(idx2);
+          result[i] = new Vector(
+           (center.x + r1.x + r2.x) / 3,
+           (center.y + r1.y + r2.y) / 3
+          );
         }
       }
       return result;
@@ -91,6 +117,10 @@ namespace Quarcode.Core
     {
       if (i < Points.Count)
         return Points.ElementAt(i);
+      else if (i >= Points.Count && i < Points.Count + BorderPoints.Count)
+      {
+        return BorderPoints.ElementAt(i - Points.Count);
+      }
       else
         throw new ArgumentOutOfRangeException();
     }
@@ -116,7 +146,10 @@ namespace Quarcode.Core
           Sign2 = -1;
         List<int> candidates = BitweenLines(k1, k2, b1, b2, Sign1, Sign2);
         candidates.OrderBy(x => Vector.Distance(center, this.VectorAt(x)));
-        result[i] = candidates[0];
+        if (candidates.Count > 0)
+          result[i] = candidates[0];
+        else
+          result[i] = -1;
       }
       return result;
     }
