@@ -57,9 +57,9 @@ namespace Quarcode.Core
     {
       return new Vector(a.x + b.x, a.y + b.y);
     }
-    public static double Distance(Vector a, Vector b)
+    public static Vector operator -(Vector a, Vector b)
     {
-      return Math.Sqrt(Math.Pow(a.x - b.x, 2) + Math.Pow(a.y - b.y, 2));
+      return new Vector(a.x - b.x, a.y - b.y);
     }
     /// <summary>
     /// Возвращает новый массив, составленный из суммы второго с каждым первым 
@@ -76,6 +76,11 @@ namespace Quarcode.Core
       }
       return result;
     }
+    public static double Distance(Vector a, Vector b)
+    {
+      return Math.Sqrt(Math.Pow(a.x - b.x, 2) + Math.Pow(a.y - b.y, 2));
+    }
+    
     public static PointF[] ToSystemPointsF(Vector[] a)
     {
       PointF[] result = new PointF[a.Length];

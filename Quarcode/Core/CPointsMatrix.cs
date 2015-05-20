@@ -65,7 +65,7 @@ namespace Quarcode.Core
       GenNoise();
     }
 
-    public Vector[] AroundGexAt(int idx)
+    public Vector[] AroundAverageGexAt(int idx)
     {
       Vector[] result = new Vector[6];
       Vector center = NoisedPoints[idx];
@@ -113,7 +113,67 @@ namespace Quarcode.Core
       }
       return result;
     }
+    public Vector[] AroundVoronojGexAt(int idx)
+    {
+      Vector[] result = new Vector[6];
+      Vector center = NoisedPoints[idx];
+      int[] surround = sixNearest(idx);
+      Vector r1;
+      Vector r2;
+      for (int i = 0; i < 6; i++)
+      {
+        int idx1 = i, idx2 = i + 1;
 
+        if (i == 5)
+        {
+          idx1 = 5; idx2 = 0;
+        }
+        if (surround[idx1] == -1 || surround[idx2] == -1)
+        {
+          //не найдено окружающи точек
+          result[i] = center;
+        }
+        else
+        {
+          double Eps = 0.00001;
+          double k1, k2;
+          double b1, b2;
+
+          r1 = NoisedPoints[surround[idx1]];
+          r2 = NoisedPoints[surround[idx2]];
+          // Укорачиваем вектора на попалам
+          r1 -= center;
+          r2 -= center;
+          r1.x /= 2;
+          r2.x /= 2;
+          r1.y /= 2;
+          r2.y /= 2;
+          // получаем вектора центров отрезков до ближайших точек
+          r1 += center;
+          r2 += center;
+          double debug1 = (r1 - center).x;
+          double debug2 = (r2 - center).x;
+          if (Math.Abs((r1 - center).x) > Eps && Math.Abs((r2 - center).x) > Eps)
+          {
+            // идеальный случай, нет вертикальных прямых
+            k1 = (r1.y - center.y) / (r1.x - center.x);
+            k2 = (r2.y - center.y) / (r2.x - center.x);
+            // Коэф прямых, проходящих через середину между двумя точками
+            k1 = -1 / k1;
+            k2 = -1 / k2;
+            b1 = r1.y - k1 * r1.x;
+            b2 = r2.y - k2 * r2.x;
+
+            result[i] = SolveSystem(k1, k2, b1, b2);
+          }
+          else
+          {
+            result[i] = center;
+          }
+        }
+      }
+      return result;
+    }
     public Vector VectorAt(int i)
     {
       if (i < Points.Count)
@@ -129,7 +189,7 @@ namespace Quarcode.Core
     public void GenNoise()
     {
       double l = _Height / (3 * Math.Sqrt(3)) - 10;
-      GenNoise(l/7);
+      GenNoise(l / 7);
     }
 
     public void GenNoise(double r)
@@ -207,6 +267,22 @@ namespace Quarcode.Core
           && sign2 * BorderPoints[i].y < sign2 * (k2 * BorderPoints[i].x + b2))
           result.Add(i + Points.Count);
       }
+      return result;
+    }
+    /// <summary>
+    /// Меотд возвращает решение системы из двух линейных уравнений
+    /// Комментарии излишни
+    /// </summary>
+    /// <param name="k1"></param>
+    /// <param name="k2"></param>
+    /// <param name="b1"></param>
+    /// <param name="b2"></param>
+    /// <returns></returns>
+    private Vector SolveSystem(double k1, double k2, double b1, double b2)
+    {
+      Vector result = new Vector();
+      result.x = (b2 - b1) / (k1 - k2);
+      result.y = k1 * result.x + b1;
       return result;
     }
   }
