@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
-
+using Svg;
 namespace Quarcode.Core
 {
   static class CImgBuilder
@@ -32,11 +32,16 @@ namespace Quarcode.Core
           Random rand = new Random();
           Color rndclr = Color.Black;
           //Рисуем черный бордер
-          gr.FillPolygon(new SolidBrush(rndclr), Vector.ToSystemPointsF(matrix.BorderPoints.ToArray()));
+          // gr.FillPolygon(new SolidBrush(rndclr), Vector.ToSystemPointsF(matrix.BorderPoints.ToArray()));
           for (int i = 0; i < matrix.Points.Count; i++)
           {
 #if DEBUG
-            if (i != 0) continue;
+            List<int> drawlist = new List<int>();
+            //drawlist.Add(0);
+            //drawlist.Add(57);
+            drawlist.Add(48);
+
+            if (!drawlist.Contains(i)) continue;
 #endif
             switch (rand.Next() % 7)
             {
@@ -66,35 +71,58 @@ namespace Quarcode.Core
             //Получаем список окружающих точек
             Vector[] aroundgex = matrix.AroundVoronojGexAt(i);
             // Заливаем поле по окружающим точкам
-            //   gr.FillPolygon(new SolidBrush(rndclr), Vector.ToSystemPointsF(aroundgex));
+            //gr.FillPolygon(new SolidBrush(rndclr), Vector.ToSystemPointsF(aroundgex));
             // Отрисовываем границу по окружающим точкам
+            if(aroundgex.Length > 2)
             gr.DrawPolygon(new Pen(new SolidBrush(Color.Red)), Vector.ToSystemPointsF(aroundgex));
-
-            for (int j = 0; j < 6; j++)
+            if (true)
+              for (int ii = 0; ii < matrix.LastSurround.Count; ii++)
+              {
+                gr.DrawLine(new Pen(new SolidBrush(Color.Red), 3),
+                  (int)matrix.LastSurround[ii].x,
+                  (int)matrix.LastSurround[ii].y,
+                  (int)matrix.LastSurround[ii].x + 2,
+                  (int)matrix.LastSurround[ii].y + 2);
+              }
+            for (int j = 0; j < aroundgex.Length; j++)
             {
               // Ставим точку
-              if (false)
+
+              if (true)
                 gr.DrawLine(new Pen(new SolidBrush(Color.Green), 3),
                   (int)aroundgex[j].x,
-                  (int)(int)aroundgex[j].y,
+                  (int)aroundgex[j].y,
                   (int)aroundgex[j].x + 2,
-                  (int)(int)aroundgex[j].y + 2);
+                  (int)aroundgex[j].y + 2);
+              //номер в округе гекса
+              if (true)
+                gr.DrawString(j.ToString(),
+                 new Font("Sans Serif", 10f),
+                 new SolidBrush(rndclr),
+                 (int)aroundgex[j].x + 2,
+                 (int)aroundgex[j].y + 2);
             }
           }
-          if (false)
+          if (true)
             for (int i = 0; i < matrix.Points.Count; i++)
             {
               //Отрисовка центральных точек данных
-              gr.DrawLine(innerPointsPen,
-                (int)matrix.Points[i].x,
-                (int)(int)matrix.Points[i].y,
-                (int)matrix.Points[i].x + 2,
-                (int)(int)matrix.Points[i].y + 2);
+              //gr.DrawLine(innerPointsPen,
+              //  (int)matrix.Points[i].x,
+              //  (int)matrix.Points[i].y,
+              //  (int)matrix.Points[i].x + 2,
+              //  (int)matrix.Points[i].y + 2);
               gr.DrawString(i.ToString(),
                 new Font("Sans Serif", 10f),
                 new SolidBrush(Color.Black),
                (int)matrix.Points[i].x,
                (int)(int)matrix.Points[i].y);
+              // Отрисовка сдвинутых точек
+              gr.DrawLine(innerPointsPen,
+               (int)matrix.NoisedPoints[i].x,
+               (int)matrix.NoisedPoints[i].y,
+               (int)matrix.NoisedPoints[i].x + 2,
+               (int)matrix.NoisedPoints[i].y + 2);
             }
           if (false)
             for (int i = 0; i < matrix.BorderPoints.Count; i++)
@@ -111,8 +139,9 @@ namespace Quarcode.Core
                (int)matrix.BorderPoints[i].x,
                (int)(int)matrix.BorderPoints[i].y);
             }
+
           //Отрисовка места под логотип
-          gr.FillPolygon(new SolidBrush(Color.WhiteSmoke), Vector.ToSystemPointsF(matrix.LogoBorderPoints.ToArray()));
+          //gr.FillPolygon(new SolidBrush(Color.WhiteSmoke), Vector.ToSystemPointsF(matrix.LogoBorderPoints.ToArray()));
 #if DEBUG
           //DEBUG
           // вывод на экран окружения конкретной точки
