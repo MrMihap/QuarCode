@@ -9,7 +9,7 @@ namespace Quarcode.Core
 {
   static class CImgBuilder
   {
-    public static Bitmap GenQRfromMatrix(CPointsMatrix matrix)
+    public static Bitmap GenQRfromMatrix(CPointsMatrix matrix, SViewState viewState)
     {
       matrix.GenNoise();
       Bitmap bmp = new Bitmap(matrix.Width, matrix.Heigt);
@@ -32,7 +32,8 @@ namespace Quarcode.Core
           Random rand = new Random();
           Color rndclr = Color.Black;
           //Рисуем черный бордер
-          // gr.FillPolygon(new SolidBrush(rndclr), Vector.ToSystemPointsF(matrix.BorderPoints.ToArray()));
+          if (viewState.DrawBorder)
+            gr.FillPolygon(new SolidBrush(rndclr), Vector.ToSystemPointsF(matrix.BorderPoints.ToArray()));
           for (int i = 0; i < matrix.Points.Count; i++)
           {
 #if DEBUG
@@ -71,10 +72,11 @@ namespace Quarcode.Core
             //Получаем список окружающих точек
             Vector[] aroundgex = matrix.AroundVoronojGexAt(i);
             // Заливаем поле по окружающим точкам
-            //gr.FillPolygon(new SolidBrush(rndclr), Vector.ToSystemPointsF(aroundgex));
+            if (viewState.FillCells)
+              gr.FillPolygon(new SolidBrush(rndclr), Vector.ToSystemPointsF(aroundgex));
             // Отрисовываем границу по окружающим точкам
-            if(aroundgex.Length > 2)
-            gr.DrawPolygon(new Pen(new SolidBrush(Color.Red)), Vector.ToSystemPointsF(aroundgex));
+            if (aroundgex.Length > 2 && viewState.DrawCellBorder)
+              gr.DrawPolygon(new Pen(new SolidBrush(Color.Red)), Vector.ToSystemPointsF(aroundgex));
             if (false)
               for (int ii = 0; ii < matrix.LastSurround.Count; ii++)
               {
@@ -103,7 +105,7 @@ namespace Quarcode.Core
                  (int)aroundgex[j].y + 2);
             }
           }
-          if (true)
+          if (viewState.DrawValNum)
             for (int i = 0; i < matrix.Points.Count; i++)
             {
               //Отрисовка центральных точек данных
@@ -112,12 +114,14 @@ namespace Quarcode.Core
               //  (int)matrix.Points[i].y,
               //  (int)matrix.Points[i].x + 2,
               //  (int)matrix.Points[i].y + 2);
+
               gr.DrawString(i.ToString(),
                 new Font("Sans Serif", 10f),
                 new SolidBrush(Color.Black),
                (int)matrix.Points[i].x,
                (int)(int)matrix.Points[i].y);
               // Отрисовка сдвинутых точек
+
               gr.DrawLine(innerPointsPen,
                (int)matrix.NoisedPoints[i].x,
                (int)matrix.NoisedPoints[i].y,

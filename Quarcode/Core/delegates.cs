@@ -6,6 +6,6 @@ using System.Threading.Tasks;
 
 namespace Quarcode.Core
 {
-  public delegate void GenerateMsgQueryDelegate(string Message);
+  public delegate void GenerateMsgQueryDelegate(SViewState viewState);
   
 }

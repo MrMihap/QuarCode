@@ -15,6 +15,7 @@ namespace Quarcode.View
   public partial class FimgView : Form, IViewInterfaces
   {
     public event GenerateMsgQueryDelegate OnMsgGenerateQuery;
+    private SViewState viewState = new SViewState();
     public FimgView()
     {
       InitializeComponent();
@@ -34,7 +35,11 @@ namespace Quarcode.View
 
     private void GenerateQRButton_Click(object sender, EventArgs e)
     {
-      if (OnMsgGenerateQuery != null) OnMsgGenerateQuery(qrMessageTextBox.Text);
+      viewState.DrawBorder = DrawBorder.Checked;
+      viewState.DrawCellBorder = DrawCellBorder.Checked;
+      viewState.DrawValNum = DrawValNum.Checked;
+      viewState.FillCells = FillCells.Checked;
+      if (OnMsgGenerateQuery != null) OnMsgGenerateQuery(viewState);
     }
 
     private void qrImgPictureBox_Paint(object sender, PaintEventArgs e)
@@ -50,29 +55,17 @@ namespace Quarcode.View
 
     private void RandomStringButton_Click(object sender, EventArgs e)
     {
-      qrMessageTextBox.Text = genMsg();
+      qrMessageTextBox.Text = CCoder.genMsg();
     }
-    String genMsg()
-    {
-      // lowChars 97-122
-      // highChars 65 - 90
-      // nums 48 - 57
-      String k = "";
-      Random rnd = new Random();
-      int l = 0;
-      l = rnd.Next(0, 3);
 
-      for (int i = 0; i < 12; i++)
-      {
-        switch (l)
-        {
-          case 0: k = k + (char)(rnd.Next(48, 58)); break;
-          case 1: k = k + (char)(rnd.Next(97, 123)); break;
-          case 2: k = k + (char)(rnd.Next(65, 91)); break;
-        }
-        l = rnd.Next(0, 3);
-      }
-      return k;
+    private void qrMessageTextBox_TextChanged(object sender, EventArgs e)
+    {
+      viewState.Message = qrMessageTextBox.Text;
+    }
+
+    private void radiusTrackBar_Scroll(object sender, EventArgs e)
+    {
+      viewState.radius = radiusTrackBar.Value;
     }
   }
 }

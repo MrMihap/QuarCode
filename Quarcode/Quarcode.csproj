@@ -49,9 +49,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\CApplicationController.cs" />
+    <Compile Include="Core\CCoder.cs" />
+    <Compile Include="Core\Common.cs" />
     <Compile Include="Core\delegates.cs" />
     <Compile Include="Core\CImgBuilder.cs" />
-    <Compile Include="Core\Types.cs" />
+    <Compile Include="Core\SGexes.cs" />
+    <Compile Include="Core\SVector.cs" />
+    <Compile Include="Core\SMainGex.cs" />
     <Compile Include="View\FimgView.cs">
       <SubType>Form</SubType>
     </Compile>

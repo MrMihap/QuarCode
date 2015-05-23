@@ -19,9 +19,9 @@ namespace Quarcode.Core
       View = viewForm as IViewInterfaces;
       View.OnMsgGenerateQuery += RecieveMessage;
     }
-    void RecieveMessage(string Query)
+    void RecieveMessage(SViewState viewState)
     {
-      View.RecieveImg(CImgBuilder.GenQRfromMatrix(this.pointsMatrix));
+      View.RecieveImg(CImgBuilder.GenQRfromMatrix(this.pointsMatrix, viewState));
     }
   }
 }

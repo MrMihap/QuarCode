@@ -284,6 +284,7 @@ namespace Quarcode.Core
       }
       return result;
     }
+
     public int[] sixNearestForVoronoj(int idx)
     {
       int[] result = new int[6];
