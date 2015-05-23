@@ -124,7 +124,8 @@ namespace Quarcode.Core
     {
       Vector[] result;
       Vector center = NoisedPoints[idx];
-      int[] surround = sixNearest(idx);
+      double L = this.Heigt / (3 * Math.Sqrt(3)) - 10;
+      int[] surround = sixNearestForVoronoj(idx);
       Vector r1;
       List<double> kList = new List<double>();
       List<double> bList = new List<double>();
@@ -206,35 +207,39 @@ namespace Quarcode.Core
     public void GenNoise()
     {
       double l = _Height / (3 * Math.Sqrt(3)) - 10;
-      GenNoise(l / 6);
+      GenNoise(l / 10);
     }
 
     public void GenNoise(double r)
     {
       NoisedPoints = new List<Vector>();
       Random rand = new Random(DateTime.Now.Millisecond);
+      Vector shift;
+      double distance;
+      double Angle;
+
       for (int i = 0; i < Points.Count; i++)
       {
-        //do
-        //{
-        //  double distance = r * (rand.Next() % 95 + 5) / 100.0;
-        //  double Angle = Math.PI * 2 * rand.Next() % 600 / 300.0;
-        //  //double distance = r * (i % 5 + 5) / 10.0;
-        //  //double Angle = Math.PI * 2 * i % 60 / 60.0;
+      //  do
+      //  {
+      //    distance = r * (rand.Next(5, 100)) / 100.0;
+      //    Angle = Math.PI * 2 * rand.Next(5, 600)/ 300.0;
+      //    //double distance = r * (i % 5 + 5) / 10.0;
+      //    //double Angle = Math.PI * 2 * i % 60 / 60.0;
 
-        //  Vector shift = new Vector(-distance, 0);
-        //  shift = Vector.Rotate(shift, Angle);
-        //  shift.x += distance;
-        //  if ((from p in NoisedPoints where p.x == Points[i].x + shift.x && p.y == Points[i].y + shift.y select p).Count() == 0)
-        //  {
-        //    NoisedPoints.Add(Points[i] + shift);
-        //    break;
-        //  }
-        //} while (true);
-        double distance = r * (i % 5 + 5) / 10.0;
-        double Angle = Math.PI * 2 * i % 60 / 60.0;
+      //    shift = new Vector(-distance, 0);
+      //    shift = Vector.Rotate(shift, Angle);
+      //    shift.x += distance;
+      //    if ((from p in NoisedPoints where p.x == Points[i].x + shift.x && p.y == Points[i].y + shift.y select p).Count() == 0)
+      //    {
+      //      NoisedPoints.Add(Points[i] + shift);
+      //      break;
+      //    }
+      //  } while (true);
+        distance = r * (i % 5 + 15) / 10.0;
+        Angle = Math.PI * 2 * i % 120 / 60.0;
 
-        Vector shift = new Vector(-distance, 0);
+        shift = new Vector(-distance, 0);
         shift = Vector.Rotate(shift, Angle);
         shift.x += distance;
         NoisedPoints.Add(Points[i] + shift);
@@ -281,14 +286,14 @@ namespace Quarcode.Core
     }
     public int[] sixNearestForVoronoj(int idx)
     {
-      List<int> result = new List<int>();
-      
+      int[] result = new int[6];
+      List<int> pre_result = new List<int>();
       Vector center = VectorAt(idx);
       //ищем ближайшие точки по кругу в секторах по 60 градусов
       //для обхода проблемных мест начальный угол будет -Pi/30;
-      for (int i = 0; i < 10; i++)
+      for (int i = 0; i < 12; i++)
       {
-        double angle = -Math.PI / 30 + i * Math.PI / 5;
+        double angle = -Math.PI / 30 + i * Math.PI / 6;
         double k1, k2, b1, b2;
         k1 = Math.Tan(angle);
         k2 = Math.Tan(angle + Math.PI / 3);
@@ -303,15 +308,18 @@ namespace Quarcode.Core
         List<int> candidates = BitweenLines(k1, k2, b1, b2, Sign1, Sign2);
 
         if (candidates.Count > 0)
-          result.Add((from x in candidates
-                       where Vector.Distance(center, this.VectorAt(x)) > 0.1
-                       orderby Vector.Distance(center, this.VectorAt(x))
-                       select x).First());
-
-        else
-          result[i] = -1;
+        {
+          int min = (from x
+                         in candidates
+                     where Vector.Distance(center, this.VectorAt(x)) > 0.1
+                     orderby Vector.Distance(center, this.VectorAt(x))
+                     select x).First();
+          if(!pre_result.Contains(min))pre_result.Add(min);
+        }
+        //else
+          //pre_result.Add(-1);
       }
-      return result.ToArray(); ;
+      return pre_result.ToArray();
     }
 
     public int indexAtVector(Vector r)
@@ -338,7 +346,6 @@ namespace Quarcode.Core
       return result;
     }
 
-    // private Vector[] VoromojFromGex(vector[], center){}
     /// <summary>
     /// Меотд возвращает решение системы из двух линейных уравнений
     /// Комментарии излишни
@@ -390,16 +397,16 @@ namespace Quarcode.Core
           if (center.y < k[j] * center.x + b[j])
           {
             // тогда если точка выше или на прямой - она удовлетворяет полуплоскости
-            if (candidates[i].y >= k[j] * candidates[i].x + b[j] /*||
-              Math.Abs(candidates[i].y - k[j] * candidates[i].x - b[j]) < 0.0001*/)
+            if (candidates[i].y >= k[j] * candidates[i].x + b[j] ||
+              Math.Abs(candidates[i].y - k[j] * candidates[i].x - b[j]) < 0.0001)
               Count++;
           }
           // центр над прямой
           if (center.y > k[j] * center.x + b[j])
           {
             // тогда если точка ниже или на прямой - она удовлетворяет полуплоскости
-            if (candidates[i].y <= k[j] * candidates[i].x + b[j]/* ||
-              Math.Abs(candidates[i].y - k[j] * candidates[i].x - b[j]) < 0.0001*/)
+            if (candidates[i].y <= k[j] * candidates[i].x + b[j] ||
+              Math.Abs(candidates[i].y - k[j] * candidates[i].x - b[j]) < 0.0001)
               Count++;
           }
 

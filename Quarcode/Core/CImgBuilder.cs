@@ -75,7 +75,7 @@ namespace Quarcode.Core
             // Отрисовываем границу по окружающим точкам
             if(aroundgex.Length > 2)
             gr.DrawPolygon(new Pen(new SolidBrush(Color.Red)), Vector.ToSystemPointsF(aroundgex));
-            if (true)
+            if (false)
               for (int ii = 0; ii < matrix.LastSurround.Count; ii++)
               {
                 gr.DrawLine(new Pen(new SolidBrush(Color.Red), 3),
@@ -88,14 +88,14 @@ namespace Quarcode.Core
             {
               // Ставим точку
 
-              if (true)
+              if (false)
                 gr.DrawLine(new Pen(new SolidBrush(Color.Green), 3),
                   (int)aroundgex[j].x,
                   (int)aroundgex[j].y,
                   (int)aroundgex[j].x + 2,
                   (int)aroundgex[j].y + 2);
               //номер в округе гекса
-              if (true)
+              if (false)
                 gr.DrawString(j.ToString(),
                  new Font("Sans Serif", 10f),
                  new SolidBrush(rndclr),
