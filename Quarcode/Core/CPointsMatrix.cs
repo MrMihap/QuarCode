@@ -236,8 +236,8 @@ namespace Quarcode.Core
       //      break;
       //    }
       //  } while (true);
-        distance = r * (i % 5 + 15) / 10.0;
-        Angle = Math.PI * 2 * i % 120 / 60.0;
+        distance = r * (rand.Next(5, 10) ) / 10.0;
+        Angle = Math.PI * rand.Next(0, 120) / 60.0;
 
         shift = new Vector(-distance, 0);
         shift = Vector.Rotate(shift, Angle);
@@ -291,9 +291,9 @@ namespace Quarcode.Core
       Vector center = VectorAt(idx);
       //ищем ближайшие точки по кругу в секторах по 60 градусов
       //для обхода проблемных мест начальный угол будет -Pi/30;
-      for (int i = 0; i < 12; i++)
+      for (int i = 0; i < 18; i++)
       {
-        double angle = -Math.PI / 30 + i * Math.PI / 6;
+        double angle = -Math.PI / 30 + i * Math.PI / 9;
         double k1, k2, b1, b2;
         k1 = Math.Tan(angle);
         k2 = Math.Tan(angle + Math.PI / 3);
