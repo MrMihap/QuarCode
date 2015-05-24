@@ -29,7 +29,7 @@ namespace Quarcode.Core
           
           DrawBorderBackground(gr, matrix, viewState);
           DrawBytes(gr, matrix, viewState);
-          DrawLogo(gr, matrix, viewState);
+          //DrawLogo(gr, matrix, viewState);
           DrawPoints(gr, matrix, viewState);
 
 //#if DEBUG
@@ -118,7 +118,7 @@ namespace Quarcode.Core
             //drawlist.Add(57);
             drawlist.Add(48);
 
-            if (!drawlist.Contains(i)) continue;
+            //if (!drawlist.Contains(i)) continue;
 #endif
 
         //Получаем список окружающих точек
