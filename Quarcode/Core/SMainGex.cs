@@ -67,8 +67,16 @@ namespace Quarcode.Core
     public Vector[] AsArrayLogoBorder()
     {
       List<Vector> ResultArray = new List<Vector>();
-      ResultArray.AddRange(Logo.AsArray());
+      //ResultArray.AddRange(Logo.AsArray());
       ResultArray.AddRange(LogoInternal.AsArray());
+      return ResultArray.ToArray();
+    }
+
+    public Vector[] AsArrayLogo()
+    {
+      List<Vector> ResultArray = new List<Vector>();
+      ResultArray.AddRange(Logo.AsArray());
+      //ResultArray.AddRange(LogoInternal.AsArray());
       return ResultArray.ToArray();
     }
   }

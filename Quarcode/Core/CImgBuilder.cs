@@ -30,10 +30,10 @@ namespace Quarcode.Core
           Pen innerPointsPen = new Pen(redline, 3);
           Pen borderPointsPen = new Pen(blueline, 3);
           Random rand = new Random();
-          Color rndclr = Color.Black;
           //Рисуем черный бордер
           if (viewState.DrawBorder)
-            gr.FillPolygon(new SolidBrush(rndclr), Vector.ToSystemPointsF(matrix.BorderPoints.ToArray()));
+            gr.FillPolygon(new SolidBrush( CCoder.GetColorFor(PointType.Border)), Vector.ToSystemPointsF(matrix.BorderPoints.ToArray()));
+          #region Отрисовка битовых ячеек
           for (int i = 0; i < matrix.Points.Count; i++)
           {
 #if DEBUG
@@ -44,39 +44,17 @@ namespace Quarcode.Core
 
             if (!drawlist.Contains(i)) continue;
 #endif
-            switch (rand.Next() % 7)
-            {
-              case 0:
-                rndclr = Color.DeepSkyBlue;
-                break;
-              case 1:
-                rndclr = Color.DeepPink;
-                break;
-              case 2:
-                rndclr = Color.Aquamarine;
-                break;
-              case 3:
-                rndclr = Color.Brown;
-                break;
-              case 4:
-                rndclr = Color.SlateGray;
-                break;
-              case 5:
-                rndclr = Color.RoyalBlue;
-                break;
-              case 6:
-                rndclr = Color.Orchid;
-                break;
-
-            }
+            
             //Получаем список окружающих точек
             Vector[] aroundgex = matrix.AroundVoronojGexAt(i);
             // Заливаем поле по окружающим точкам
             if (viewState.FillCells)
-              gr.FillPolygon(new SolidBrush(rndclr), Vector.ToSystemPointsF(aroundgex));
+              gr.FillPolygon(new SolidBrush(CCoder.GetColorFor(PointType.ByteTrue)), Vector.ToSystemPointsF(aroundgex));
             // Отрисовываем границу по окружающим точкам
             if (aroundgex.Length > 2 && viewState.DrawCellBorder)
-              gr.DrawPolygon(new Pen(new SolidBrush(Color.Red)), Vector.ToSystemPointsF(aroundgex));
+              gr.DrawPolygon(new Pen(new SolidBrush(CCoder.GetColorFor(PointType.Border))), Vector.ToSystemPointsF(aroundgex));
+           
+            
             if (false)
               for (int ii = 0; ii < matrix.LastSurround.Count; ii++)
               {
@@ -100,7 +78,7 @@ namespace Quarcode.Core
               if (false)
                 gr.DrawString(j.ToString(),
                  new Font("Sans Serif", 10f),
-                 new SolidBrush(rndclr),
+                 new SolidBrush(Color.Black),
                  (int)aroundgex[j].x + 2,
                  (int)aroundgex[j].y + 2);
             }
@@ -128,6 +106,7 @@ namespace Quarcode.Core
                (int)matrix.NoisedPoints[i].x + 2,
                (int)matrix.NoisedPoints[i].y + 2);
             }
+#if DEBUG
           if (false)
             for (int i = 0; i < matrix.BorderPoints.Count; i++)
             {
@@ -143,7 +122,7 @@ namespace Quarcode.Core
                (int)matrix.BorderPoints[i].x,
                (int)(int)matrix.BorderPoints[i].y);
             }
-
+#endif
           //Отрисовка места под логотип
           //gr.FillPolygon(new SolidBrush(Color.WhiteSmoke), Vector.ToSystemPointsF(matrix.LogoBorderPoints.ToArray()));
 #if DEBUG
@@ -177,11 +156,14 @@ namespace Quarcode.Core
               }
             }
           //END DEBUG
-#endif
-
+          #endif
+          #endregion
         }
       }
       return bmp;
+    }
+    private static void DrawBytes(Graphics gr, CPointsMatrix matrix)
+    {
     }
   }
 }

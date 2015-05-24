@@ -86,7 +86,7 @@ namespace Quarcode.Core
       Color.Green,
       Color.SkyBlue,
       Color.Blue,
-      Color.Violet
+      Color.AliceBlue 
       };
     private static Color[] ByteFalseColors = new Color[] { 
       Color.White

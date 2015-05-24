@@ -222,6 +222,7 @@
       this.Controls.Add(this.ControlsGroupeBox);
       this.Name = "FimgView";
       this.Text = "GexQR Generator";
+      this.Load += new System.EventHandler(this.FimgView_Load);
       ((System.ComponentModel.ISupportInitialize)(this.qrImgPictureBox)).EndInit();
       this.PicBoxContext.ResumeLayout(false);
       this.ControlsGroupeBox.ResumeLayout(false);

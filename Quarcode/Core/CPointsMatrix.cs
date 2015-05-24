@@ -10,6 +10,7 @@ namespace Quarcode.Core
     public List<Vector> Points;
     public List<Vector> NoisedPoints;
     public List<Vector> BorderPoints;
+    public List<Vector> LogoPoints;
     public List<Vector> LogoBorderPoints;
     //debug
     public List<Vector> LastSurround = new List<Vector>();
@@ -55,20 +56,24 @@ namespace Quarcode.Core
       Width = 1700;
       Heigt = 1700;
     }
+
     public CPointsMatrix(int __Height)
     {
       Width = __Height;
       Heigt = Width;
     }
+
     private void InitMatrix()
     {
       Points = new List<Vector>();
       BorderPoints = new List<Vector>();
       LogoBorderPoints = new List<Vector>();
+      LogoPoints = new List<Vector>();      
       mainGexBlock gex = new mainGexBlock(Heigt - 40);
       Points.AddRange(gex.AsArray());
       BorderPoints.AddRange(gex.AsArrayBorder());
       LogoBorderPoints.AddRange(gex.AsArrayLogoBorder());
+      LogoPoints.AddRange(gex.AsArrayLogo());
       GenNoise();
     }
 
@@ -120,6 +125,7 @@ namespace Quarcode.Core
       }
       return result;
     }
+
     public Vector[] AroundVoronojGexAt(int idx)
     {
       Vector[] result;
@@ -191,6 +197,7 @@ namespace Quarcode.Core
       result = (from v in result orderby Vector.Angle(center - v) select v).ToArray();
       return result;
     }
+    
     public Vector VectorAt(int i)
     {
       if (i < Points.Count)
@@ -202,7 +209,6 @@ namespace Quarcode.Core
       else
         throw new ArgumentOutOfRangeException();
     }
-
 
     public void GenNoise()
     {

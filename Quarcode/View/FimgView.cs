@@ -67,5 +67,10 @@ namespace Quarcode.View
     {
       viewState.radius = radiusTrackBar.Value;
     }
+
+    private void FimgView_Load(object sender, EventArgs e)
+    {
+
+    }
   }
 }
