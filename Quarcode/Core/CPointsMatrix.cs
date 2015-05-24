@@ -11,7 +11,6 @@ namespace Quarcode.Core
     public List<Vector> NoisedPoints;
     public List<Vector> BorderPoints;
     public List<Vector> LogoPoints;
-    public List<Vector> LogoBorderPoints;
     //debug
     public List<Vector> LastSurround = new List<Vector>();
     //debug end
@@ -67,13 +66,19 @@ namespace Quarcode.Core
     {
       Points = new List<Vector>();
       BorderPoints = new List<Vector>();
-      LogoBorderPoints = new List<Vector>();
-      LogoPoints = new List<Vector>();      
+      LogoPoints = new List<Vector>();
+      NoisedPoints = new List<Vector>();
+
       mainGexBlock gex = new mainGexBlock(Heigt - 40);
+      
       Points.AddRange(gex.AsArray());
       BorderPoints.AddRange(gex.AsArrayBorder());
-      LogoBorderPoints.AddRange(gex.AsArrayLogoBorder());
       LogoPoints.AddRange(gex.AsArrayLogo());
+
+      NoisedPoints.AddRange(Points);
+      NoisedPoints.AddRange(LogoPoints);
+      NoisedPoints.AddRange(BorderPoints);
+
       GenNoise();
     }
 
@@ -197,7 +202,7 @@ namespace Quarcode.Core
       result = (from v in result orderby Vector.Angle(center - v) select v).ToArray();
       return result;
     }
-    
+
     public Vector VectorAt(int i)
     {
       if (i < Points.Count)
@@ -205,6 +210,11 @@ namespace Quarcode.Core
       else if (i >= Points.Count && i < Points.Count + BorderPoints.Count)
       {
         return BorderPoints.ElementAt(i - Points.Count);
+      }
+      else if (i >= Points.Count + BorderPoints.Count &&
+        i < Points.Count + BorderPoints.Count + LogoPoints.Count)
+      {
+        return LogoPoints[i - (Points.Count + BorderPoints.Count)];
       }
       else
         throw new ArgumentOutOfRangeException();
@@ -226,23 +236,23 @@ namespace Quarcode.Core
 
       for (int i = 0; i < Points.Count; i++)
       {
-      //  do
-      //  {
-      //    distance = r * (rand.Next(5, 100)) / 100.0;
-      //    Angle = Math.PI * 2 * rand.Next(5, 600)/ 300.0;
-      //    //double distance = r * (i % 5 + 5) / 10.0;
-      //    //double Angle = Math.PI * 2 * i % 60 / 60.0;
+        //  do
+        //  {
+        //    distance = r * (rand.Next(5, 100)) / 100.0;
+        //    Angle = Math.PI * 2 * rand.Next(5, 600)/ 300.0;
+        //    //double distance = r * (i % 5 + 5) / 10.0;
+        //    //double Angle = Math.PI * 2 * i % 60 / 60.0;
 
-      //    shift = new Vector(-distance, 0);
-      //    shift = Vector.Rotate(shift, Angle);
-      //    shift.x += distance;
-      //    if ((from p in NoisedPoints where p.x == Points[i].x + shift.x && p.y == Points[i].y + shift.y select p).Count() == 0)
-      //    {
-      //      NoisedPoints.Add(Points[i] + shift);
-      //      break;
-      //    }
-      //  } while (true);
-        distance = r * (rand.Next(5, 10) ) / 10.0;
+        //    shift = new Vector(-distance, 0);
+        //    shift = Vector.Rotate(shift, Angle);
+        //    shift.x += distance;
+        //    if ((from p in NoisedPoints where p.x == Points[i].x + shift.x && p.y == Points[i].y + shift.y select p).Count() == 0)
+        //    {
+        //      NoisedPoints.Add(Points[i] + shift);
+        //      break;
+        //    }
+        //  } while (true);
+        distance = r * (rand.Next(5, 10)) / 10.0;
         Angle = Math.PI * rand.Next(0, 120) / 60.0;
 
         shift = new Vector(-distance, 0);
@@ -250,10 +260,8 @@ namespace Quarcode.Core
         shift.x += distance;
         NoisedPoints.Add(Points[i] + shift);
       }
-      for (int i = 0; i < BorderPoints.Count; i++)
-      {
-        NoisedPoints.Add(BorderPoints[i]);
-      }
+      NoisedPoints.AddRange(BorderPoints);
+      NoisedPoints.AddRange(LogoPoints);
     }
 
     public int[] sixNearest(int idx)
@@ -296,36 +304,47 @@ namespace Quarcode.Core
       int[] result = new int[6];
       List<int> pre_result = new List<int>();
       Vector center = VectorAt(idx);
-      //ищем ближайшие точки по кругу в секторах по 60 градусов
-      //для обхода проблемных мест начальный угол будет -Pi/30;
-      for (int i = 0; i < 18; i++)
+      ////ищем ближайшие точки по кругу в секторах по 60 градусов
+      ////для обхода проблемных мест начальный угол будет -Pi/30;
+      //for (int i = 0; i < 24; i++)
+      //{
+      //  double angle = -Math.PI / 30 + i * Math.PI / 12;
+      //  double k1, k2, b1, b2;
+      //  k1 = Math.Tan(angle);
+      //  k2 = Math.Tan(angle + Math.PI / 3);
+      //  b1 = center.y - k1 * center.x;
+      //  b2 = center.y - k2 * center.x;
+      //  int Sign1 = 1;
+      //  int Sign2 = 1;
+      //  if (angle >= Math.PI / 2 && angle < Math.PI * 3 / 2)
+      //    Sign1 = -1;
+      //  if (angle + Math.PI / 3 >= Math.PI / 2 && angle + Math.PI / 3 < Math.PI * 3 / 2)
+      //    Sign2 = -1;
+      List<int> candidates = new List<int>();
+      for (int i = 0; i < Points.Count + BorderPoints.Count + LogoPoints.Count; i++)
       {
-        double angle = -Math.PI / 30 + i * Math.PI / 9;
-        double k1, k2, b1, b2;
-        k1 = Math.Tan(angle);
-        k2 = Math.Tan(angle + Math.PI / 3);
-        b1 = center.y - k1 * center.x;
-        b2 = center.y - k2 * center.x;
-        int Sign1 = 1;
-        int Sign2 = 1;
-        if (angle >= Math.PI / 2 && angle < Math.PI * 3 / 2)
-          Sign1 = -1;
-        if (angle + Math.PI / 3 >= Math.PI / 2 && angle + Math.PI / 3 < Math.PI * 3 / 2)
-          Sign2 = -1;
-        List<int> candidates = BitweenLines(k1, k2, b1, b2, Sign1, Sign2);
-
-        if (candidates.Count > 0)
-        {
-          int min = (from x
-                         in candidates
-                     where Vector.Distance(center, this.VectorAt(x)) > 0.1
-                     orderby Vector.Distance(center, this.VectorAt(x))
-                     select x).First();
-          if(!pre_result.Contains(min))pre_result.Add(min);
-        }
-        //else
-          //pre_result.Add(-1);
+        candidates.Add(i);
       }
+      pre_result = new List<int>();
+      pre_result.AddRange((from x
+                       in candidates
+                           where Vector.Distance(center, this.VectorAt(x)) > 0.1
+                           orderby Vector.Distance(center, this.VectorAt(x))
+                           select x).Take(15));
+      // BitweenLines(k1, k2, b1, b2, Sign1, Sign2);
+
+      //if (candidates.Count > 0)
+      //{
+      //  int min = (from x
+      //                 in candidates
+      //             where Vector.Distance(center, this.VectorAt(x)) > 0.1
+      //             orderby Vector.Distance(center, this.VectorAt(x))
+      //             select x).First();
+      //  if (!pre_result.Contains(min)) pre_result.Add(min);
+      //}
+      //else
+      //pre_result.Add(-1);
+
       return pre_result.ToArray();
     }
 
@@ -349,6 +368,12 @@ namespace Quarcode.Core
         if (sign1 * BorderPoints[i].y >= sign1 * (k1 * BorderPoints[i].x + b1)
           && sign2 * BorderPoints[i].y < sign2 * (k2 * BorderPoints[i].x + b2))
           result.Add(i + Points.Count);
+      }
+      for (int i = 0; i < LogoPoints.Count; i++)
+      {
+        if (sign1 * LogoPoints[i].y >= sign1 * (k1 * LogoPoints[i].x + b1)
+          && sign2 * LogoPoints[i].y < sign2 * (k2 * LogoPoints[i].x + b2))
+          result.Add(i + Points.Count + LogoPoints.Count);
       }
       return result;
     }

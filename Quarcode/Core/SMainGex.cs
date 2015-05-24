@@ -59,8 +59,9 @@ namespace Quarcode.Core
       {
         ResultArray.AddRange(externalBorders[i].AsArray());
       }
+      //ResultArray.AddRange(externalBorders[5].AsArray());
 
-      ResultArray.AddRange(LogoInternal.AsArray());
+     // ResultArray.AddRange(LogoInternal.AsArray());
       return ResultArray.ToArray();
     }
 
@@ -68,15 +69,15 @@ namespace Quarcode.Core
     {
       List<Vector> ResultArray = new List<Vector>();
       //ResultArray.AddRange(Logo.AsArray());
-      ResultArray.AddRange(LogoInternal.AsArray());
+      //ResultArray.AddRange(LogoInternal.AsArray());
       return ResultArray.ToArray();
     }
 
     public Vector[] AsArrayLogo()
     {
       List<Vector> ResultArray = new List<Vector>();
+      ResultArray.AddRange(LogoInternal.AsArray());
       ResultArray.AddRange(Logo.AsArray());
-      //ResultArray.AddRange(LogoInternal.AsArray());
       return ResultArray.ToArray();
     }
   }
