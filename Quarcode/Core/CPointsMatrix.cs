@@ -81,7 +81,7 @@ namespace Quarcode.Core
       NoisedPoints.AddRange(BorderPoints);
 
       GenNoise();
-      
+      InitDrawData();
     }
 
     public Vector[] AroundAverageGexAt(int idx)
@@ -263,7 +263,17 @@ namespace Quarcode.Core
         shift.x += distance;
         NoisedPoints.Add(Points[i] + shift);
       }
-      NoisedPoints.AddRange(LogoPoints);
+      for (int i = 0; i < LogoPoints.Count; i++)
+      {
+        distance = r * (rand.Next(5, 10)) / 10.0;
+        Angle = Math.PI * rand.Next(0, 120) / 60.0;
+
+        shift = new Vector(-distance, 0);
+        shift = Vector.Rotate(shift, Angle);
+        shift.x += distance;
+        NoisedPoints.Add(LogoPoints[i] + shift);
+      }
+      //NoisedPoints.AddRange(LogoPoints);
       NoisedPoints.AddRange(BorderPoints);
       InitDrawData();
 
@@ -293,7 +303,7 @@ namespace Quarcode.Core
     public int[] sixNearest(int idx)
     {
       int[] result = new int[6];
-      Vector center = VectorAt(idx);
+      Vector center = NoisedPoints[idx];
       //ищем ближайшие точки по кругу в секторах по 60 градусов
       //для обхода проблемных мест начальный угол будет -Pi/30;
       for (int i = 0; i < 6; i++)
@@ -315,8 +325,8 @@ namespace Quarcode.Core
         if (candidates.Count > 0)
           result[i] = (from x
                          in candidates
-                       where Vector.Distance(center, this.VectorAt(x)) > 0.1
-                       orderby Vector.Distance(center, this.VectorAt(x))
+                       where Vector.Distance(center, this.NoisedPoints[x]) > 0.1
+                       orderby Vector.Distance(center, this.NoisedPoints[x])
                        select x).First();
 
         else
@@ -328,7 +338,7 @@ namespace Quarcode.Core
     public int[] sixNearestForVoronoj(int idx)
     {
       List<int> result = new List<int>();
-      Vector center = VectorAt(idx);
+      Vector center = NoisedPoints[idx];
 
       List<int> candidates = new List<int>();
       for (int i = 0; i < NoisedPoints.Count; i++)
@@ -336,8 +346,8 @@ namespace Quarcode.Core
         candidates.Add(i);
       }
       result.AddRange((from x in candidates
-                       where Vector.Distance(center, this.VectorAt(x)) > 0.1
-                       orderby Vector.Distance(center, this.VectorAt(x))
+                       where Vector.Distance(center, NoisedPoints[x]) > 0.1
+                       orderby Vector.Distance(center, NoisedPoints[x])
                        select x).Take(18));
 
       return result.ToArray();
@@ -377,6 +387,7 @@ namespace Quarcode.Core
       result.y = k1 * result.x + b1;
       return result;
     }
+
     /// <summary>
     ///Меотд возвращает все возможные пересечения уравнений прямых y = kx + b
     /// </summary>

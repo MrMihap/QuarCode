@@ -12,8 +12,6 @@ namespace Quarcode.Core
   {
     public static Bitmap GenBMPQRfromMatrix(CPointsMatrix matrix, SViewState viewState)
     {
-      Brush redline = new SolidBrush(Color.Red);
-      // matrix.GenNoise();
       Bitmap bmp = new Bitmap(matrix.Width, matrix.Heigt);
 
       using (Graphics gr = Graphics.FromImage(bmp))
@@ -23,10 +21,26 @@ namespace Quarcode.Core
         gr.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
         gr.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
 
-        gr.FillRectangle(new SolidBrush(Color.WhiteSmoke), 0, 0, matrix.Width, matrix.Heigt);
+        gr.FillRectangle(new SolidBrush(CCoder.GetColorFor(PointType.Logo)), 0, 0, matrix.Width, matrix.Heigt);
+        DrawBorderBackground(gr, matrix, viewState);
+
+        // Логотип
+        List<SGexPoint> currentType = matrix.DrawData.Where(x => x.pointType == PointType.Logo).ToList();
+
+        for (int i = 0; i < currentType.Count; i++)
+        {
+          if (viewState.FillCells)
+            gr.FillPolygon(
+              new SolidBrush(CCoder.GetColorFor(currentType[i].pointType)),
+              Vector.ToSystemPointsF(currentType[i].Cell.ToArray()));
+          if (viewState.DrawCellBorder)
+            gr.DrawPolygon(
+              new Pen(new SolidBrush(Color.Gray), matrix.Heigt / (350f)),
+              Vector.ToSystemPointsF(currentType[i].Cell.ToArray()));
+        }
 
         // Значащие биты
-        List<SGexPoint> currentType = matrix.DrawData.Where(
+        currentType = matrix.DrawData.Where(
           x => x.pointType == PointType.ByteTrue ||
             x.pointType == PointType.ByteFalse ||
             x.pointType == PointType.UndefinedByte).ToList();
@@ -35,27 +49,15 @@ namespace Quarcode.Core
         for (int i = 0; i < currentType.Count; i++)
         {
           currentType[i].pointType = databitsvalue[i] ? PointType.ByteTrue : PointType.ByteFalse;
-          gr.FillPolygon(new SolidBrush(CCoder.GetColorFor(matrix.DrawData[i].pointType)),
-            Vector.ToSystemPointsF(currentType[i].Cell.ToArray()));
-          gr.DrawPolygon(new Pen(new SolidBrush(CCoder.GetColorFor(PointType.Border)), matrix.Heigt / (350f)),
-            Vector.ToSystemPointsF(currentType[i].Cell.ToArray()));
-        }
-        // Логотип
-        currentType = matrix.DrawData.Where(
-         x => x.pointType == PointType.Logo).ToList();
-
-        for (int i = 0; i < currentType.Count; i++)
-        {
-          currentType[i].pointType = databitsvalue[i] ? PointType.ByteTrue : PointType.ByteFalse;
-          gr.FillPolygon(
-            new SolidBrush(CCoder.GetColorFor(currentType[i].pointType)),
-            Vector.ToSystemPointsF(currentType[i].Cell.ToArray()));
-          gr.DrawPolygon(
-            new Pen(new SolidBrush(CCoder.GetColorFor(PointType.Border)), matrix.Heigt / (350f)),
-            Vector.ToSystemPointsF(currentType[i].Cell.ToArray()));
+          if (viewState.FillCells)
+            gr.FillPolygon(new SolidBrush(CCoder.GetColorFor(matrix.DrawData[i].pointType)),
+              Vector.ToSystemPointsF(currentType[i].Cell.ToArray()));
+          if (viewState.DrawCellBorder)
+            gr.DrawPolygon(new Pen(new SolidBrush(CCoder.GetColorFor(PointType.Border)), matrix.Heigt / (350f)),
+              Vector.ToSystemPointsF(currentType[i].Cell.ToArray()));
         }
 
-        DrawBorderBackground(gr, matrix, viewState);
+
         //DrawBytes(gr, matrix, viewState);
         //DrawLogo(gr, matrix, viewState);
         DrawPoints(gr, matrix, viewState);
@@ -84,36 +86,36 @@ namespace Quarcode.Core
         //Отрисовка места под логотип
         //gr.FillPolygon(new SolidBrush(Color.WhiteSmoke), Vector.ToSystemPointsF(matrix.LogoBorderPoints.ToArray()));
 #if DEBUG
-          //DEBUG
-          // вывод на экран окружения конкретной точки
-          if (false)
-            for (int i = 0; i < matrix.Points.Count; i++)
+        //DEBUG
+        // вывод на экран окружения конкретной точки
+        if (false)
+          for (int i = 0; i < matrix.Points.Count; i++)
+          {
+            if (i != 5) continue;
+            int[] points = matrix.sixNearest(i);
+            for (int jj = 0; jj < points.Length; jj++)
             {
-              if (i != 5) continue;
-              int[] points = matrix.sixNearest(i);
-              for (int jj = 0; jj < points.Length; jj++)
+              try
               {
-                try
-                {
-                  gr.DrawLine(new Pen(new SolidBrush(Color.Green)),
-                    (int)matrix.VectorAt(points[jj]).x + 2,
-                    (int)(int)matrix.VectorAt(points[jj]).y + 2,
-                    (int)matrix.VectorAt(points[jj]).x + 4,
-                    (int)(int)matrix.VectorAt(points[jj]).y + 4);
-                  gr.DrawString(jj.ToString(),
-                    new Font("Sans Serif", 16f),
-                    new SolidBrush(Color.Green),
-                   (int)matrix.VectorAt(points[jj]).x + 5,
-                   (int)(int)matrix.VectorAt(points[jj]).y - 5);
+                gr.DrawLine(new Pen(new SolidBrush(Color.Green)),
+                  (int)matrix.VectorAt(points[jj]).x + 2,
+                  (int)(int)matrix.VectorAt(points[jj]).y + 2,
+                  (int)matrix.VectorAt(points[jj]).x + 4,
+                  (int)(int)matrix.VectorAt(points[jj]).y + 4);
+                gr.DrawString(jj.ToString(),
+                  new Font("Sans Serif", 16f),
+                  new SolidBrush(Color.Green),
+                 (int)matrix.VectorAt(points[jj]).x + 5,
+                 (int)(int)matrix.VectorAt(points[jj]).y - 5);
 
-                }
-                catch (Exception e)
-                {
-                  // do nothing
-                }
+              }
+              catch (Exception e)
+              {
+                // do nothing
               }
             }
-          //END DEBUG
+          }
+        //END DEBUG
 #endif
       }
       return bmp;
@@ -128,12 +130,12 @@ namespace Quarcode.Core
       for (int i = 0; i < matrix.Points.Count; i++)
       {
 #if DEBUG
-            List<int> drawlist = new List<int>();
-            //drawlist.Add(0);
-            //drawlist.Add(57);
-            drawlist.Add(48);
+        List<int> drawlist = new List<int>();
+        //drawlist.Add(0);
+        //drawlist.Add(57);
+        drawlist.Add(48);
 
-            //if (!drawlist.Contains(i)) continue;
+        //if (!drawlist.Contains(i)) continue;
 #endif
 
         //Получаем список окружающих точек

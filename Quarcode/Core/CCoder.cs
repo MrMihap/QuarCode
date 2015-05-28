@@ -4,11 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+using System.Security.Cryptography;
 namespace Quarcode.Core
 {
   public static class CCoder
   {
- 
+
     private static Random rand = new Random();
 
     public static List<bool> EnCode(String Message, int ResultLength)
@@ -17,7 +18,7 @@ namespace Quarcode.Core
       // highChars 65 - 90
       // nums 48 - 57
       if (ResultLength < 72) throw new IndexOutOfRangeException("too low target array");
-      Boolean[] bin_msg = new Boolean[ResultLength];
+      Boolean[] bin_msg = new Boolean[72];
       Byte x;
       List<Boolean> tmp = new List<Boolean>();
 
@@ -33,16 +34,34 @@ namespace Quarcode.Core
         }
         for (int j = 0; j <= 5; j++) bin_msg[i * 6 + 5 - j] = Convert.ToBoolean(x & (int)Math.Pow(2, j));
       }
-      for (int i = 72; i < bin_msg.Length; i++)
+      for (int i = 0; i < bin_msg.Length; i++) tmp.Add(bin_msg[i]);
+
+      //укладка хэш функции
+      string md5 = GetMd5Sum(Message);
+      for (int i = 0; i < 10; i++)
       {
-        bin_msg[i] = false;
+        x = (byte)md5[i];
+
+        if (char.IsLower(md5[i])) x = (byte)(x - (byte)97);
+        else
+        {
+          if (char.IsUpper(md5[i])) x = (byte)(x - (byte)36); //x-65+26
+          else if (char.IsDigit(md5[i])) x = (byte)(x + (byte)4); //x-48+26+26
+        }
+        for (int j = 0; j <= 5; j++)
+          tmp.Add(Convert.ToBoolean(x & (int)Math.Pow(2, j)));
       }
-        for (int i = 0; i < bin_msg.Length; i++) tmp.Add(bin_msg[i]);
+      //нехватающие байты
+
+      for (int i = 0; i < 4; i++)
+      {
+        tmp.Add(true);
+      }
       return tmp;
 
     }
 
-    public static Color GetColorFor(PointType pointType) 
+    public static Color GetColorFor(PointType pointType)
     {
       switch (pointType)
       {
@@ -61,7 +80,7 @@ namespace Quarcode.Core
       }
       return Color.White;
     }
-    
+
     public static String genMsg()
     {
       // lowChars 97-122
@@ -85,15 +104,25 @@ namespace Quarcode.Core
       return k;
     }
 
+    public static string GetMd5Sum(string str)
+    {
+      MD5 md5 = MD5CryptoServiceProvider.Create();
+      byte[] dataMd5 = md5.ComputeHash(Encoding.Default.GetBytes(str));
+      StringBuilder sb = new StringBuilder();
+      for (int i = 0; i < dataMd5.Length; i++)
+        sb.AppendFormat("{0:x2}", dataMd5[i]);
+      return sb.ToString();
+    }
+
     #region Colors
     private static Color[] ByteTrueColors = new Color[] { 
-      Color.Red, 
-      Color.Orange,
-      Color.Yellow,
-      Color.Green,
-      Color.Blue,
-      Color.Blue,
-      Color.Blue 
+      Color.FromArgb(255, 202, 40, 31), 
+      Color.FromArgb(255, 204, 116, 44),
+      Color.FromArgb(255, 204, 194, 44),
+      Color.FromArgb(255, 44, 204, 73),
+      Color.FromArgb(255, 44, 182, 204),
+      Color.FromArgb(255, 44, 44, 204),
+      Color.FromArgb(255, 131, 44, 204)
       };
     private static Color[] ByteFalseColors = new Color[] { 
       Color.White
@@ -102,13 +131,13 @@ namespace Quarcode.Core
       Color.Gray
       };
     private static Color[] LogoColors = new Color[] { 
-      Color.Yellow
+       Color.FromArgb(255, 230,230,230)
       };
     private static Color[] LogoAddColors = new Color[] { 
       Color.Yellow
       };
     private static Color[] BorderColors = new Color[] { 
-      Color.Black
+      Color.FromArgb(255, 0, 0, 0)
       };
     #endregion
   }
