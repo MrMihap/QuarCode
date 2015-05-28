@@ -20,6 +20,7 @@ namespace Quarcode.View
     {
       InitializeComponent();
       qrImgPictureBox.Image = new Bitmap(1, 1);
+      radiusTrackBar.Value = 30;
     }
     void IViewInterfaces.RecieveImg(Bitmap bmp)
     {
@@ -35,10 +36,17 @@ namespace Quarcode.View
 
     private void GenerateQRButton_Click(object sender, EventArgs e)
     {
-      viewState.DrawBorder = DrawBorder.Checked;
+      if (qrMessageTextBox.Text.Length == 0)
+      {
+        qrMessageTextBox.Text = CCoder.genMsg();
+      }
+      viewState.DrawQRBorder = DrawBorder.Checked;
       viewState.DrawCellBorder = DrawCellBorder.Checked;
       viewState.DrawValNum = DrawValNum.Checked;
       viewState.FillCells = FillCells.Checked;
+
+      viewState.Message = qrMessageTextBox.Text;
+      viewState.ReRand = ReRand.Checked;
       if (OnMsgGenerateQuery != null) OnMsgGenerateQuery(viewState);
     }
 
@@ -50,6 +58,17 @@ namespace Quarcode.View
 
     private void SaveToBMPButton_Click(object sender, EventArgs e)
     {
+
+      SaveFileDialog dialog = new SaveFileDialog();
+      dialog.Filter = "png files (*.png)|*.png";
+      dialog.Title = "Export in png format"; 
+      switch (dialog.ShowDialog())
+      {
+        case System.Windows.Forms.DialogResult.OK:
+          CImgBuilder.saveToFile((Bitmap)qrImgPictureBox.Image, dialog.FileName);
+          break;
+      }
+
       MessageBox.Show("functinal will be implemented soon");
     }
 
@@ -71,6 +90,11 @@ namespace Quarcode.View
     private void FimgView_Load(object sender, EventArgs e)
     {
 
+    }
+
+    private void ReRand_CheckedChanged(object sender, EventArgs e)
+    {
+      viewState.radius = radiusTrackBar.Value;
     }
   }
 }

@@ -4,70 +4,85 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+using System.Drawing.Imaging;
 using Svg;
 namespace Quarcode.Core
 {
   static class CImgBuilder
   {
-    public static Bitmap GenQRfromMatrix(CPointsMatrix matrix, SViewState viewState)
+    public static Bitmap GenBMPQRfromMatrix(CPointsMatrix matrix, SViewState viewState)
     {
       Brush redline = new SolidBrush(Color.Red);
-      matrix.GenNoise();
+      // matrix.GenNoise();
       Bitmap bmp = new Bitmap(matrix.Width, matrix.Heigt);
-      if (!matrix.IsInited)
-        using (Graphics gr = Graphics.FromImage(bmp))
-        {
-          Pen fatPen = new Pen(redline, 5);
-          gr.DrawLine(fatPen, 0, 0, bmp.Width, bmp.Height);
-          gr.DrawLine(fatPen, 0, bmp.Height, bmp.Width, 0);
-        }
-      else
-      {
-        using (Graphics gr = Graphics.FromImage(bmp))
-        {
-          gr.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
-          
-          DrawBorderBackground(gr, matrix, viewState);
-          DrawBytes(gr, matrix, viewState);
-          //DrawLogo(gr, matrix, viewState);
-          DrawPoints(gr, matrix, viewState);
 
-//#if DEBUG
-          Brush blueline = new SolidBrush(Color.Red);
-          Pen borderPointsPen = new Pen(blueline, 3);
-          if (true)
-            for (int i = 0; i < matrix.BorderPoints.Count; i++)
-            {
-              //Отрисовка центральных точек границы
-              gr.DrawLine(borderPointsPen,
-                (int)matrix.BorderPoints[i].x,
-                (int)(int)matrix.BorderPoints[i].y,
-                (int)matrix.BorderPoints[i].x + 2,
-                (int)(int)matrix.BorderPoints[i].y + 2);
-              gr.DrawString(i.ToString(),
-                new Font("Sans Serif", 16f),
-                new SolidBrush(Color.Red),
-               (int)matrix.BorderPoints[i].x,
-               (int)(int)matrix.BorderPoints[i].y);
-            }
-          if (false)
-            for (int i = 0; i < matrix.LogoPoints.Count; i++)
-            {
-              //Отрисовка центральных точек ЛОГО
-              gr.DrawLine(borderPointsPen,
-                (int)matrix.LogoPoints[i].x,
-                (int)(int)matrix.LogoPoints[i].y,
-                (int)matrix.LogoPoints[i].x + 2,
-                (int)(int)matrix.LogoPoints[i].y + 2);
-              gr.DrawString(i.ToString(),
-                new Font("Calibri", 16f),
-                new SolidBrush(Color.Red),
-               (int)matrix.LogoPoints[i].x,
-               (int)(int)matrix.LogoPoints[i].y);
-            }
-//#endif
-          //Отрисовка места под логотип
-          //gr.FillPolygon(new SolidBrush(Color.WhiteSmoke), Vector.ToSystemPointsF(matrix.LogoBorderPoints.ToArray()));
+      using (Graphics gr = Graphics.FromImage(bmp))
+      {
+
+        gr.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+        gr.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+        gr.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+
+        gr.FillRectangle(new SolidBrush(Color.WhiteSmoke), 0, 0, matrix.Width, matrix.Heigt);
+
+        // Значащие биты
+        List<SGexPoint> currentType = matrix.DrawData.Where(
+          x => x.pointType == PointType.ByteTrue ||
+            x.pointType == PointType.ByteFalse ||
+            x.pointType == PointType.UndefinedByte).ToList();
+        List<bool> databitsvalue = CCoder.EnCode(viewState.Message, currentType.Count);
+
+        for (int i = 0; i < currentType.Count; i++)
+        {
+          currentType[i].pointType = databitsvalue[i] ? PointType.ByteTrue : PointType.ByteFalse;
+          gr.FillPolygon(new SolidBrush(CCoder.GetColorFor(matrix.DrawData[i].pointType)),
+            Vector.ToSystemPointsF(currentType[i].Cell.ToArray()));
+          gr.DrawPolygon(new Pen(new SolidBrush(CCoder.GetColorFor(PointType.Border)), matrix.Heigt / (350f)),
+            Vector.ToSystemPointsF(currentType[i].Cell.ToArray()));
+        }
+        // Логотип
+        currentType = matrix.DrawData.Where(
+         x => x.pointType == PointType.Logo).ToList();
+
+        for (int i = 0; i < currentType.Count; i++)
+        {
+          currentType[i].pointType = databitsvalue[i] ? PointType.ByteTrue : PointType.ByteFalse;
+          gr.FillPolygon(
+            new SolidBrush(CCoder.GetColorFor(currentType[i].pointType)),
+            Vector.ToSystemPointsF(currentType[i].Cell.ToArray()));
+          gr.DrawPolygon(
+            new Pen(new SolidBrush(CCoder.GetColorFor(PointType.Border)), matrix.Heigt / (350f)),
+            Vector.ToSystemPointsF(currentType[i].Cell.ToArray()));
+        }
+
+        DrawBorderBackground(gr, matrix, viewState);
+        //DrawBytes(gr, matrix, viewState);
+        //DrawLogo(gr, matrix, viewState);
+        DrawPoints(gr, matrix, viewState);
+        DrawLogoPoints(gr, matrix, viewState);
+
+        //#if DEBUG
+        Brush blueline = new SolidBrush(Color.Red);
+        Pen borderPointsPen = new Pen(blueline, 3);
+        if (false)
+          for (int i = 0; i < matrix.BorderPoints.Count; i++)
+          {
+            //Отрисовка центральных точек границы
+            gr.DrawLine(borderPointsPen,
+              (int)matrix.BorderPoints[i].x,
+              (int)(int)matrix.BorderPoints[i].y,
+              (int)matrix.BorderPoints[i].x + 2,
+              (int)(int)matrix.BorderPoints[i].y + 2);
+            gr.DrawString(i.ToString(),
+              new Font("Sans Serif", 16f),
+              new SolidBrush(Color.Red),
+             (int)matrix.BorderPoints[i].x,
+             (int)(int)matrix.BorderPoints[i].y);
+          }
+
+        //#endif
+        //Отрисовка места под логотип
+        //gr.FillPolygon(new SolidBrush(Color.WhiteSmoke), Vector.ToSystemPointsF(matrix.LogoBorderPoints.ToArray()));
 #if DEBUG
           //DEBUG
           // вывод на экран окружения конкретной точки
@@ -100,15 +115,15 @@ namespace Quarcode.Core
             }
           //END DEBUG
 #endif
-        }
       }
       return bmp;
     }
+
     private static void DrawBytes(Graphics gr, CPointsMatrix matrix, SViewState viewState)
     {
-      Random rand = new Random();
+      //Random rand = new Random();
       //Рисуем черный бордер
-      if (viewState.DrawBorder)
+      if (viewState.DrawQRBorder)
         gr.FillPolygon(new SolidBrush(CCoder.GetColorFor(PointType.Border)), Vector.ToSystemPointsF(matrix.BorderPoints.ToArray()));
       for (int i = 0; i < matrix.Points.Count; i++)
       {
@@ -128,7 +143,7 @@ namespace Quarcode.Core
           gr.FillPolygon(new SolidBrush(CCoder.GetColorFor(PointType.ByteTrue)), Vector.ToSystemPointsF(aroundgex));
         // Отрисовываем границу по окружающим точкам
         if (aroundgex.Length > 2 && viewState.DrawCellBorder)
-          gr.DrawPolygon(new Pen(new SolidBrush(CCoder.GetColorFor(PointType.Border))), Vector.ToSystemPointsF(aroundgex));
+          gr.DrawPolygon(new Pen(new SolidBrush(CCoder.GetColorFor(PointType.Border)), matrix.Heigt / (350f)), Vector.ToSystemPointsF(aroundgex));
 
 
         if (false)
@@ -163,11 +178,9 @@ namespace Quarcode.Core
 
     private static void DrawLogo(Graphics gr, CPointsMatrix matrix, SViewState viewState)
     {
-           //Рисуем черный бордер
-      if (viewState.DrawBorder)
-        gr.FillPolygon(new SolidBrush(CCoder.GetColorFor(PointType.Border)), Vector.ToSystemPointsF(matrix.BorderPoints.ToArray()));
       for (int i = matrix.Points.Count; i < matrix.Points.Count + matrix.LogoPoints.Count; i++)
       {
+        if (i == 148) continue;
         //Получаем список окружающих точек
         Vector[] aroundgex = matrix.AroundVoronojGexAt(i);
         // Заливаем поле по окружающим точкам
@@ -177,16 +190,6 @@ namespace Quarcode.Core
         if (aroundgex.Length > 2 && viewState.DrawCellBorder)
           gr.DrawPolygon(new Pen(new SolidBrush(CCoder.GetColorFor(PointType.Border))), Vector.ToSystemPointsF(aroundgex));
 
-
-        if (false)
-          for (int ii = 0; ii < matrix.LastSurround.Count; ii++)
-          {
-            gr.DrawLine(new Pen(new SolidBrush(Color.Red), 3),
-              (int)matrix.LastSurround[ii].x,
-              (int)matrix.LastSurround[ii].y,
-              (int)matrix.LastSurround[ii].x + 2,
-              (int)matrix.LastSurround[ii].y + 2);
-          }
         for (int j = 0; j < aroundgex.Length; j++)
         {
           // Ставим точку
@@ -209,12 +212,12 @@ namespace Quarcode.Core
     }
 
     private static void DrawBorderBackground(Graphics gr, CPointsMatrix matrix, SViewState viewState)
-  {
+    {
       Random rand = new Random();
       //Рисуем черный бордер
-      if (viewState.DrawBorder)
+      if (viewState.DrawQRBorder)
         gr.FillPolygon(new SolidBrush(CCoder.GetColorFor(PointType.Border)), Vector.ToSystemPointsF(matrix.BorderPoints.ToArray()));
-  }
+    }
 
     private static void DrawPoints(Graphics gr, CPointsMatrix matrix, SViewState viewState)
     {
@@ -244,5 +247,65 @@ namespace Quarcode.Core
            (int)matrix.NoisedPoints[i].y + 2);
         }
     }
+
+    private static void DrawLogoPoints(Graphics gr, CPointsMatrix matrix, SViewState viewState)
+    {
+      Brush redline = new SolidBrush(Color.Red);
+      Pen innerPointsPen = new Pen(redline, 3);
+      if (viewState.DrawValNum)
+        for (int i = matrix.Points.Count; i < matrix.Points.Count + matrix.LogoPoints.Count; i++)
+        {
+          //Отрисовка центральных точек данных
+          gr.DrawString(i.ToString(),
+          new Font("Sans Serif", 10f),
+          new SolidBrush(Color.Black),
+         (int)matrix.NoisedPoints[i].x,
+         (int)matrix.NoisedPoints[i].y);
+          // Отрисовка сдвинутых точек
+
+          gr.DrawLine(innerPointsPen,
+           (int)matrix.NoisedPoints[i].x,
+           (int)matrix.NoisedPoints[i].y,
+           (int)matrix.NoisedPoints[i].x + 2,
+           (int)matrix.NoisedPoints[i].y + 2);
+        }
+    }
+
+    private static void DrawBorderPoints(Graphics gr, CPointsMatrix matrix, SViewState viewState)
+    {
+      Brush redline = new SolidBrush(Color.Red);
+      Pen innerPointsPen = new Pen(redline, 3);
+      if (viewState.DrawValNum)
+        for (int i = matrix.Points.Count; i < matrix.Points.Count + matrix.LogoPoints.Count; i++)
+        {
+          //Отрисовка центральных точек данных
+          gr.DrawString(i.ToString(),
+          new Font("Sans Serif", 10f),
+          new SolidBrush(Color.Black),
+         (int)matrix.NoisedPoints[i].x,
+         (int)matrix.NoisedPoints[i].y);
+          // Отрисовка сдвинутых точек
+
+          gr.DrawLine(innerPointsPen,
+           (int)matrix.NoisedPoints[i].x,
+           (int)matrix.NoisedPoints[i].y,
+           (int)matrix.NoisedPoints[i].x + 2,
+           (int)matrix.NoisedPoints[i].y + 2);
+        }
+    }
+
+    public static void saveToFile(Bitmap img, string filepath)
+    {
+      using (Graphics gr = Graphics.FromImage(img))
+      {
+        gr.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+        gr.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
+        gr.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
+
+        img.Save(filepath, ImageFormat.Png);
+
+      }
+    }
   }
+
 }

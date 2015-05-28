@@ -11,6 +11,7 @@ namespace Quarcode.Core
     public List<Vector> NoisedPoints;
     public List<Vector> BorderPoints;
     public List<Vector> LogoPoints;
+    public List<SGexPoint> DrawData;
     //debug
     public List<Vector> LastSurround = new List<Vector>();
     //debug end
@@ -68,18 +69,19 @@ namespace Quarcode.Core
       BorderPoints = new List<Vector>();
       LogoPoints = new List<Vector>();
       NoisedPoints = new List<Vector>();
-
       mainGexBlock gex = new mainGexBlock(Heigt - 40);
-      
-      Points.AddRange(gex.AsArray());
-      BorderPoints.AddRange(gex.AsArrayBorder());
-      LogoPoints.AddRange(gex.AsArrayLogo());
 
+      Points.AddRange(gex.AsArray());
+      LogoPoints.AddRange(gex.AsArrayLogo());
+      BorderPoints.AddRange(gex.AsArrayBorder());
+      //Points.AddRange(LogoPoints);
+      
       NoisedPoints.AddRange(Points);
       NoisedPoints.AddRange(LogoPoints);
       NoisedPoints.AddRange(BorderPoints);
 
       GenNoise();
+      
     }
 
     public Vector[] AroundAverageGexAt(int idx)
@@ -140,6 +142,7 @@ namespace Quarcode.Core
       Vector r1;
       List<double> kList = new List<double>();
       List<double> bList = new List<double>();
+      List<double> xList = new List<double>();
       for (int i = 0; i < surround.Length; i++)
       {
         //int idx1 = i;
@@ -177,6 +180,7 @@ namespace Quarcode.Core
             }
             else
             {
+              xList.Add(r1.x / 2 + center.x / 2);
               // самый плохой случай - перпендикуляр вертикален
               // должен быть исключен правильной генерацией случайных точек
             }
@@ -195,27 +199,18 @@ namespace Quarcode.Core
         }
       }
       Vector[] Candidates = SolveMultiSystem(kList, bList);
+      LastSurround.Clear();
       LastSurround.AddRange(Candidates);
       // необходимо удалить лишние точки, т.е. те, которые вне минимального контура
-      result = ExecuteNonVoronojPoints(center, Candidates, kList, bList);
-      //result = ExecuteNonVoronojPoints(center, result, kList, bList);
+      result = ExecuteNonVoronojPoints(center, Candidates, kList, bList, xList);
       result = (from v in result orderby Vector.Angle(center - v) select v).ToArray();
       return result;
     }
 
     public Vector VectorAt(int i)
     {
-      if (i < Points.Count)
-        return Points.ElementAt(i);
-      else if (i >= Points.Count && i < Points.Count + BorderPoints.Count)
-      {
-        return BorderPoints.ElementAt(i - Points.Count);
-      }
-      else if (i >= Points.Count + BorderPoints.Count &&
-        i < Points.Count + BorderPoints.Count + LogoPoints.Count)
-      {
-        return LogoPoints[i - (Points.Count + BorderPoints.Count)];
-      }
+      if (i < NoisedPoints.Count && i >= 0)
+        return NoisedPoints[i];
       else
         throw new ArgumentOutOfRangeException();
     }
@@ -224,6 +219,14 @@ namespace Quarcode.Core
     {
       double l = _Height / (3 * Math.Sqrt(3)) - 10;
       GenNoise(l / 10);
+    }
+
+    public void GenNoise(int percent)
+    {
+      double l = _Height / (3 * Math.Sqrt(3)) - 10;
+      GenNoise(l * percent / (100 * (Math.Sqrt(3) + 1)));
+      InitDrawData();
+
     }
 
     public void GenNoise(double r)
@@ -260,8 +263,31 @@ namespace Quarcode.Core
         shift.x += distance;
         NoisedPoints.Add(Points[i] + shift);
       }
-      NoisedPoints.AddRange(BorderPoints);
       NoisedPoints.AddRange(LogoPoints);
+      NoisedPoints.AddRange(BorderPoints);
+      InitDrawData();
+
+    }
+
+    private void InitDrawData()
+    {
+      DrawData = new List<SGexPoint>();
+
+      for (int i = 0; i < NoisedPoints.Count; i++)
+      {
+        if (i >= 0 && i < Points.Count)
+        {
+          DrawData.Add(new SGexPoint(PointType.UndefinedByte, NoisedPoints[i], AroundVoronojGexAt(i).ToList()));
+        }
+        if (i >= Points.Count && i < LogoPoints.Count + Points.Count)
+        {
+          DrawData.Add(new SGexPoint(PointType.Logo, NoisedPoints[i], AroundVoronojGexAt(i).ToList()));
+        }
+        if (i >= Points.Count + LogoPoints.Count)
+        {
+          DrawData.Add(new SGexPoint(PointType.Border, NoisedPoints[i], AroundVoronojGexAt(i).ToList()));
+        }
+      }
     }
 
     public int[] sixNearest(int idx)
@@ -301,51 +327,20 @@ namespace Quarcode.Core
 
     public int[] sixNearestForVoronoj(int idx)
     {
-      int[] result = new int[6];
-      List<int> pre_result = new List<int>();
+      List<int> result = new List<int>();
       Vector center = VectorAt(idx);
-      ////ищем ближайшие точки по кругу в секторах по 60 градусов
-      ////для обхода проблемных мест начальный угол будет -Pi/30;
-      //for (int i = 0; i < 24; i++)
-      //{
-      //  double angle = -Math.PI / 30 + i * Math.PI / 12;
-      //  double k1, k2, b1, b2;
-      //  k1 = Math.Tan(angle);
-      //  k2 = Math.Tan(angle + Math.PI / 3);
-      //  b1 = center.y - k1 * center.x;
-      //  b2 = center.y - k2 * center.x;
-      //  int Sign1 = 1;
-      //  int Sign2 = 1;
-      //  if (angle >= Math.PI / 2 && angle < Math.PI * 3 / 2)
-      //    Sign1 = -1;
-      //  if (angle + Math.PI / 3 >= Math.PI / 2 && angle + Math.PI / 3 < Math.PI * 3 / 2)
-      //    Sign2 = -1;
+
       List<int> candidates = new List<int>();
-      for (int i = 0; i < Points.Count + BorderPoints.Count + LogoPoints.Count; i++)
+      for (int i = 0; i < NoisedPoints.Count; i++)
       {
         candidates.Add(i);
       }
-      pre_result = new List<int>();
-      pre_result.AddRange((from x
-                       in candidates
-                           where Vector.Distance(center, this.VectorAt(x)) > 0.1
-                           orderby Vector.Distance(center, this.VectorAt(x))
-                           select x).Take(15));
-      // BitweenLines(k1, k2, b1, b2, Sign1, Sign2);
+      result.AddRange((from x in candidates
+                       where Vector.Distance(center, this.VectorAt(x)) > 0.1
+                       orderby Vector.Distance(center, this.VectorAt(x))
+                       select x).Take(18));
 
-      //if (candidates.Count > 0)
-      //{
-      //  int min = (from x
-      //                 in candidates
-      //             where Vector.Distance(center, this.VectorAt(x)) > 0.1
-      //             orderby Vector.Distance(center, this.VectorAt(x))
-      //             select x).First();
-      //  if (!pre_result.Contains(min)) pre_result.Add(min);
-      //}
-      //else
-      //pre_result.Add(-1);
-
-      return pre_result.ToArray();
+      return result.ToArray();
     }
 
     public int indexAtVector(Vector r)
@@ -357,23 +352,11 @@ namespace Quarcode.Core
     private List<int> BitweenLines(double k1, double k2, double b1, double b2, int sign1, int sign2)
     {
       List<int> result = new List<int>();
-      for (int i = 0; i < Points.Count; i++)
+      for (int i = 0; i < NoisedPoints.Count; i++)
       {
-        if (sign1 * Points[i].y >= sign1 * (k1 * Points[i].x + b1)
-          && sign2 * Points[i].y < sign2 * (k2 * Points[i].x + b2))
+        if (sign1 * NoisedPoints[i].y >= sign1 * (k1 * NoisedPoints[i].x + b1)
+          && sign2 * NoisedPoints[i].y < sign2 * (k2 * NoisedPoints[i].x + b2))
           result.Add(i);
-      }
-      for (int i = 0; i < BorderPoints.Count; i++)
-      {
-        if (sign1 * BorderPoints[i].y >= sign1 * (k1 * BorderPoints[i].x + b1)
-          && sign2 * BorderPoints[i].y < sign2 * (k2 * BorderPoints[i].x + b2))
-          result.Add(i + Points.Count);
-      }
-      for (int i = 0; i < LogoPoints.Count; i++)
-      {
-        if (sign1 * LogoPoints[i].y >= sign1 * (k1 * LogoPoints[i].x + b1)
-          && sign2 * LogoPoints[i].y < sign2 * (k2 * LogoPoints[i].x + b2))
-          result.Add(i + Points.Count + LogoPoints.Count);
       }
       return result;
     }
@@ -416,7 +399,7 @@ namespace Quarcode.Core
       return result.ToArray();
     }
 
-    private Vector[] ExecuteNonVoronojPoints(Vector center, Vector[] candidates, List<double> k, List<double> b)
+    private Vector[] ExecuteNonVoronojPoints(Vector center, Vector[] candidates, List<double> k, List<double> b, List<double> xList)
     {
       List<Vector> result = new List<Vector>();
       for (int i = 0; i < candidates.Length; i++)
@@ -441,8 +424,26 @@ namespace Quarcode.Core
               Math.Abs(candidates[i].y - k[j] * candidates[i].x - b[j]) < 0.0001)
               Count++;
           }
-
         }
+        //for (int j = 0; j < xList.Count; j++)
+        //{
+        //  // центр слева прямой
+        //  if (center.x < xList[j])
+        //  {
+        //    // тогда если точка правее или на прямой - она удовлетворяет полуплоскости
+        //    if (candidates[i].x >= xList[j] ||
+        //      Math.Abs(candidates[i].x - xList[j]) < 0.0001)
+        //      Count++;
+        //  }
+        //  // центр справа от прямой
+        //  if (center.x > xList[j])
+        //  {
+        //    // тогда если точка левее или на прямой - она удовлетворяет полуплоскости
+        //    if (candidates[i].x <= xList[j] ||
+        //      Math.Abs(candidates[i].x - xList[j]) < 0.0001)
+        //      Count++;
+        //  }
+        //}
         if (Count == 2)
         {
           result.Add(candidates[i]);

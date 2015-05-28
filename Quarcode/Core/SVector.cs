@@ -27,7 +27,6 @@ namespace Quarcode.Core
       x = _x;
       y = _y;
     }
-
     public Vector(Vector v)
     {
       x = v.x;

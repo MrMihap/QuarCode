@@ -21,7 +21,9 @@ namespace Quarcode.Core
     }
     void RecieveMessage(SViewState viewState)
     {
-      View.RecieveImg(CImgBuilder.GenQRfromMatrix(this.pointsMatrix, viewState));
+      if (viewState.ReRand)
+        pointsMatrix.GenNoise(viewState.radius);
+      View.RecieveImg(CImgBuilder.GenBMPQRfromMatrix(this.pointsMatrix, viewState));
     }
   }
 }

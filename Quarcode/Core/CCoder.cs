@@ -11,12 +11,13 @@ namespace Quarcode.Core
  
     private static Random rand = new Random();
 
-    public static List<bool> EnCode(String Message)
+    public static List<bool> EnCode(String Message, int ResultLength)
     {
       // lowChars 97-122
       // highChars 65 - 90
       // nums 48 - 57
-      Boolean[] bin_msg = new Boolean[72];
+      if (ResultLength < 72) throw new IndexOutOfRangeException("too low target array");
+      Boolean[] bin_msg = new Boolean[ResultLength];
       Byte x;
       List<Boolean> tmp = new List<Boolean>();
 
@@ -32,7 +33,11 @@ namespace Quarcode.Core
         }
         for (int j = 0; j <= 5; j++) bin_msg[i * 6 + 5 - j] = Convert.ToBoolean(x & (int)Math.Pow(2, j));
       }
-      for (int i = 0; i < 72; i++) tmp.Add(bin_msg[i]);
+      for (int i = 72; i < bin_msg.Length; i++)
+      {
+        bin_msg[i] = false;
+      }
+        for (int i = 0; i < bin_msg.Length; i++) tmp.Add(bin_msg[i]);
       return tmp;
 
     }
@@ -45,6 +50,8 @@ namespace Quarcode.Core
           return ByteTrueColors[rand.Next(0, ByteTrueColors.Length)];
         case PointType.ByteFalse:
           return ByteFalseColors[rand.Next(0, ByteFalseColors.Length)];
+        case PointType.UndefinedByte:
+          return ByteUndefColors[rand.Next(0, ByteUndefColors.Length)];
         case PointType.Border:
           return BorderColors[rand.Next(0, BorderColors.Length)];
         case PointType.Logo:
@@ -84,12 +91,15 @@ namespace Quarcode.Core
       Color.Orange,
       Color.Yellow,
       Color.Green,
-      Color.SkyBlue,
       Color.Blue,
-      Color.AliceBlue 
+      Color.Blue,
+      Color.Blue 
       };
     private static Color[] ByteFalseColors = new Color[] { 
       Color.White
+      };
+    private static Color[] ByteUndefColors = new Color[] { 
+      Color.Gray
       };
     private static Color[] LogoColors = new Color[] { 
       Color.Yellow

@@ -35,6 +35,7 @@
       this.SaveToBMPButton = new System.Windows.Forms.ToolStripMenuItem();
       this.ControlsGroupeBox = new System.Windows.Forms.GroupBox();
       this.DrawBorder = new System.Windows.Forms.CheckBox();
+      this.ReRand = new System.Windows.Forms.CheckBox();
       this.FillCells = new System.Windows.Forms.CheckBox();
       this.DrawValNum = new System.Windows.Forms.CheckBox();
       this.DrawCellBorder = new System.Windows.Forms.CheckBox();
@@ -89,6 +90,7 @@
       // ControlsGroupeBox
       // 
       this.ControlsGroupeBox.Controls.Add(this.DrawBorder);
+      this.ControlsGroupeBox.Controls.Add(this.ReRand);
       this.ControlsGroupeBox.Controls.Add(this.FillCells);
       this.ControlsGroupeBox.Controls.Add(this.DrawValNum);
       this.ControlsGroupeBox.Controls.Add(this.DrawCellBorder);
@@ -115,6 +117,19 @@
       this.DrawBorder.Text = "Draw Border";
       this.DrawBorder.UseVisualStyleBackColor = true;
       this.DrawBorder.Click += new System.EventHandler(this.GenerateQRButton_Click);
+      // 
+      // ReRand
+      // 
+      this.ReRand.AutoSize = true;
+      this.ReRand.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+      this.ReRand.Location = new System.Drawing.Point(607, 40);
+      this.ReRand.Name = "ReRand";
+      this.ReRand.Size = new System.Drawing.Size(69, 17);
+      this.ReRand.TabIndex = 4;
+      this.ReRand.Text = "Re Rand";
+      this.ReRand.UseVisualStyleBackColor = true;
+      this.ReRand.CheckedChanged += new System.EventHandler(this.ReRand_CheckedChanged);
+      this.ReRand.Click += new System.EventHandler(this.GenerateQRButton_Click);
       // 
       // FillCells
       // 
@@ -157,10 +172,9 @@
       // 
       this.radiusTrackBar.AutoSize = false;
       this.radiusTrackBar.Location = new System.Drawing.Point(52, 40);
-      this.radiusTrackBar.Maximum = 100;
-      this.radiusTrackBar.Minimum = 1;
+      this.radiusTrackBar.Maximum = 40;
       this.radiusTrackBar.Name = "radiusTrackBar";
-      this.radiusTrackBar.Size = new System.Drawing.Size(181, 20);
+      this.radiusTrackBar.Size = new System.Drawing.Size(118, 20);
       this.radiusTrackBar.TabIndex = 3;
       this.radiusTrackBar.Value = 10;
       this.radiusTrackBar.Scroll += new System.EventHandler(this.radiusTrackBar_Scroll);
@@ -250,6 +264,7 @@
     private System.Windows.Forms.CheckBox FillCells;
     private System.Windows.Forms.CheckBox DrawValNum;
     private System.Windows.Forms.CheckBox DrawCellBorder;
+    private System.Windows.Forms.CheckBox ReRand;
   }
 }
 

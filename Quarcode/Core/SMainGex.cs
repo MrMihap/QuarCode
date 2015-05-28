@@ -16,7 +16,7 @@ namespace Quarcode.Core
     externalGexBlock[] externalGexses;
     externalBorder[] externalBorders;
     internalGexBlock LogoInternal;
-    externalGexBlock Logo;
+    externalGexBlock LogoExternal;
     public mainGexBlock(double Height)
     {
       internalGexses = new internalGexBlock[6];
@@ -30,7 +30,7 @@ namespace Quarcode.Core
       internalGexses[0] = new internalGexBlock(Center, l);
       externalGexses[0] = new externalGexBlock(Center, l, 0);
       externalBorders[5] = new externalBorder(Center + Vector.Rotate(mainGexRingDefault, -Math.PI * 5 / 3), l, 5);
-      Logo = new externalGexBlock(Center + Vector.Rotate(mainGexRingDefault, -Math.PI / 3 * 5), l, 0);
+      LogoExternal = new externalGexBlock(Center + Vector.Rotate(mainGexRingDefault, -Math.PI / 3 * 5), l, 6);
       LogoInternal = new internalGexBlock(Center + Vector.Rotate(mainGexRingDefault, (-Math.PI / 3) * 5), l);
       for (int i = 0; i < 5; i++)
       {
@@ -64,20 +64,11 @@ namespace Quarcode.Core
      // ResultArray.AddRange(LogoInternal.AsArray());
       return ResultArray.ToArray();
     }
-
-    public Vector[] AsArrayLogoBorder()
-    {
-      List<Vector> ResultArray = new List<Vector>();
-      //ResultArray.AddRange(Logo.AsArray());
-      //ResultArray.AddRange(LogoInternal.AsArray());
-      return ResultArray.ToArray();
-    }
-
     public Vector[] AsArrayLogo()
     {
       List<Vector> ResultArray = new List<Vector>();
       ResultArray.AddRange(LogoInternal.AsArray());
-      ResultArray.AddRange(Logo.AsArray());
+      ResultArray.AddRange(LogoExternal.AsArray());
       return ResultArray.ToArray();
     }
   }

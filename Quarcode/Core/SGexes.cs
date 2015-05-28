@@ -40,23 +40,23 @@ namespace Quarcode.Core
     {
       double TriangleLength = borderLength / (Math.Sqrt(3) + 1);
       // Zero 
-      //if (position == 0)
-      //{
-      //  //all points
-      //  Vector defaultRing = new Vector(borderLength, 0);
-      //  for (int i = 0; i < 6; i++)
-      //  {
-      //    _Points.Add(Vector.Rotate(defaultRing, i * Math.PI / 3));
-      //  }
-      //}
-      //else 
+      if (position == 0)
+      {
+        //all points
+        Vector defaultRing = new Vector(borderLength, 0);
+        for (int i = 0; i < 6; i++)
+        {
+          _Points.Add(Vector.Rotate(defaultRing, i * Math.PI / 3));
+        }
+      }
+      else 
       if (position <= 6)
       {
         int PointsCount = 3;
-        //if (position == 6)
-        //{
-        //  PointsCount = 2;
-        //}
+        if (position == 6)
+        {
+          PointsCount = 2;
+        }
         Vector defaultRing = new Vector(-borderLength, 0);
         if (position == 5)
         {
