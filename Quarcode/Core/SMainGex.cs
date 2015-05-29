@@ -17,26 +17,27 @@ namespace Quarcode.Core
     externalBorder[] externalBorders;
     internalGexBlock LogoInternal;
     externalGexBlock LogoExternal;
+    public double L;
     public mainGexBlock(double Height)
     {
       internalGexses = new internalGexBlock[6];
       externalGexses = new externalGexBlock[6];
       externalBorders = new externalBorder[6];
 
-      double l = Height / (3 * Math.Sqrt(3));
+      L = Height / ( (3 * Math.Sqrt(3)) + 2/(Math.Sqrt(3) + 1)) ;
       Vector Center = new Vector(Height / 2 + 30, Height / 2 + 30);
-      Vector mainGexRingDefault = new Vector(-l * 1.5, l * Math.Sqrt(3) / 2);
+      Vector mainGexRingDefault = new Vector(-L * 1.5, L * Math.Sqrt(3) / 2);
 
-      internalGexses[0] = new internalGexBlock(Center, l);
-      externalGexses[0] = new externalGexBlock(Center, l, 0);
-      externalBorders[5] = new externalBorder(Center + Vector.Rotate(mainGexRingDefault, -Math.PI * 5 / 3), l, 5);
-      LogoExternal = new externalGexBlock(Center + Vector.Rotate(mainGexRingDefault, -Math.PI / 3 * 5), l, 6);
-      LogoInternal = new internalGexBlock(Center + Vector.Rotate(mainGexRingDefault, (-Math.PI / 3) * 5), l);
+      internalGexses[0] = new internalGexBlock(Center, L);
+      externalGexses[0] = new externalGexBlock(Center, L, 0);
+      externalBorders[5] = new externalBorder(Center + Vector.Rotate(mainGexRingDefault, -Math.PI * 5 / 3), L, 5);
+      LogoExternal = new externalGexBlock(Center + Vector.Rotate(mainGexRingDefault, -Math.PI / 3 * 5), L, 6);
+      LogoInternal = new internalGexBlock(Center + Vector.Rotate(mainGexRingDefault, (-Math.PI / 3) * 5), L);
       for (int i = 0; i < 5; i++)
       {
         internalGexses[i + 1] = new internalGexBlock(Center + Vector.Rotate(mainGexRingDefault, -Math.PI / 3 * i), internalGexses[0].Points);
-        externalGexses[i + 1] = new externalGexBlock(Center + Vector.Rotate(mainGexRingDefault, -Math.PI / 3 * i), l, i + 1);
-        externalBorders[i] = new externalBorder(Center + Vector.Rotate(mainGexRingDefault, -Math.PI / 3 * i), l, i);
+        externalGexses[i + 1] = new externalGexBlock(Center + Vector.Rotate(mainGexRingDefault, -Math.PI / 3 * i), L, i + 1);
+        externalBorders[i] = new externalBorder(Center + Vector.Rotate(mainGexRingDefault, -Math.PI / 3 * i), L, i);
       }
     }
 

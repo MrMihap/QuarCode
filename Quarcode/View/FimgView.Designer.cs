@@ -225,14 +225,14 @@
       this.QrImgWrapperPanel.Controls.Add(this.qrImgPictureBox);
       this.QrImgWrapperPanel.Location = new System.Drawing.Point(13, 84);
       this.QrImgWrapperPanel.Name = "QrImgWrapperPanel";
-      this.QrImgWrapperPanel.Size = new System.Drawing.Size(681, 475);
+      this.QrImgWrapperPanel.Size = new System.Drawing.Size(681, 468);
       this.QrImgWrapperPanel.TabIndex = 3;
       // 
       // FimgView
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(701, 560);
+      this.ClientSize = new System.Drawing.Size(701, 553);
       this.Controls.Add(this.QrImgWrapperPanel);
       this.Controls.Add(this.ControlsGroupeBox);
       this.Name = "FimgView";

@@ -17,6 +17,7 @@ namespace Quarcode.Core
     //debug end
     int _Width;
     int _Height;
+    double L = 0;
     // 
     /// <summary>
     /// Changing makes matrix up to date
@@ -30,7 +31,6 @@ namespace Quarcode.Core
       set
       {
         _Width = value;
-        this.InitMatrix();
       }
     }
     /// <summary>
@@ -45,7 +45,7 @@ namespace Quarcode.Core
       set
       {
         _Height = value;
-        this.InitMatrix();
+        //this.InitMatrix();
       }
     }
 
@@ -55,12 +55,14 @@ namespace Quarcode.Core
     {
       Width = 1700;
       Height = 1700;
+      InitMatrix();
     }
 
-    public CPointsMatrix(int __Height)
+    public CPointsMatrix(int height)
     {
-      Width = __Height;
+      Width = height;
       Height = Width;
+      InitMatrix();
     }
 
     private void InitMatrix()
@@ -70,11 +72,10 @@ namespace Quarcode.Core
       LogoPoints = new List<Vector>();
       NoisedPoints = new List<Vector>();
       mainGexBlock gex = new mainGexBlock(Height);
-
+      L = gex.L;
       Points.AddRange(gex.AsArray());
       LogoPoints.AddRange(gex.AsArrayLogo());
       BorderPoints.AddRange(gex.AsArrayBorder());
-      //Points.AddRange(LogoPoints);
       
       NoisedPoints.AddRange(Points);
       NoisedPoints.AddRange(LogoPoints);
@@ -217,14 +218,13 @@ namespace Quarcode.Core
 
     public void GenNoise()
     {
-      double l = _Height / (3 * Math.Sqrt(3)) - 10;
-      GenNoise(l / 10);
+      GenNoise(L / 10);
     }
 
     public void GenNoise(int percent)
     {
-      double l = _Height / (3 * Math.Sqrt(3)) - 10;
-      GenNoise(l * percent / (100 * (Math.Sqrt(3) + 1)));
+     
+      GenNoise(L * percent / (100 * (Math.Sqrt(3) + 1)));
       InitDrawData();
 
     }
@@ -356,7 +356,7 @@ namespace Quarcode.Core
       result.AddRange((from x in candidates
                        where Vector.Distance(center, NoisedPoints[x]) > 0.1
                        orderby Vector.Distance(center, NoisedPoints[x])
-                       select x).Take(18));
+                       select x).Take(10));
 
       return result.ToArray();
     }

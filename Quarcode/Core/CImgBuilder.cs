@@ -224,9 +224,9 @@ namespace Quarcode.Core
     private static void DrawPoints(Graphics gr, CPointsMatrix matrix, SViewState viewState)
     {
       Brush redline = new SolidBrush(Color.Red);
-      Pen innerPointsPen = new Pen(redline, 3);
+      Pen innerPointsPen = new Pen(redline, matrix.Height / 350f);
       if (viewState.DrawValNum)
-        for (int i = 0; i < matrix.Points.Count; i++)
+        for (int i = 0; i < matrix.DrawData.Count; i++)
         {
           //Отрисовка центральных точек данных
           //gr.DrawLine(innerPointsPen,
@@ -236,41 +236,41 @@ namespace Quarcode.Core
           //  (int)matrix.Points[i].y + 2);
 
           gr.DrawString(i.ToString(),
-            new Font("Sans Serif", 10f),
+            new Font("Sans Serif", matrix.Height/70f),
             new SolidBrush(Color.Black),
-           (int)matrix.Points[i].x,
-           (int)(int)matrix.Points[i].y);
+           (int)matrix.DrawData[i].r.x,
+           (int)(int)matrix.DrawData[i].r.y);
           // Отрисовка сдвинутых точек
 
           gr.DrawLine(innerPointsPen,
-           (int)matrix.NoisedPoints[i].x,
-           (int)matrix.NoisedPoints[i].y,
-           (int)matrix.NoisedPoints[i].x + 2,
-           (int)matrix.NoisedPoints[i].y + 2);
+           (int)matrix.DrawData[i].r.x,
+           (int)matrix.DrawData[i].r.y,
+           (int)matrix.DrawData[i].r.x + matrix.Height / 350f,
+           (int)matrix.DrawData[i].r.y + matrix.Height / 350f);
         }
     }
 
     private static void DrawLogoPoints(Graphics gr, CPointsMatrix matrix, SViewState viewState)
     {
-      Brush redline = new SolidBrush(Color.Red);
-      Pen innerPointsPen = new Pen(redline, 3);
-      if (viewState.DrawValNum)
-        for (int i = matrix.Points.Count; i < matrix.Points.Count + matrix.LogoPoints.Count; i++)
-        {
-          //Отрисовка центральных точек данных
-          gr.DrawString(i.ToString(),
-          new Font("Sans Serif", 10f),
-          new SolidBrush(Color.Black),
-         (int)matrix.NoisedPoints[i].x,
-         (int)matrix.NoisedPoints[i].y);
-          // Отрисовка сдвинутых точек
+      //Brush redline = new SolidBrush(Color.Red);
+      //Pen innerPointsPen = new Pen(redline, 3);
+      //if (viewState.DrawValNum)
+      //  for (int i = matrix.Points.Count; i < matrix.Points.Count + matrix.LogoPoints.Count; i++)
+      //  {
+      //    //Отрисовка центральных точек данных
+      //    gr.DrawString(i.ToString(),
+      //    new Font("Sans Serif", 10f),
+      //    new SolidBrush(Color.Black),
+      //   (int)matrix.NoisedPoints[i].x,
+      //   (int)matrix.NoisedPoints[i].y);
+      //    // Отрисовка сдвинутых точек
 
-          gr.DrawLine(innerPointsPen,
-           (int)matrix.NoisedPoints[i].x,
-           (int)matrix.NoisedPoints[i].y,
-           (int)matrix.NoisedPoints[i].x + 2,
-           (int)matrix.NoisedPoints[i].y + 2);
-        }
+      //    gr.DrawLine(innerPointsPen,
+      //     (int)matrix.NoisedPoints[i].x,
+      //     (int)matrix.NoisedPoints[i].y,
+      //     (int)matrix.NoisedPoints[i].x + 2,
+      //     (int)matrix.NoisedPoints[i].y + 2);
+      //  }
     }
 
     private static void DrawBorderPoints(Graphics gr, CPointsMatrix matrix, SViewState viewState)
