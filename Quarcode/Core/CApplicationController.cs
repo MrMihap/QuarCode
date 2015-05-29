@@ -14,7 +14,7 @@ namespace Quarcode.Core
     private IViewInterfaces View;
     public CApplicationController()
     {
-      pointsMatrix = new CPointsMatrix(700);
+      pointsMatrix = new CPointsMatrix(7000);
       viewForm = new FimgView();
       View = viewForm as IViewInterfaces;
       View.OnMsgGenerateQuery += RecieveMessage;

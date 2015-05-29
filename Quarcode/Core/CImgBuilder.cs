@@ -12,7 +12,7 @@ namespace Quarcode.Core
   {
     public static Bitmap GenBMPQRfromMatrix(CPointsMatrix matrix, SViewState viewState)
     {
-      Bitmap bmp = new Bitmap(matrix.Width, matrix.Heigt);
+      Bitmap bmp = new Bitmap(matrix.Width, matrix.Height);
 
       using (Graphics gr = Graphics.FromImage(bmp))
       {
@@ -21,11 +21,11 @@ namespace Quarcode.Core
         gr.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
         gr.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
 
-        gr.FillRectangle(new SolidBrush(CCoder.GetColorFor(PointType.Logo)), 0, 0, matrix.Width, matrix.Heigt);
+        gr.FillRectangle(new SolidBrush(CCoder.GetColorFor(PointType.Logo)), 0, 0, matrix.Width, matrix.Height);
         DrawBorderBackground(gr, matrix, viewState);
 
         // Логотип
-        List<SGexPoint> currentType = matrix.DrawData.Where(x => x.pointType == PointType.Logo).ToList();
+        List<CGexPoint> currentType = matrix.DrawData.Where(x => x.pointType == PointType.Logo).ToList();
 
         for (int i = 0; i < currentType.Count; i++)
         {
@@ -35,7 +35,7 @@ namespace Quarcode.Core
               Vector.ToSystemPointsF(currentType[i].Cell.ToArray()));
           if (viewState.DrawCellBorder)
             gr.DrawPolygon(
-              new Pen(new SolidBrush(Color.Gray), matrix.Heigt / (350f)),
+              new Pen(new SolidBrush(Color.Gray), matrix.Height / (350f)),
               Vector.ToSystemPointsF(currentType[i].Cell.ToArray()));
         }
 
@@ -53,7 +53,7 @@ namespace Quarcode.Core
             gr.FillPolygon(new SolidBrush(CCoder.GetColorFor(matrix.DrawData[i].pointType)),
               Vector.ToSystemPointsF(currentType[i].Cell.ToArray()));
           if (viewState.DrawCellBorder)
-            gr.DrawPolygon(new Pen(new SolidBrush(CCoder.GetColorFor(PointType.Border)), matrix.Heigt / (350f)),
+            gr.DrawPolygon(new Pen(new SolidBrush(CCoder.GetColorFor(PointType.Border)), matrix.Height / (350f)),
               Vector.ToSystemPointsF(currentType[i].Cell.ToArray()));
         }
 
@@ -145,7 +145,7 @@ namespace Quarcode.Core
           gr.FillPolygon(new SolidBrush(CCoder.GetColorFor(PointType.ByteTrue)), Vector.ToSystemPointsF(aroundgex));
         // Отрисовываем границу по окружающим точкам
         if (aroundgex.Length > 2 && viewState.DrawCellBorder)
-          gr.DrawPolygon(new Pen(new SolidBrush(CCoder.GetColorFor(PointType.Border)), matrix.Heigt / (350f)), Vector.ToSystemPointsF(aroundgex));
+          gr.DrawPolygon(new Pen(new SolidBrush(CCoder.GetColorFor(PointType.Border)), matrix.Height / (350f)), Vector.ToSystemPointsF(aroundgex));
 
 
         if (false)

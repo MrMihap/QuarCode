@@ -27,7 +27,7 @@ namespace Quarcode.Core
     LogoAdditional
   }
 
-  public class SGexPoint
+  public class CGexPoint
   {
     public PointType pointType;
 
@@ -35,7 +35,7 @@ namespace Quarcode.Core
 
     public List<Vector> Cell;
 
-    public SGexPoint(PointType type, Vector center, List<Vector> Surround)
+    public CGexPoint(PointType type, Vector center, List<Vector> Surround)
     {
       pointType = type;
       r = center;

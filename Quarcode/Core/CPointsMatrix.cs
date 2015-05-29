@@ -11,7 +11,7 @@ namespace Quarcode.Core
     public List<Vector> NoisedPoints;
     public List<Vector> BorderPoints;
     public List<Vector> LogoPoints;
-    public List<SGexPoint> DrawData;
+    public List<CGexPoint> DrawData;
     //debug
     public List<Vector> LastSurround = new List<Vector>();
     //debug end
@@ -36,7 +36,7 @@ namespace Quarcode.Core
     /// <summary>
     /// Changing makes matrix up to date
     /// </summary>
-    public int Heigt
+    public int Height
     {
       get
       {
@@ -54,13 +54,13 @@ namespace Quarcode.Core
     public CPointsMatrix()
     {
       Width = 1700;
-      Heigt = 1700;
+      Height = 1700;
     }
 
     public CPointsMatrix(int __Height)
     {
       Width = __Height;
-      Heigt = Width;
+      Height = Width;
     }
 
     private void InitMatrix()
@@ -69,7 +69,7 @@ namespace Quarcode.Core
       BorderPoints = new List<Vector>();
       LogoPoints = new List<Vector>();
       NoisedPoints = new List<Vector>();
-      mainGexBlock gex = new mainGexBlock(Heigt - 40);
+      mainGexBlock gex = new mainGexBlock(Height - 40);
 
       Points.AddRange(gex.AsArray());
       LogoPoints.AddRange(gex.AsArrayLogo());
@@ -137,7 +137,7 @@ namespace Quarcode.Core
     {
       Vector[] result;
       Vector center = NoisedPoints[idx];
-      double L = this.Heigt / (3 * Math.Sqrt(3)) - 10;
+      double L = this.Height / (3 * Math.Sqrt(3)) - 10;
       int[] surround = sixNearestForVoronoj(idx);
       Vector r1;
       List<double> kList = new List<double>();
@@ -281,21 +281,29 @@ namespace Quarcode.Core
 
     private void InitDrawData()
     {
-      DrawData = new List<SGexPoint>();
+      DrawData = new List<CGexPoint>();
 
       for (int i = 0; i < NoisedPoints.Count; i++)
       {
         if (i >= 0 && i < Points.Count)
         {
-          DrawData.Add(new SGexPoint(PointType.UndefinedByte, NoisedPoints[i], AroundVoronojGexAt(i).ToList()));
+          DrawData.Add(new CGexPoint(PointType.UndefinedByte, NoisedPoints[i], AroundVoronojGexAt(i).ToList()));
         }
         if (i >= Points.Count && i < LogoPoints.Count + Points.Count)
         {
-          DrawData.Add(new SGexPoint(PointType.Logo, NoisedPoints[i], AroundVoronojGexAt(i).ToList()));
+          DrawData.Add(new CGexPoint(PointType.Logo, NoisedPoints[i], AroundVoronojGexAt(i).ToList()));
         }
         if (i >= Points.Count + LogoPoints.Count)
         {
-          DrawData.Add(new SGexPoint(PointType.Border, NoisedPoints[i], AroundVoronojGexAt(i).ToList()));
+          DrawData.Add(new CGexPoint(PointType.Border, NoisedPoints[i], AroundVoronojGexAt(i).ToList()));
+        }
+      }
+      foreach (CGexPoint p in DrawData)
+      {
+        p.r.y = Height - p.r.y;
+        for (int i = 0; i < p.Cell.Count; i++)
+        {
+          p.Cell[i] = new Vector(p.Cell[i].x, Height - p.Cell[i].y);
         }
       }
     }
