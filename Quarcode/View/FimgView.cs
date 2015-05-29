@@ -16,6 +16,7 @@ namespace Quarcode.View
   {
     public event GenerateMsgQueryDelegate OnMsgGenerateQuery;
     private SViewState viewState = new SViewState();
+    private volatile Bitmap sourseImage = null;
     public FimgView()
     {
       InitializeComponent();
@@ -24,12 +25,15 @@ namespace Quarcode.View
     }
     void IViewInterfaces.RecieveImg(Bitmap bmp)
     {
-
+      sourseImage = bmp;
+      Size s = new System.Drawing.Size();
+      s.Width = s.Height;
+      Bitmap ScaledImage = new Bitmap(bmp, s);
       if (qrImgPictureBox.InvokeRequired)
-        qrImgPictureBox.BeginInvoke(new Action<Bitmap>((x) => { qrImgPictureBox.Image = x; qrImgPictureBox.Refresh(); }), bmp);
+        qrImgPictureBox.BeginInvoke(new Action<Bitmap>((x) => { qrImgPictureBox.Image = x; qrImgPictureBox.Refresh(); }), ScaledImage);
       else
       {
-        qrImgPictureBox.Image = bmp;
+        qrImgPictureBox.Image = ScaledImage;
         qrImgPictureBox.Refresh();
       }
     }

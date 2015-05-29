@@ -23,7 +23,7 @@ namespace Quarcode.Core
       externalGexses = new externalGexBlock[6];
       externalBorders = new externalBorder[6];
 
-      double l = Height / (3 * Math.Sqrt(3)) - 10;
+      double l = Height / (3 * Math.Sqrt(3));
       Vector Center = new Vector(Height / 2 + 30, Height / 2 + 30);
       Vector mainGexRingDefault = new Vector(-l * 1.5, l * Math.Sqrt(3) / 2);
 

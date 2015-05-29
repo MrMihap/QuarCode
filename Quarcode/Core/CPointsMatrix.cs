@@ -69,7 +69,7 @@ namespace Quarcode.Core
       BorderPoints = new List<Vector>();
       LogoPoints = new List<Vector>();
       NoisedPoints = new List<Vector>();
-      mainGexBlock gex = new mainGexBlock(Height - 40);
+      mainGexBlock gex = new mainGexBlock(Height);
 
       Points.AddRange(gex.AsArray());
       LogoPoints.AddRange(gex.AsArrayLogo());
