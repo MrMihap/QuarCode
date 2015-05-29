@@ -12,8 +12,15 @@ namespace Quarcode.Core
   {
     public static Bitmap GenBMPQRfromMatrix(CPointsMatrix matrix, SViewState viewState)
     {
-      Bitmap bmp = new Bitmap(matrix.Width, matrix.Height);
-
+      Bitmap bmp;
+      try
+      {
+        bmp = new Bitmap(matrix.Width, matrix.Height);
+      }
+      catch
+      {
+        return new Bitmap(1, 1);
+      }
       using (Graphics gr = Graphics.FromImage(bmp))
       {
 
@@ -22,46 +29,12 @@ namespace Quarcode.Core
         gr.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
 
         gr.FillRectangle(new SolidBrush(CCoder.GetColorFor(PointType.Logo)), 0, 0, matrix.Width, matrix.Height);
+
         DrawBorderBackground(gr, matrix, viewState);
-
-        // Логотип
-        List<CGexPoint> currentType = matrix.DrawData.Where(x => x.pointType == PointType.Logo).ToList();
-
-        for (int i = 0; i < currentType.Count; i++)
-        {
-          if (viewState.FillCells)
-            gr.FillPolygon(
-              new SolidBrush(CCoder.GetColorFor(currentType[i].pointType)),
-              Vector.ToSystemPointsF(currentType[i].Cell.ToArray()));
-          if (viewState.DrawCellBorder)
-            gr.DrawPolygon(
-              new Pen(new SolidBrush(Color.Gray), matrix.Height / (350f)),
-              Vector.ToSystemPointsF(currentType[i].Cell.ToArray()));
-        }
-
-        // Значащие биты
-        currentType = matrix.DrawData.Where(
-          x => x.pointType == PointType.ByteTrue ||
-            x.pointType == PointType.ByteFalse ||
-            x.pointType == PointType.UndefinedByte).ToList();
-        List<bool> databitsvalue = CCoder.EnCode(viewState.Message, currentType.Count);
-
-        for (int i = 0; i < currentType.Count; i++)
-        {
-          currentType[i].pointType = databitsvalue[i] ? PointType.ByteTrue : PointType.ByteFalse;
-          if (viewState.FillCells)
-            gr.FillPolygon(new SolidBrush(CCoder.GetColorFor(matrix.DrawData[i].pointType)),
-              Vector.ToSystemPointsF(currentType[i].Cell.ToArray()));
-          if (viewState.DrawCellBorder)
-            gr.DrawPolygon(new Pen(new SolidBrush(CCoder.GetColorFor(PointType.Border)), matrix.Height / (350f)),
-              Vector.ToSystemPointsF(currentType[i].Cell.ToArray()));
-        }
-
-
-        //DrawBytes(gr, matrix, viewState);
-        //DrawLogo(gr, matrix, viewState);
+        DrawBytes(gr, matrix, viewState);
+        DrawLogo(gr, matrix, viewState);
         DrawPoints(gr, matrix, viewState);
-        DrawLogoPoints(gr, matrix, viewState);
+        //DrawLogoPoints(gr, matrix, viewState);
 
         //#if DEBUG
         Brush blueline = new SolidBrush(Color.Red);
@@ -123,102 +96,50 @@ namespace Quarcode.Core
 
     private static void DrawBytes(Graphics gr, CPointsMatrix matrix, SViewState viewState)
     {
-      //Random rand = new Random();
-      //Рисуем черный бордер
-      if (viewState.DrawQRBorder)
-        gr.FillPolygon(new SolidBrush(CCoder.GetColorFor(PointType.Border)), Vector.ToSystemPointsF(matrix.BorderPoints.ToArray()));
-      for (int i = 0; i < matrix.Points.Count; i++)
+      // Значащие биты
+       List<CGexPoint>  ValueBits = matrix.DrawData.Where(
+        x => x.pointType == PointType.ByteTrue ||
+          x.pointType == PointType.ByteFalse ||
+          x.pointType == PointType.UndefinedByte).ToList();
+      List<bool> databitsvalue = CCoder.EnCode(viewState.Message, ValueBits.Count);
+
+      for (int i = 0; i < ValueBits.Count; i++)
       {
-#if DEBUG
-        List<int> drawlist = new List<int>();
-        //drawlist.Add(0);
-        //drawlist.Add(57);
-        drawlist.Add(48);
-
-        //if (!drawlist.Contains(i)) continue;
-#endif
-
-        //Получаем список окружающих точек
-        Vector[] aroundgex = matrix.AroundVoronojGexAt(i);
-        // Заливаем поле по окружающим точкам
+        ValueBits[i].pointType = databitsvalue[i] ? PointType.ByteTrue : PointType.ByteFalse;
         if (viewState.FillCells)
-          gr.FillPolygon(new SolidBrush(CCoder.GetColorFor(PointType.ByteTrue)), Vector.ToSystemPointsF(aroundgex));
-        // Отрисовываем границу по окружающим точкам
-        if (aroundgex.Length > 2 && viewState.DrawCellBorder)
-          gr.DrawPolygon(new Pen(new SolidBrush(CCoder.GetColorFor(PointType.Border)), matrix.Height / (350f)), Vector.ToSystemPointsF(aroundgex));
-
-
-        if (false)
-          for (int ii = 0; ii < matrix.LastSurround.Count; ii++)
-          {
-            gr.DrawLine(new Pen(new SolidBrush(Color.Red), 3),
-              (int)matrix.LastSurround[ii].x,
-              (int)matrix.LastSurround[ii].y,
-              (int)matrix.LastSurround[ii].x + 2,
-              (int)matrix.LastSurround[ii].y + 2);
-          }
-        for (int j = 0; j < aroundgex.Length; j++)
-        {
-          // Ставим точку
-
-          if (false)
-            gr.DrawLine(new Pen(new SolidBrush(Color.Green), 3),
-              (int)aroundgex[j].x,
-              (int)aroundgex[j].y,
-              (int)aroundgex[j].x + 2,
-              (int)aroundgex[j].y + 2);
-          //номер в округе гекса
-          if (false)
-            gr.DrawString(j.ToString(),
-             new Font("Sans Serif", 10f),
-             new SolidBrush(Color.Black),
-             (int)aroundgex[j].x + 2,
-             (int)aroundgex[j].y + 2);
-        }
+          gr.FillPolygon(new SolidBrush(CCoder.GetColorFor(matrix.DrawData[i].pointType)),
+            Vector.ToSystemPointsF(ValueBits[i].Cell.ToArray()));
+        if (viewState.DrawCellBorder)
+          gr.DrawPolygon(new Pen(new SolidBrush(CCoder.GetColorFor(PointType.Border)), matrix.Height / (350f)),
+            Vector.ToSystemPointsF(ValueBits[i].Cell.ToArray()));
       }
+      
     }
 
     private static void DrawLogo(Graphics gr, CPointsMatrix matrix, SViewState viewState)
     {
-      for (int i = matrix.Points.Count; i < matrix.Points.Count + matrix.LogoPoints.Count; i++)
+      // Логотип
+      List<CGexPoint> logoBits = matrix.DrawData.Where(x => x.pointType == PointType.Logo).ToList();
+
+      for (int i = 0; i < logoBits.Count; i++)
       {
-        if (i == 148) continue;
-        //Получаем список окружающих точек
-        Vector[] aroundgex = matrix.AroundVoronojGexAt(i);
-        // Заливаем поле по окружающим точкам
         if (viewState.FillCells)
-          gr.FillPolygon(new SolidBrush(CCoder.GetColorFor(PointType.Logo)), Vector.ToSystemPointsF(aroundgex));
-        // Отрисовываем границу по окружающим точкам
-        if (aroundgex.Length > 2 && viewState.DrawCellBorder)
-          gr.DrawPolygon(new Pen(new SolidBrush(CCoder.GetColorFor(PointType.Border))), Vector.ToSystemPointsF(aroundgex));
-
-        for (int j = 0; j < aroundgex.Length; j++)
-        {
-          // Ставим точку
-
-          if (false)
-            gr.DrawLine(new Pen(new SolidBrush(Color.Green), 3),
-              (int)aroundgex[j].x,
-              (int)aroundgex[j].y,
-              (int)aroundgex[j].x + 2,
-              (int)aroundgex[j].y + 2);
-          //номер в округе гекса
-          if (false)
-            gr.DrawString(j.ToString(),
-             new Font("Sans Serif", 10f),
-             new SolidBrush(Color.Black),
-             (int)aroundgex[j].x + 2,
-             (int)aroundgex[j].y + 2);
-        }
+          gr.FillPolygon(
+            new SolidBrush(CCoder.GetColorFor(logoBits[i].pointType)),
+            Vector.ToSystemPointsF(logoBits[i].Cell.ToArray()));
+        if (viewState.DrawCellBorder)
+          gr.DrawPolygon(
+            new Pen(new SolidBrush(Color.Gray), matrix.Height / (350f)),
+            Vector.ToSystemPointsF(logoBits[i].Cell.ToArray()));
       }
     }
 
     private static void DrawBorderBackground(Graphics gr, CPointsMatrix matrix, SViewState viewState)
     {
-      Random rand = new Random();
       //Рисуем черный бордер
+      Vector[] border = (from p in matrix.DrawData where p.pointType == PointType.Border select p.r).ToArray();
       if (viewState.DrawQRBorder)
-        gr.FillPolygon(new SolidBrush(CCoder.GetColorFor(PointType.Border)), Vector.ToSystemPointsF(matrix.BorderPoints.ToArray()));
+        gr.FillPolygon(new SolidBrush(CCoder.GetColorFor(PointType.Border)), Vector.ToSystemPointsF(border));
     }
 
     private static void DrawPoints(Graphics gr, CPointsMatrix matrix, SViewState viewState)
