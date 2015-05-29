@@ -27,6 +27,7 @@ namespace Quarcode.View
     {
       sourseImage = bmp;
       Size s = new System.Drawing.Size();
+      s.Height = 700;
       s.Width = s.Height;
       Bitmap ScaledImage = new Bitmap(bmp, s);
       if (qrImgPictureBox.InvokeRequired)
