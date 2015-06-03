@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.Drawing;
+using System.Xml;
 namespace Quarcode.Core
 {
   public struct SViewState
@@ -45,6 +46,21 @@ namespace Quarcode.Core
     public void SetType(PointType type)
     {
       this.pointType = type;
+    }
+  }
+
+  public static class Common
+  {
+    public static Color createColor(XmlElement elem)
+    {
+      int r = 0, g = 0, b = 0, a = 255;
+
+      int.TryParse(elem.GetAttribute("r"), out r);
+      int.TryParse(elem.GetAttribute("g"), out g);
+      int.TryParse(elem.GetAttribute("b"), out b);
+      int.TryParse(elem.GetAttribute("a"), out a);
+      Color result = Color.FromArgb(a, r, g, b);
+      return result;
     }
   }
 }

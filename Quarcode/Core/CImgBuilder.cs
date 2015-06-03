@@ -97,23 +97,25 @@ namespace Quarcode.Core
     private static void DrawBytes(Graphics gr, CPointsMatrix matrix, SViewState viewState)
     {
       // Значащие биты
-       List<CGexPoint>  ValueBits = matrix.DrawData.Where(
-        x => x.pointType == PointType.ByteTrue ||
-          x.pointType == PointType.ByteFalse ||
-          x.pointType == PointType.UndefinedByte).ToList();
+      List<CGexPoint> ValueBits = matrix.DrawData.Where(
+       x => x.pointType == PointType.ByteTrue ||
+         x.pointType == PointType.ByteFalse ||
+         x.pointType == PointType.UndefinedByte).ToList();
       List<bool> databitsvalue = CCoder.EnCode(viewState.Message, ValueBits.Count);
 
       for (int i = 0; i < ValueBits.Count; i++)
       {
-        ValueBits[i].pointType = databitsvalue[i] ? PointType.ByteTrue : PointType.ByteFalse;
-        if (viewState.FillCells)
-          gr.FillPolygon(new SolidBrush(CCoder.GetColorFor(matrix.DrawData[i].pointType)),
-            Vector.ToSystemPointsF(ValueBits[i].Cell.ToArray()));
-        if (viewState.DrawCellBorder)
-          gr.DrawPolygon(new Pen(new SolidBrush(CCoder.GetColorFor(PointType.Border)), matrix.Height / (350f)),
-            Vector.ToSystemPointsF(ValueBits[i].Cell.ToArray()));
+        if (ValueBits[i].Cell.Count > 2)
+        {
+          ValueBits[i].pointType = databitsvalue[i] ? PointType.ByteTrue : PointType.ByteFalse;
+          if (viewState.FillCells)
+            gr.FillPolygon(new SolidBrush(CCoder.GetColorFor(matrix.DrawData[i].pointType)),
+              Vector.ToSystemPointsF(ValueBits[i].Cell.ToArray()));
+          if (viewState.DrawCellBorder)
+            gr.DrawPolygon(new Pen(new SolidBrush(CCoder.GetColorFor(PointType.Border)), matrix.Height / (350f)),
+              Vector.ToSystemPointsF(ValueBits[i].Cell.ToArray()));
+        }
       }
-      
     }
 
     private static void DrawLogo(Graphics gr, CPointsMatrix matrix, SViewState viewState)
@@ -123,14 +125,17 @@ namespace Quarcode.Core
 
       for (int i = 0; i < logoBits.Count; i++)
       {
-        if (viewState.FillCells)
-          gr.FillPolygon(
-            new SolidBrush(CCoder.GetColorFor(logoBits[i].pointType)),
-            Vector.ToSystemPointsF(logoBits[i].Cell.ToArray()));
-        if (viewState.DrawCellBorder)
-          gr.DrawPolygon(
-            new Pen(new SolidBrush(Color.Gray), matrix.Height / (350f)),
-            Vector.ToSystemPointsF(logoBits[i].Cell.ToArray()));
+        if (logoBits[i].Cell.Count > 2)
+        {
+          if (viewState.FillCells)
+            gr.FillPolygon(
+              new SolidBrush(CCoder.GetColorFor(logoBits[i].pointType)),
+              Vector.ToSystemPointsF(logoBits[i].Cell.ToArray()));
+          if (viewState.DrawCellBorder)
+            gr.DrawPolygon(
+              new Pen(new SolidBrush(Color.Gray), matrix.Height / (350f)),
+              Vector.ToSystemPointsF(logoBits[i].Cell.ToArray()));
+        }
       }
     }
 
@@ -157,7 +162,7 @@ namespace Quarcode.Core
           //  (int)matrix.Points[i].y + 2);
 
           gr.DrawString(i.ToString(),
-            new Font("Sans Serif", matrix.Height/70f),
+            new Font("Sans Serif", matrix.Height / 70f),
             new SolidBrush(Color.Black),
            (int)matrix.DrawData[i].r.x,
            (int)(int)matrix.DrawData[i].r.y);

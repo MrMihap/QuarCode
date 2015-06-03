@@ -66,17 +66,15 @@ namespace Quarcode.Core
       switch (pointType)
       {
         case PointType.ByteTrue:
-          return ByteTrueColors[rand.Next(0, ByteTrueColors.Length)];
+          return ByteTrueColors[rand.Next(0, ByteTrueColors.Count)];
         case PointType.ByteFalse:
-          return ByteFalseColors[rand.Next(0, ByteFalseColors.Length)];
+          return ByteFalseColors[rand.Next(0, ByteFalseColors.Count)];
         case PointType.UndefinedByte:
-          return ByteUndefColors[rand.Next(0, ByteUndefColors.Length)];
+          return ByteUndefColors[rand.Next(0, ByteUndefColors.Count)];
         case PointType.Border:
-          return BorderColors[rand.Next(0, BorderColors.Length)];
+          return BorderColors[rand.Next(0, BorderColors.Count)];
         case PointType.Logo:
-          return LogoColors[rand.Next(0, LogoColors.Length)];
-        case PointType.LogoAdditional:
-          return LogoAddColors[rand.Next(0, LogoAddColors.Length)];
+          return LogoCellColors[rand.Next(0, LogoCellColors.Count)];
       }
       return Color.White;
     }
@@ -115,30 +113,14 @@ namespace Quarcode.Core
     }
 
     #region Colors
-    private static Color[] ByteTrueColors = new Color[] { 
-      Color.FromArgb(255, 202, 40, 31), 
-      Color.FromArgb(255, 204, 116, 44),
-      Color.FromArgb(255, 204, 194, 44),
-      Color.FromArgb(255, 44, 204, 73),
-      Color.FromArgb(255, 44, 182, 204),
-      Color.FromArgb(255, 44, 44, 204),
-      Color.FromArgb(255, 131, 44, 204)
-      };
-    private static Color[] ByteFalseColors = new Color[] { 
-      Color.White
-      };
-    private static Color[] ByteUndefColors = new Color[] { 
-      Color.Gray
-      };
-    private static Color[] LogoColors = new Color[] { 
-       Color.FromArgb(255, 230,230,230)
-      };
-    private static Color[] LogoAddColors = new Color[] { 
-      Color.Yellow
-      };
-    private static Color[] BorderColors = new Color[] { 
-      Color.FromArgb(255, 0, 0, 0)
-      };
+    public static List<Color> ByteTrueColors = new List<Color>();
+    public static List<Color> ByteFalseColors = new List<Color>();
+    public static List<Color> ByteUndefColors = new List<Color>();
+    //public static List<Color> LogoColors = new List<Color>();
+    public static List<Color> LogoCellColors = new List<Color>();
+    public static List<Color> LogoBorderColors = new List<Color>();
+    public static List<Color> BorderColors = new List<Color>();
+    public static List<Color> BackgroundColors = new List<Color>();
     #endregion
   }
 }

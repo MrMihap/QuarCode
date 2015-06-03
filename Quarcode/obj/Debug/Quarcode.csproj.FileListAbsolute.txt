@@ -15,3 +15,4 @@ C:\Users\Михаил\Documents\GitHub\QuarCode\Quarcode\obj\Debug\Quarcode.View
 C:\Users\Михаил\Documents\GitHub\QuarCode\Quarcode\bin\Debug\Svg.dll
 C:\Users\Михаил\Documents\GitHub\QuarCode\Quarcode\bin\Debug\Svg.pdb
 C:\Users\Михаил\Documents\GitHub\QuarCode\Quarcode\bin\Debug\Svg.xml
+C:\Users\Михаил\Documents\GitHub\QuarCode\Quarcode\bin\Debug\config.xml

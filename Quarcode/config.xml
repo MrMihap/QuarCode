@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<appconfig>
+  <colors>
+    <color type="emptyByte" r="255" g="255" b="255" a="255"/>
+    <color type="valueByte" r="128" g="145" b="170" a="255"/>
+    <color type="valueByte" r="204" g="116" b="44" a="255"/>
+    <color type="valueByte" r="204" g="194" b="44" a="255"/>
+    <color type="valueByte" r="44"  g="204" b="73" a="255"/>
+    <color type="valueByte" r="44"  g="182" b="204" a="255"/>
+    <color type="valueByte" r="44"  g="44"  b="204" a="255"/>
+    <color type="valueByte" r="131" g="44"  b="204" a="255"/>
+    <!--undef byte - defines error coolr value of Byte Cell in case of data array is less then cell array  -->
+    <color type="undefByte" r="131" g="44"  b="204" a="255"/>
+    <color type="basicBackground" r="230" g="230" b="230" a="255"/>
+    <color type="logoBackground" r="230" g="230" b="230" a="255"/>
+    <color type="valueCellBorder" r="0" g="0" b="0" a="255"/>
+    <color type="logoCellBorder" r="200" g="200" b="200" a="255"/>
+  </colors>
+  <size>
+    <renderSize l="3000"/>
+    <exportSize l="700" />
+  </size>
+</appconfig>

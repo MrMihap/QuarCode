@@ -76,7 +76,7 @@ namespace Quarcode.Core
       Points.AddRange(gex.AsArray());
       LogoPoints.AddRange(gex.AsArrayLogo());
       BorderPoints.AddRange(gex.AsArrayBorder());
-      
+
       NoisedPoints.AddRange(Points);
       NoisedPoints.AddRange(LogoPoints);
       NoisedPoints.AddRange(BorderPoints);
@@ -154,39 +154,35 @@ namespace Quarcode.Core
         }
         else
         {
-          double Eps = 0.001;
+          double Eps = L / 2000000;
           double k1, b1;
 
-          r1 = NoisedPoints[surround[i]];
+          r1 = NoisedPoints[surround[i]] + center;
+          Vector debug3 = NoisedPoints[surround[i]];
           // Укорачиваем вектора на попалам
-          r1 -= center;
           r1.x /= 2;
           r1.y /= 2;
           // получаем вектора центров отрезков до ближайших точек
-          r1 += center;
           //double debug1 = (r1 - center).x;
           //double debug2 = (r2 - center).x;
-          if (Math.Abs((r1 - center).x) > Eps)
+          if (Math.Abs((r1 - center).x) > Eps && Math.Abs((r1 - center).y) > Eps)
           {
-            if (Math.Abs((r1 - center).y) > Eps)
-            {
-              // идеальный случай, нет вертикальных прямых
-              k1 = (r1.y - center.y) / (r1.x - center.x);
-              // Коэф прямых, проходящих через середину между двумя точками
-              k1 = -1 / k1;
-              b1 = r1.y - k1 * r1.x;
-              kList.Add(k1);
-              bList.Add(b1);
-              //result[i] = SolveSystem(k1, k2, b1, b2);
-            }
-            else
-            {
-              xList.Add(r1.x / 2 + center.x / 2);
-              // самый плохой случай - перпендикуляр вертикален
-              // должен быть исключен правильной генерацией случайных точек
-            }
+            // идеальный случай, нет вертикальных прямых
+            k1 = (r1.y - center.y) / (r1.x - center.x);
+            // Коэф прямых, проходящих через середину между двумя точками
+            k1 = -1 / k1;
+            b1 = r1.y - k1 * r1.x;
+            kList.Add(k1);
+            bList.Add(b1);
+            //result[i] = SolveSystem(k1, k2, b1, b2);
           }
-          else
+          else if (Math.Abs((r1 - center).y) < Eps)
+          {
+            xList.Add(r1.x / 2 + center.x / 2);
+            // самый плохой случай - перпендикуляр вертикален
+            // должен быть исключен правильной генерацией случайных точек
+          }
+          else if (Math.Abs((r1 - center).x) < Eps)
           {
             // случай когда одна из прямых вертикальна
             double k = 0, b = 0;
@@ -223,7 +219,7 @@ namespace Quarcode.Core
 
     public void GenNoise(int percent)
     {
-     
+
       GenNoise(L * percent / (100 * (Math.Sqrt(3) + 1)));
       InitDrawData();
 
@@ -239,24 +235,41 @@ namespace Quarcode.Core
 
       for (int i = 0; i < Points.Count; i++)
       {
-        //  do
-        //  {
-        //    distance = r * (rand.Next(5, 100)) / 100.0;
-        //    Angle = Math.PI * 2 * rand.Next(5, 600)/ 300.0;
-        //    //double distance = r * (i % 5 + 5) / 10.0;
-        //    //double Angle = Math.PI * 2 * i % 60 / 60.0;
+        do
+        {
+          distance = r * (rand.Next(5, 10)) / 10.0;
+          Angle = Math.PI * rand.Next(0, 120) / 60.0;
 
-        //    shift = new Vector(-distance, 0);
-        //    shift = Vector.Rotate(shift, Angle);
-        //    shift.x += distance;
-        //    if ((from p in NoisedPoints where p.x == Points[i].x + shift.x && p.y == Points[i].y + shift.y select p).Count() == 0)
-        //    {
-        //      NoisedPoints.Add(Points[i] + shift);
-        //      break;
-        //    }
-        //  } while (true);
-        distance = r * (rand.Next(5, 10)) / 10.0;
-        Angle = Math.PI * rand.Next(0, 120) / 60.0;
+
+          shift = new Vector(-distance, 0);
+          shift = Vector.Rotate(shift, Angle);
+          shift.x += distance;
+          Vector neo = Points[i] + shift;
+          bool alredyExists = false;
+          int identity = (from p in NoisedPoints
+                          where
+                            Math.Abs((p.x - neo.x)) < L / 20 &&
+                            Math.Abs(p.y - neo.y) < L / 20
+                          select p).Count();
+          for (int j = 0; j < NoisedPoints.Count; j++)
+          {
+            if (Math.Abs(NoisedPoints[i].y - neo.y) < L / 20 && Math.Abs(NoisedPoints[i].y - neo.y) < L / 20)
+            {
+              alredyExists = true;
+              break;
+            }
+          }
+          if (!alredyExists)
+          {
+            break;
+          }
+          else
+          {
+            continue;
+          }
+        } while (true);
+        //distance = r * (rand.Next(5, 10)) / 10.0;
+        //Angle = Math.PI * rand.Next(0, 120) / 60.0;
 
         shift = new Vector(-distance, 0);
         shift = Vector.Rotate(shift, Angle);
