@@ -9,7 +9,7 @@
     <color type="valueByte" r="44"  g="182" b="204" a="255"/>
     <color type="valueByte" r="44"  g="44"  b="204" a="255"/>
     <color type="valueByte" r="131" g="44"  b="204" a="255"/>
-    <!--undef byte - defines error coolr value of Byte Cell in case of data array is less then cell array  -->
+    <!--undef byte - defines error color value of Byte Cell in case of data array is less then cell array  -->
     <color type="undefByte" r="131" g="44"  b="204" a="255"/>
     <color type="basicBackground" r="230" g="230" b="230" a="255"/>
     <color type="logoBackground" r="230" g="230" b="230" a="255"/>

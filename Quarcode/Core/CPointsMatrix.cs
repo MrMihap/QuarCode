@@ -147,25 +147,20 @@ namespace Quarcode.Core
       for (int i = 0; i < surround.Length; i++)
       {
         //int idx1 = i;
-        if (surround[i] == -1)
-        {
-          //не найдено окружающи точек
-          //result[i] = center;
-        }
-        else
+        if (surround[i] != -1)
         {
           double Eps = L / 2000000;
           double k1, b1;
 
           r1 = NoisedPoints[surround[i]] + center;
-          Vector debug3 = NoisedPoints[surround[i]];
+          Vector cdebug3 = NoisedPoints[surround[i]];
           // Укорачиваем вектора на попалам
           r1.x /= 2;
           r1.y /= 2;
           // получаем вектора центров отрезков до ближайших точек
           //double debug1 = (r1 - center).x;
-          //double debug2 = (r2 - center).x;
-          if (Math.Abs((r1 - center).x) > Eps && Math.Abs((r1 - center).y) > Eps)
+          //double debug2 = (r1 - center).y;
+          if(true)// (Math.Abs((r1 - center).x) > Eps && Math.Abs((r1 - center).y) > Eps)
           {
             // идеальный случай, нет вертикальных прямых
             k1 = (r1.y - center.y) / (r1.x - center.x);
@@ -176,23 +171,23 @@ namespace Quarcode.Core
             bList.Add(b1);
             //result[i] = SolveSystem(k1, k2, b1, b2);
           }
-          else if (Math.Abs((r1 - center).y) < Eps)
-          {
-            xList.Add(r1.x / 2 + center.x / 2);
-            // самый плохой случай - перпендикуляр вертикален
-            // должен быть исключен правильной генерацией случайных точек
-          }
-          else if (Math.Abs((r1 - center).x) < Eps)
-          {
-            // случай когда одна из прямых вертикальна
-            double k = 0, b = 0;
-            // тогда перпендикуляр к ней будет горизонтален
-            k = 0;
-            b = r1.y - k * r1.x;
-            kList.Add(k);
-            bList.Add(b);
-            //result[i] = new Vector(center.x, k * center.x + b);
-          }
+          //else if (Math.Abs((r1 - center).y) < Eps)
+          //{
+          //  xList.Add(r1.x / 2 + center.x / 2);
+          //  // самый плохой случай - перпендикуляр вертикален
+          //  // должен быть исключен правильной генерацией случайных точек
+          //}
+          //else if (Math.Abs((r1 - center).x) < Eps)
+          //{
+          //  // случай когда одна из прямых вертикальна
+          //  double k = 0, b = 0;
+          //  // тогда перпендикуляр к ней будет горизонтален
+          //  k = 0;
+          //  b = r1.y - k * r1.x;
+          //  kList.Add(k);
+          //  bList.Add(b);
+          //  //result[i] = new Vector(center.x, k * center.x + b);
+          //}
         }
       }
       Vector[] Candidates = SolveMultiSystem(kList, bList);
@@ -219,16 +214,13 @@ namespace Quarcode.Core
 
     public void GenNoise(int percent)
     {
-
       GenNoise(L * percent / (100 * (Math.Sqrt(3) + 1)));
-      InitDrawData();
-
     }
 
     public void GenNoise(double r)
     {
       NoisedPoints = new List<Vector>();
-      Random rand = new Random(DateTime.Now.Millisecond);
+      Random rand = new Random();// (DateTime.Now.Millisecond);
       Vector shift;
       double distance;
       double Angle;
@@ -237,7 +229,7 @@ namespace Quarcode.Core
       {
         do
         {
-          distance = r * (rand.Next(5, 10)) / 10.0;
+          distance = r * (rand.Next(0, 20)) / 20.0;
           Angle = Math.PI * rand.Next(0, 120) / 60.0;
 
 
@@ -248,15 +240,31 @@ namespace Quarcode.Core
           bool alredyExists = false;
           int identity = (from p in NoisedPoints
                           where
-                            Math.Abs((p.x - neo.x)) < L / 20 &&
-                            Math.Abs(p.y - neo.y) < L / 20
+                            Math.Abs((p.x - neo.x)) < L / 200000 &&
+                            Math.Abs(p.y - neo.y) < L / 200000
                           select p).Count();
           for (int j = 0; j < NoisedPoints.Count; j++)
           {
-            if (Math.Abs(NoisedPoints[i].y - neo.y) < L / 20 && Math.Abs(NoisedPoints[i].y - neo.y) < L / 20)
+            if (Math.Abs(NoisedPoints[j].y - 2499.1284703335459) < 0.000001 )
+            {
+              //debug
+
+            }
+            if (Math.Abs(NoisedPoints[j].y - neo.y) < L / 200000 || Math.Abs(NoisedPoints[j].x - neo.x) < L / 200000)
             {
               alredyExists = true;
               break;
+            }
+          }
+          if (!alredyExists)
+          {
+            for (int j = 0; j < BorderPoints.Count; j++)
+            {
+              if (Math.Abs(BorderPoints[j].y - neo.y) < L / 200000 || Math.Abs(BorderPoints[j].x - neo.x) < L / 200000)
+              {
+                alredyExists = true;
+                break;
+              }
             }
           }
           if (!alredyExists)
@@ -271,9 +279,9 @@ namespace Quarcode.Core
         //distance = r * (rand.Next(5, 10)) / 10.0;
         //Angle = Math.PI * rand.Next(0, 120) / 60.0;
 
-        shift = new Vector(-distance, 0);
-        shift = Vector.Rotate(shift, Angle);
-        shift.x += distance;
+        //shift = new Vector(-distance, 0);
+        //shift = Vector.Rotate(shift, Angle);
+        //shift.x += distance;
         NoisedPoints.Add(Points[i] + shift);
       }
       for (int i = 0; i < LogoPoints.Count; i++)
@@ -285,6 +293,11 @@ namespace Quarcode.Core
         shift = Vector.Rotate(shift, Angle);
         shift.x += distance;
         NoisedPoints.Add(LogoPoints[i] + shift);
+        if (Math.Abs((LogoPoints[i] + shift).y - 2499.1284703335459) < 0.000001)
+        {
+          //debug
+
+        }
       }
       //NoisedPoints.AddRange(LogoPoints);
       NoisedPoints.AddRange(BorderPoints);

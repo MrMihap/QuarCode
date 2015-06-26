@@ -173,7 +173,7 @@
       this.radiusTrackBar.AutoSize = false;
       this.radiusTrackBar.Location = new System.Drawing.Point(52, 40);
       this.radiusTrackBar.Maximum = 40;
-      this.radiusTrackBar.Minimum = 1;
+      this.radiusTrackBar.Minimum = 5;
       this.radiusTrackBar.Name = "radiusTrackBar";
       this.radiusTrackBar.Size = new System.Drawing.Size(118, 20);
       this.radiusTrackBar.TabIndex = 3;
