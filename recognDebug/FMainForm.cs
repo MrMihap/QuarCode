@@ -23,10 +23,12 @@ namespace recognDebug
       InitializeComponent();
       
     }
+
     void IRecieveCroptedImage.Recieve(Image<Bgr, Byte> sourse)
     {
       
     }
+
     void IRecieveFilteredImage.Recieve(Image<Hsv, Byte> sourse)
     {
       if (FilteredImageBox.InvokeRequired)
@@ -34,21 +36,25 @@ namespace recognDebug
       else
         FilteredImageBox.Image = sourse;
     }
+
     void IRecieveFoundContours.Recieve(List<List<Point>> contourList)
     {
       Bitmap bmp = RawImageBox.Image.Bitmap;
       using (Graphics gr = Graphics.FromImage(bmp))
       {
+        //gr.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+       
         Brush br = new SolidBrush(Color.Red);
-        Pen pen = new Pen(br, 2.0f);
+        Pen pen = new Pen(br, 0.5f);
         foreach (List<Point> con in contourList)
         {
           gr.DrawLines(pen, con.ToArray());
+          gr.DrawLine(pen, con[con.Count - 1], con[0]);
         }
       }
       bmp = FilteredImageBox.Image.Bitmap; 
 
-      using (Graphics gr = Graphics.FromImage(FilteredImageBox.Image.Bitmap;))
+      using (Graphics gr = Graphics.FromImage(FilteredImageBox.Image.Bitmap))
       {
         Brush br = new SolidBrush(Color.Red);
         Pen pen = new Pen(br, 2.0f);
@@ -58,6 +64,7 @@ namespace recognDebug
         }
       }
     }
+
     void IRecieveRawImage.Recieve(Image<Bgr, Byte> sourse) 
     {
       if (RawImageBox.InvokeRequired)
@@ -65,6 +72,7 @@ namespace recognDebug
       else
         RawImageBox.Image = sourse;
     }
+
     void IRecieveRecognizedCode.Recieve(string code) 
     {
       if (LastCodeTextBox.InvokeRequired)
@@ -103,6 +111,5 @@ namespace recognDebug
           break;
       }
     }
-
   }
 }

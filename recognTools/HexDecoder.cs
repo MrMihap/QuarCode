@@ -25,7 +25,7 @@ namespace recognTools
     public static Image<Hsv, Byte> Filter(Image<Bgr, Byte> sourse)
     {
       // 1.Gauss 
-      sourse = sourse.SmoothGaussian(3);
+      sourse = sourse.SmoothGaussian(9);
       // 2.To HSV
       Image<Hsv, Byte> filteredimage = sourse.Convert<Hsv, Byte>();
 
@@ -37,10 +37,10 @@ namespace recognTools
 
       max.Hue = 179;
       max.Satuation = 55;
-      max.Value = 105;
+      max.Value = 20;
 
 
-      return filteredimage.InRange(min, max).Canny(3, 6).Convert<Hsv, Byte>();
+      return filteredimage.InRange(min, max).Dilate(1).Convert<Hsv, Byte>();
     }
     public static List<List<Point>> FindAllContours(Image<Hsv, Byte> sourse)
     {
@@ -54,7 +54,7 @@ namespace recognTools
       CvInvoke.Canny(uimage, cannyEdges, cannyThreshold, cannyThresholdLinking);
       using (VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint())
       {
-        CvInvoke.FindContours(cannyEdges, contours, null, RetrType.List, ChainApproxMethod.LinkRuns);
+        CvInvoke.FindContours(cannyEdges, contours, null, RetrType.List, ChainApproxMethod.ChainApproxNone);
         int count = contours.Size;
         for (int i = 0; i < count; i++)
         {
@@ -62,7 +62,7 @@ namespace recognTools
           using (VectorOfPoint approxContour = new VectorOfPoint())
           {
             CvInvoke.ApproxPolyDP(contour, approxContour, CvInvoke.ArcLength(contour, true) * 0.05, true);
-            if (CvInvoke.ContourArea(approxContour, false) > 350) //only consider contours with area greater than 250
+            if (CvInvoke.ContourArea(approxContour, false) > 60) //only consider contours with area greater than 250
             {
               result.Add(approxContour.ToArray().ToList());
             }

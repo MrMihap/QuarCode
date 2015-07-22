@@ -44,6 +44,7 @@ namespace recognTools
         List<List<Point>> allContours = HexDecoder.FindAllContours(filtredSourse);
         if (OnContourFound != null) OnContourFound(allContours);
         // 4.Filter Contours
+
         // 5.Crop true Orinted HexImage
         // 6.Parse Image for Code
         string result = HexDecoder.TryDecode(sourse);
