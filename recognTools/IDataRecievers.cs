@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Drawing;
 
 using Emgu.CV;
 using Emgu.CV.Structure;
@@ -20,11 +21,11 @@ namespace recognTools
   }
   public interface IRecieveFilteredImage
   {
-    void Recieve(Image<Bgr, Byte> sourse);
+    void Recieve(Image<Hsv, Byte> sourse);
   }
   public interface IRecieveFoundContours
   {
-    void Recieve(List<MCvContour> contourList);
+    void Recieve(List<List<Point>> contourList);
   }
   public interface IRecieveCroptedImage
   {

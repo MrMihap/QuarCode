@@ -4,15 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+
 using Emgu.CV;
 using Emgu.CV.Structure;
-using System.Data;
+
 namespace recognTools
 {
     public delegate void OnHexCodeRecognizedDelegate(string code);
     public delegate void OnImageRecievedDelegate(Image<Bgr, Byte> sourse);
-    public delegate void OnImageFilteredDelegate(Image<Bgr, Byte> sourse);
-    public delegate void OnContourFoundDelegate(List<MCvContour> contourList);
+    public delegate void OnImageFilteredDelegate(Image<Hsv, Byte> sourse);
+    public delegate void OnContourFoundDelegate(List<List<Point>> contourList);
     public delegate void OnHexImageCroptedDelegate(Image<Bgr, Byte> sourse);
 
     public static class ImageParser
@@ -22,7 +23,7 @@ namespace recognTools
       public static event OnImageFilteredDelegate OnImageFiltered;
       public static event OnContourFoundDelegate  OnContourFound;
       public static event OnHexImageCroptedDelegate OnHexImageCropted; 
-      static void AddDevDataReciever(object reciever)
+      public static void AddDevDataReciever(object reciever)
       {
         if (reciever is IRecieveRecognizedCode) OnHexCodeRecognized += (reciever as IRecieveRecognizedCode).Recieve;
         if (reciever is IRecieveRawImage) OnImageRecieved += (reciever as IRecieveRawImage).Recieve;
@@ -31,16 +32,24 @@ namespace recognTools
         if (reciever is IRecieveCroptedImage) OnHexImageCropted += (reciever as IRecieveCroptedImage).Recieve;
 
       }
-      static void RecieveImage(Image<Bgr, Byte> sourse)
+      public static void RecieveImage(Image<Bgr, Byte> sourse)
       {
-        string result = Parse(sourse);
+        // 1. Recieve
+        OnImageRecieved(sourse);
+        // 2.Filter
+        Image<Hsv, Byte> filtredSourse = HexDecoder.Filter(sourse);
+        if (OnImageRecieved != null) OnImageFiltered(filtredSourse);
+
+        // 3.Find All Contours
+        List<List<Point>> allContours = HexDecoder.FindAllContours(filtredSourse);
+        if (OnContourFound != null) OnContourFound(allContours);
+        // 4.Filter Contours
+        // 5.Crop true Orinted HexImage
+        // 6.Parse Image for Code
+        string result = HexDecoder.TryDecode(sourse);
         if (result != null)
           if (OnHexCodeRecognized != null) OnHexCodeRecognized(result);
-      }
 
-      private static string Parse(Image<Bgr, Byte> sourse)
-      {
-        return null;
       }
 
     }
