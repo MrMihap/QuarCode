@@ -3,6 +3,10 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quarcode", "Quarcode\Quarcode.csproj", "{2237956E-D1C0-43C4-9890-BDBA16BF3090}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "recognDebug", "recognDebug\recognDebug.csproj", "{AE414336-071C-4B7D-9D6F-E1885BA0AC91}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "recognTools", "recognTools\recognTools.csproj", "{89A2175A-855B-4E24-B455-628F348CBF19}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +17,14 @@ Global
 		{2237956E-D1C0-43C4-9890-BDBA16BF3090}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2237956E-D1C0-43C4-9890-BDBA16BF3090}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2237956E-D1C0-43C4-9890-BDBA16BF3090}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AE414336-071C-4B7D-9D6F-E1885BA0AC91}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AE414336-071C-4B7D-9D6F-E1885BA0AC91}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AE414336-071C-4B7D-9D6F-E1885BA0AC91}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AE414336-071C-4B7D-9D6F-E1885BA0AC91}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89A2175A-855B-4E24-B455-628F348CBF19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89A2175A-855B-4E24-B455-628F348CBF19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89A2175A-855B-4E24-B455-628F348CBF19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89A2175A-855B-4E24-B455-628F348CBF19}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
