@@ -7,13 +7,15 @@ using System.Drawing;
 
 using Emgu.CV;
 using Emgu.CV.Structure;
+using Emgu.CV.Util;
+using Emgu.CV.CvEnum;
 
 namespace recognTools
 {
     public delegate void OnHexCodeRecognizedDelegate(string code);
     public delegate void OnImageRecievedDelegate(Image<Bgr, Byte> sourse);
     public delegate void OnImageFilteredDelegate(Image<Hsv, Byte> sourse);
-    public delegate void OnContourFoundDelegate(List<List<Point>> contourList);
+    public delegate void OnContourFoundDelegate(VectorOfVectorOfPoint contourList);
     public delegate void OnHexImageCroptedDelegate(Image<Bgr, Byte> sourse);
 
     public static class ImageParser
@@ -30,7 +32,6 @@ namespace recognTools
         if (reciever is IRecieveFilteredImage) OnImageFiltered += (reciever as IRecieveFilteredImage).Recieve;
         if (reciever is IRecieveFoundContours) OnContourFound += (reciever as IRecieveFoundContours).Recieve;
         if (reciever is IRecieveCroptedImage) OnHexImageCropted += (reciever as IRecieveCroptedImage).Recieve;
-
       }
       public static void RecieveImage(Image<Bgr, Byte> sourse)
       {
@@ -41,11 +42,15 @@ namespace recognTools
         if (OnImageRecieved != null) OnImageFiltered(filtredSourse);
 
         // 3.Find All Contours
-        List<List<Point>> allContours = HexDecoder.FindAllContours(filtredSourse);
+        VectorOfVectorOfPoint allContours = HexDecoder.FindAllContours(filtredSourse);
         if (OnContourFound != null) OnContourFound(allContours);
         // 4.Filter Contours
+        allContours = HexDecoder.FilterAllContours(allContours);        
+        CvInvoke.DrawContours(sourse,allContours, -1, new Bgr(Color.Red).MCvScalar, 2);
 
         // 5.Crop true Orinted HexImage
+        
+
         // 6.Parse Image for Code
         string result = HexDecoder.TryDecode(sourse);
         if (result != null)

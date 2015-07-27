@@ -16,3 +16,13 @@ C:\Users\Михаил\Documents\GitHub\QuarCode\Quarcode\bin\Debug\Svg.pdb
 C:\Users\Михаил\Documents\GitHub\QuarCode\Quarcode\bin\Debug\Svg.xml
 C:\Users\Михаил\Documents\GitHub\QuarCode\Quarcode\bin\Debug\config.xml
 C:\Users\Михаил\Documents\GitHub\QuarCode\Quarcode\obj\Debug\Quarcode.csprojResolveAssemblyReference.cache
+C:\Users\Админ\Documents\GitHub\QuarCode\Quarcode\bin\Debug\config.xml
+C:\Users\Админ\Documents\GitHub\QuarCode\Quarcode\bin\Debug\Quarcode.exe.config
+C:\Users\Админ\Documents\GitHub\QuarCode\Quarcode\bin\Debug\Quarcode.exe
+C:\Users\Админ\Documents\GitHub\QuarCode\Quarcode\bin\Debug\Quarcode.pdb
+C:\Users\Админ\Documents\GitHub\QuarCode\Quarcode\obj\Debug\Quarcode.csprojResolveAssemblyReference.cache
+C:\Users\Админ\Documents\GitHub\QuarCode\Quarcode\obj\Debug\Quarcode.View.FimgView.resources
+C:\Users\Админ\Documents\GitHub\QuarCode\Quarcode\obj\Debug\Quarcode.Properties.Resources.resources
+C:\Users\Админ\Documents\GitHub\QuarCode\Quarcode\obj\Debug\Quarcode.csproj.GenerateResource.Cache
+C:\Users\Админ\Documents\GitHub\QuarCode\Quarcode\obj\Debug\Quarcode.exe
+C:\Users\Админ\Documents\GitHub\QuarCode\Quarcode\obj\Debug\Quarcode.pdb

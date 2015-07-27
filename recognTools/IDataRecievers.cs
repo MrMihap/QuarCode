@@ -7,6 +7,8 @@ using System.Drawing;
 
 using Emgu.CV;
 using Emgu.CV.Structure;
+using Emgu.CV.Util;
+using Emgu.CV.CvEnum;
 
 namespace recognTools
 {
@@ -25,7 +27,7 @@ namespace recognTools
   }
   public interface IRecieveFoundContours
   {
-    void Recieve(List<List<Point>> contourList);
+    void Recieve(VectorOfVectorOfPoint contourList);
   }
   public interface IRecieveCroptedImage
   {

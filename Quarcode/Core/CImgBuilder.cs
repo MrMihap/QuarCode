@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 using System.Drawing.Imaging;
-using Svg;
+
 namespace Quarcode.Core
 {
   static class CImgBuilder
@@ -36,26 +36,7 @@ namespace Quarcode.Core
         DrawPoints(gr, matrix, viewState);
         //DrawLogoPoints(gr, matrix, viewState);
 
-        //#if DEBUG
-        Brush blueline = new SolidBrush(Color.Red);
-        Pen borderPointsPen = new Pen(blueline, 3);
-        if (false)
-          for (int i = 0; i < matrix.BorderPoints.Count; i++)
-          {
-            //Отрисовка центральных точек границы
-            gr.DrawLine(borderPointsPen,
-              (int)matrix.BorderPoints[i].x,
-              (int)(int)matrix.BorderPoints[i].y,
-              (int)matrix.BorderPoints[i].x + 2,
-              (int)(int)matrix.BorderPoints[i].y + 2);
-            gr.DrawString(i.ToString(),
-              new Font("Sans Serif", 16f),
-              new SolidBrush(Color.Red),
-             (int)matrix.BorderPoints[i].x,
-             (int)(int)matrix.BorderPoints[i].y);
-          }
-
-        //#endif
+      
         //Отрисовка места под логотип
         //gr.FillPolygon(new SolidBrush(Color.WhiteSmoke), Vector.ToSystemPointsF(matrix.LogoBorderPoints.ToArray()));
 #if DEBUG
