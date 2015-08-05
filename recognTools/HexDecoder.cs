@@ -124,7 +124,7 @@ namespace recognTools
 
       Image<Gray, Byte> cannyBlack = maskHsvBlack.Canny(cannyThreshold, cannyThresholdLinking);
       VectorOfVectorOfPoint borders = new VectorOfVectorOfPoint();//list of all borders
-
+      int minimumArea = sourse.Height * sourse.Width/80;
       using (VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint())
       {
         CvInvoke.FindContours(cannyBlack, contours, null, RetrType.List, ChainApproxMethod.ChainApproxSimple);
@@ -135,7 +135,7 @@ namespace recognTools
           using (VectorOfPoint approxContour = new VectorOfPoint())
           {
             CvInvoke.ApproxPolyDP(contour, approxContour, CvInvoke.ArcLength(contour, true) * 0.05, true);
-            if (CvInvoke.ContourArea(approxContour, false) > 250) //only consider contours with area greater than 250
+            if (CvInvoke.ContourArea(approxContour, false) > minimumArea) //only consider contours with area greater than 250
             {
               if (approxContour.Size <= 12)
               {
