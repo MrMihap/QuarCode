@@ -35,8 +35,11 @@ namespace recognTools
       }
       public static void RecieveImage(Image<Bgr, Byte> sourse)
       {
+        // 0. Scale
+        sourse.Resize(0.5, Inter.Linear);
         // 1. Recieve
-        OnImageRecieved(sourse);
+        OnImageRecieved(sourse.SmoothMedian(9));
+
         // 2.Filter
         Image<Hsv, Byte> filtredSourse = HexDecoder.Filter(sourse);
         if (OnImageRecieved != null) OnImageFiltered(filtredSourse);
@@ -44,6 +47,7 @@ namespace recognTools
         // 3.Find All Contours
         VectorOfVectorOfPoint allContours = HexDecoder.FindAllContours(filtredSourse);
         if (OnContourFound != null) OnContourFound(allContours);
+
         // 4.Filter Contours
         allContours = HexDecoder.FilterAllContours(allContours);        
         CvInvoke.DrawContours(sourse,allContours, -1, new Bgr(Color.Red).MCvScalar, 2);
