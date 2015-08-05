@@ -95,11 +95,10 @@ namespace recognTools
         }
       }
 
-
       // 3.To HSV
       Image<Bgr, Byte> filteredimage = new Image<Bgr, byte>(sourse.ToBitmap());
       filteredimage.Data = dst;
-      //filteredimage = filteredimage.SmoothMedian(9);
+      filteredimage = filteredimage.SmoothMedian(9);
       return filteredimage.Convert<Hsv, Byte>();
     }
     public static VectorOfVectorOfPoint FindAllContours(Image<Hsv, Byte> sourse)
@@ -138,7 +137,7 @@ namespace recognTools
             CvInvoke.ApproxPolyDP(contour, approxContour, CvInvoke.ArcLength(contour, true) * 0.05, true);
             if (CvInvoke.ContourArea(approxContour, false) > 250) //only consider contours with area greater than 250
             {
-              if (approxContour.Size == 4)
+              if (approxContour.Size <= 12)
               {
                 borders.Push(contour);
                 //Black_boxList.Add(CvInvoke.MinAreaRect(approxContour)); 
@@ -148,30 +147,7 @@ namespace recognTools
         }
       }
 
-      Image<Gray, Byte> cannyBlue = maskHsvBlue.Canny(cannyThreshold, cannyThresholdLinking);
-      //VectorOfVectorOfPoint blueborders = new VectorOfVectorOfPoint();//list of blue borders
-      using (VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint())
-      {
-        CvInvoke.FindContours(cannyBlue, contours, null, RetrType.List, ChainApproxMethod.ChainApproxSimple);
-
-        for (int i = 0; i < contours.Size; i++)
-        {
-          using (VectorOfPoint contour = contours[i])
-          using (VectorOfPoint approxContour = new VectorOfPoint())
-          {
-            CvInvoke.ApproxPolyDP(contour, approxContour, CvInvoke.ArcLength(contour, true) * 0.05, true);
-            if (CvInvoke.ContourArea(approxContour, false) > 150) //only consider contours with area greater than 250
-            {
-              if (approxContour.Size >= 4)
-              {
-                //Blue_boxList.Add(CvInvoke.MinAreaRect(approxContour));
-                borders.Push(contour);
-              }
-            }
-          }
-        }
-      }
-      VectorOfVectorOfPoint result = borders;
+     VectorOfVectorOfPoint result = borders;
 
 
 
