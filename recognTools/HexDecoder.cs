@@ -39,8 +39,8 @@ namespace recognTools
       const double greeProp = 2.5;
       const double redProp = 2.5;
       const byte zeroLevel = 0;
-      const byte treshhold = 55;
-      const byte colorDif = 16;
+      const byte treshhold = 70;
+      const byte colorDif = 18;
       for (int i = sourse.Rows - 1; i >= 0; i--)
       {
         for (int j = sourse.Cols - 1; j >= 0; j--)
@@ -113,10 +113,6 @@ namespace recognTools
       maskHsvBlack = sourse.InRange(blackVal_min, blackVal_max);
       maskHsvBlack.Erode(3).Dilate(3);
       maskHsvBlack = maskHsvBlack.Not();
-
-      //Blue field
-      maskHsvBlue = sourse.InRange(blueVal_min, blueVal_max);
-      maskHsvBlue.Erode(3).Dilate(3);
 
       double cannyThreshold = 1.0;
       double cannyThresholdLinking = 500.0;
