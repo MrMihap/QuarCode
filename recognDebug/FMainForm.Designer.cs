@@ -44,17 +44,19 @@
       this.LastCodeTextBox = new System.Windows.Forms.TextBox();
       this.label4 = new System.Windows.Forms.Label();
       this.OptionsGroupBox = new System.Windows.Forms.GroupBox();
+      this.cropImageBox = new Emgu.CV.UI.ImageBox();
       ((System.ComponentModel.ISupportInitialize)(this.RawImageBox)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.FilteredImageBox)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.CroptedImageBox)).BeginInit();
       this.menuStrip1.SuspendLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.cropImageBox)).BeginInit();
       this.SuspendLayout();
       // 
       // RawImageBox
       // 
       this.RawImageBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-      this.RawImageBox.Location = new System.Drawing.Point(13, 50);
+      this.RawImageBox.Location = new System.Drawing.Point(12, 54);
       this.RawImageBox.Name = "RawImageBox";
       this.RawImageBox.Size = new System.Drawing.Size(638, 460);
       this.RawImageBox.TabIndex = 2;
@@ -180,11 +182,22 @@
       this.OptionsGroupBox.TabStop = false;
       this.OptionsGroupBox.Text = "Options";
       // 
+      // cropImageBox
+      // 
+      this.cropImageBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+      this.cropImageBox.Location = new System.Drawing.Point(12, 520);
+      this.cropImageBox.Name = "cropImageBox";
+      this.cropImageBox.Size = new System.Drawing.Size(382, 190);
+      this.cropImageBox.TabIndex = 9;
+      this.cropImageBox.TabStop = false;
+      // 
       // FMainForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(1362, 711);
+      this.Controls.Add(this.cropImageBox);
       this.Controls.Add(this.OptionsGroupBox);
       this.Controls.Add(this.label4);
       this.Controls.Add(this.LastCodeTextBox);
@@ -203,6 +216,7 @@
       ((System.ComponentModel.ISupportInitialize)(this.CroptedImageBox)).EndInit();
       this.menuStrip1.ResumeLayout(false);
       this.menuStrip1.PerformLayout();
+      ((System.ComponentModel.ISupportInitialize)(this.cropImageBox)).EndInit();
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -225,6 +239,7 @@
     private System.Windows.Forms.TextBox LastCodeTextBox;
     private System.Windows.Forms.Label label4;
     private System.Windows.Forms.GroupBox OptionsGroupBox;
+    private Emgu.CV.UI.ImageBox cropImageBox;
   }
 }
 

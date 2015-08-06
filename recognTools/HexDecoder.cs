@@ -75,22 +75,22 @@ namespace recognTools
 
             //too many blue
             if (b > r + colorDif || b > g + colorDif)
-                IsBlack = false;
+              IsBlack = false;
             //too many green
             if (g > r + colorDif || g > b + colorDif)
-                IsBlack = false;
+              IsBlack = false;
             //too many red
             if (r > b + colorDif || r > g + colorDif)
-                IsBlack = false;
+              IsBlack = false;
 
           }
           if (IsBlack)
           {
             dst[i, j, 0] = dst[i, j, 1] = dst[i, j, 2] = 0;
           }
-          else 
-          { 
-            dst[i, j, 0] = dst[i, j, 1] = dst[i, j, 2] = 255; 
+          else
+          {
+            dst[i, j, 0] = dst[i, j, 1] = dst[i, j, 2] = 255;
           }
         }
       }
@@ -101,6 +101,7 @@ namespace recognTools
       //filteredimage = filteredimage.SmoothMedian(9);
       return filteredimage.Convert<Hsv, Byte>();
     }
+
     public static VectorOfVectorOfPoint FindAllContours(Image<Hsv, Byte> sourse)
     {
       Image<Gray, Byte> maskHsvBlack;
@@ -120,7 +121,7 @@ namespace recognTools
 
       Image<Gray, Byte> cannyBlack = maskHsvBlack.Canny(cannyThreshold, cannyThresholdLinking);
       VectorOfVectorOfPoint borders = new VectorOfVectorOfPoint();//list of all borders
-      int minimumArea = sourse.Height * sourse.Width/80;
+      int minimumArea = sourse.Height * sourse.Width / 80;
       using (VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint())
       {
         CvInvoke.FindContours(cannyBlack, contours, null, RetrType.List, ChainApproxMethod.ChainApproxSimple);
@@ -133,17 +134,17 @@ namespace recognTools
             CvInvoke.ApproxPolyDP(contour, approxContour, CvInvoke.ArcLength(contour, true) * 0.05, true);
             if (CvInvoke.ContourArea(approxContour, false) > minimumArea) //only consider contours with area greater than 250
             {
-              if (approxContour.Size <= 12)
-              {
-                borders.Push(contour);
-                //Black_boxList.Add(CvInvoke.MinAreaRect(approxContour)); 
-              }
+              //if (approxContour.Size <= 45)
+              //{
+              borders.Push(contour);
+              //Black_boxList.Add(CvInvoke.MinAreaRect(approxContour)); 
+              //}
             }
           }
         }
       }
 
-     VectorOfVectorOfPoint result = borders;
+      VectorOfVectorOfPoint result = borders;
 
 
 
@@ -154,26 +155,68 @@ namespace recognTools
     {
       VectorOfVectorOfPoint result = new VectorOfVectorOfPoint();
       bool ready = false;
-      using (VectorOfVectorOfPoint contours = sourse)
+      VectorOfVectorOfPoint contours = sourse;
+      double[] Areas = new double[contours.Size];
+      for (int i = 0; i < contours.Size; i++)
       {
-        for (int i = 0; i < contours.Size && !ready; i++)
+        Areas[i] = CvInvoke.ContourArea(contours[i]);
+      }
+      for (int i = 0; i < contours.Size && !ready; i++)
+      {
+        using (VectorOfPoint contour = contours[i])
         {
-          using (VectorOfPoint contour = contours[i])
+          for (int j = 1; j < contours.Size && !ready; j++)
           {
-            for (int j = i + 1; j < contours.Size && !ready; j++)
-            {
 
-              if (0.35 * CvInvoke.ContourArea(contours[j]) > CvInvoke.ContourArea(contours[i]) && 0.29 * CvInvoke.ContourArea(contours[j]) < CvInvoke.ContourArea(contours[i]))
-              {
-                result.Push(contours[j]);
-                result.Push(contours[i]);
-                ready = !ready;
-              }
+            if (Math.Abs(Areas[i] / Areas[j] - 0.33) < 0.069)
+            {
+              result.Push(contours[j]);
+              result.Push(contours[i]);
+              ready = !ready;
             }
           }
         }
       }
       return result;
     }
+
+    public static Image<Bgr, Byte> CropCodeFromImage(Image<Bgr, Byte> sourse, VectorOfVectorOfPoint Contours)
+    {
+
+      Image<Bgr, Byte> CroptedImage;// = sourse.GetSubRect(new Rectangle(0,0, 100,100));
+      int idMain = 0;
+      int idBlue = 1;
+      if (CvInvoke.ContourArea(Contours[0]) < CvInvoke.ContourArea(Contours[1]))
+      {
+        idMain = 1;
+        idBlue = 0;
+      }
+      Point[] mainPoints = Contours[idMain].ToArray();
+      Point[] subPoints = Contours[idBlue].ToArray();
+      Image<Bgr, Byte> RotatedImage;
+      // 1.Ищем угол поворота относительно вертикали для вертикального выравнивания контуров
+      double Alpha;
+      // 1.1.найдем две точки : самую левую верхнего контура и самую левую правого контура
+      Point mainLeft = (from p in mainPoints orderby p.X  select p).FirstOrDefault();
+      Point subLeft = (from p in subPoints orderby p.X select p).FirstOrDefault();
+      // 1.2 Ищем угол поворота, который поставит одну над второй
+      Alpha = 0;
+      // 1.3 Поворачиваем основное изображение на этот угол
+      RotatedImage = sourse.Rotate(Alpha, new Bgr(Color.White));
+      // 1.4 Поворачиваем контур на этот угол
+ 
+      // 2.Вырезаем основной контур
+      int bottom = mainPoints.Min(x => x.Y);
+      int top = mainPoints.Max(x => x.Y);
+      int left = mainPoints.Min(x => x.X);
+      int right = mainPoints.Max(x => x.X);
+      Rectangle box = new Rectangle(left, bottom, right - left, top - bottom);
+      CroptedImage = RotatedImage.GetSubRect(box);
+      // 3.Поворачиваем на найденый угол угол
+
+      // 4.Вставляем повернтуый контур в новое изображение
+      return CroptedImage;
+    }
+    
   }
 }

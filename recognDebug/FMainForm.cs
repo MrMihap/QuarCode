@@ -31,7 +31,10 @@ namespace recognDebug
 
     void IRecieveCroptedImage.Recieve(Image<Bgr, Byte> sourse)
     {
-      
+      if (cropImageBox.InvokeRequired)
+        cropImageBox.BeginInvoke(new Action(() => cropImageBox.Image = sourse));
+      else
+        cropImageBox.Image = sourse;
     }
 
     void IRecieveFilteredImage.Recieve(Image<Hsv, Byte> sourse)
@@ -44,29 +47,7 @@ namespace recognDebug
 
     void IRecieveFoundContours.Recieve(VectorOfVectorOfPoint contourList)
     {
-      //Bitmap bmp = RawImageBox.Image.Bitmap;
-      //using (Graphics gr = Graphics.FromImage(bmp))
-      //{
-        //gr.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-
-        #region contour drawing
-        CvInvoke.DrawContours(RawImageBox.Image, contourList, -1, new Bgr(Color.Green).MCvScalar, 1);
-       
-        #endregion
-
-
-      //  Brush br = new SolidBrush(Color.Red);
-      //  Pen pen = new Pen(br, 0.5f);
-        
-      //}
-      //bmp = FilteredImageBox.Image.Bitmap; 
-
-      //using (Graphics gr = Graphics.FromImage(FilteredImageBox.Image.Bitmap))
-      //{
-      //  Brush br = new SolidBrush(Color.Red);
-      //  Pen pen = new Pen(br, 2.0f);
-        
-      //}
+        CvInvoke.DrawContours(RawImageBox.Image, contourList, -1, new Bgr(Color.Green).MCvScalar, 3);
     }
 
     void IRecieveRawImage.Recieve(Image<Bgr, Byte> sourse) 

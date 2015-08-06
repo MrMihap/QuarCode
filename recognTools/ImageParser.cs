@@ -49,14 +49,15 @@ namespace recognTools
         if (OnContourFound != null) OnContourFound(allContours);
 
         // 4.Filter Contours
-        allContours = HexDecoder.FilterAllContours(allContours);        
-        CvInvoke.DrawContours(sourse,allContours, -1, new Bgr(Color.Red).MCvScalar, 2);
-
-        // 5.Crop true Orinted HexImage
+        VectorOfVectorOfPoint fltContours = HexDecoder.FilterAllContours(allContours);
+        //CvInvoke.DrawContours(sourse, allContours, -1, new Bgr(Color.Red).MCvScalar, 2);
+        if (fltContours.Size < 2) { return;  throw new Exception("не найдены два рапозноваемых контура"); }
         
-
+        // 5.Crop true Orinted HexImage
+        Image<Bgr, Byte> CropMatrix = HexDecoder.CropCodeFromImage(sourse, fltContours);
+        if (OnHexImageCropted != null) OnHexImageCropted(CropMatrix);
         // 6.Parse Image for Code
-        string result = HexDecoder.TryDecode(sourse);
+        string result = HexDecoder.TryDecode(CropMatrix);
         if (result != null)
           if (OnHexCodeRecognized != null) OnHexCodeRecognized(result);
 

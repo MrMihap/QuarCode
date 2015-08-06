@@ -65,6 +65,7 @@ namespace Quarcode.Core
     {
       return new Vector(a.x - b.x, a.y - b.y);
     }
+
     /// <summary>
     /// Возвращает новый массив, составленный из суммы второго с каждым первым 
     /// </summary>
