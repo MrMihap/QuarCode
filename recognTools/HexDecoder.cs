@@ -38,8 +38,8 @@ namespace recognTools
       const double blueProp = 1.8;
       const double greeProp = 2.5;
       const double redProp = 2.5;
-      const byte zeroLevel = 0;
-      const byte treshhold = 70;
+      const byte zeroLevel = 50;
+      const byte treshhold = 20;
       const byte colorDif = 18;
       for (int i = sourse.Rows - 1; i >= 0; i--)
       {

@@ -85,7 +85,7 @@
             this.secondExitButton});
       this.menuStrip1.Location = new System.Drawing.Point(0, 0);
       this.menuStrip1.Name = "menuStrip1";
-      this.menuStrip1.Size = new System.Drawing.Size(1445, 24);
+      this.menuStrip1.Size = new System.Drawing.Size(1362, 24);
       this.menuStrip1.TabIndex = 3;
       this.menuStrip1.Text = "menuStrip1";
       // 
@@ -104,6 +104,7 @@
       this.connectToCamStream.Name = "connectToCamStream";
       this.connectToCamStream.Size = new System.Drawing.Size(269, 22);
       this.connectToCamStream.Text = "Подключится к камере";
+      this.connectToCamStream.Click += new System.EventHandler(this.connectToCamStream_Click);
       // 
       // LoadSingleImgButton
       // 
@@ -183,7 +184,7 @@
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-      this.ClientSize = new System.Drawing.Size(1445, 711);
+      this.ClientSize = new System.Drawing.Size(1362, 711);
       this.Controls.Add(this.OptionsGroupBox);
       this.Controls.Add(this.label4);
       this.Controls.Add(this.LastCodeTextBox);

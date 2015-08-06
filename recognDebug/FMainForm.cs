@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+using System.IO;
+
 using Emgu.CV;
 using Emgu.CV.Structure;
 using Emgu.CV.Util;
@@ -18,6 +20,9 @@ namespace recognDebug
 {
   public partial class FMainForm : Form, IRecieveCroptedImage, IRecieveFilteredImage, IRecieveFoundContours, IRecieveRawImage, IRecieveRecognizedCode
   {
+    string dirname = @"../../../testimg/";
+    private string currentFileName;
+
     public FMainForm()
     {
       InitializeComponent();
@@ -109,6 +114,26 @@ namespace recognDebug
           MessageBox.Show("Отменено пользователем");
           break;
       }
+    }
+
+    private void connectToCamStream_Click(object sender, EventArgs e)
+    {
+      //debug mode
+      //packet processing
+      ImageParser.OnImageFiltered += ImageParser_OnImageFiltered;
+      if (Directory.Exists(dirname)) 
+      {
+        foreach (string fileName in Directory.GetFiles(dirname))
+        {
+          currentFileName = fileName;
+          ImageParser.RecieveImage(new Image<Bgr, Byte>(fileName));
+        }
+      }
+    }
+
+    void ImageParser_OnImageFiltered(Image<Hsv, byte> sourse)
+    {
+      sourse.ToBitmap().Save(currentFileName.Replace(".jpg","_pass.png"), System.Drawing.Imaging.ImageFormat.Png);
     }
   }
 }
