@@ -34,13 +34,13 @@ namespace recognTools
       byte[, ,] dst = TMP.Data;
 
       bool IsBlack;
-      const int grayMax = 80;
-      const double blueProp = 1.8;
-      const double greeProp = 2.5;
-      const double redProp = 2.5;
-      const byte zeroLevel = 50;
-      const byte treshhold = 20;
-      const byte colorDif = 18;
+      //const double blueProp = 1.8;
+      //const double greeProp = 2.5;
+      //const double redProp = 2.5;
+      //const byte treshhold = 15;
+      const int grayMax = 110; // превышение этого уровня по любому каналу означет отсутствие черного
+      const byte zeroLevel = 70;//уровень выше которого цвет проверяется на отклонение от серого
+      const byte colorDif = 35; // максимальное отклонение между цветами
       for (int i = sourse.Rows - 1; i >= 0; i--)
       {
         for (int j = sourse.Cols - 1; j >= 0; j--)
@@ -69,7 +69,7 @@ namespace recognTools
           {
               int debug = 0;
           }*/
-          if (b >= zeroLevel && g >= zeroLevel && r >= zeroLevel)
+          if (b >= zeroLevel || g >= zeroLevel || r >= zeroLevel)
           {
             //IsBlack = false;
 
@@ -98,7 +98,7 @@ namespace recognTools
       // 3.To HSV
       Image<Bgr, Byte> filteredimage = new Image<Bgr, byte>(sourse.ToBitmap());
       filteredimage.Data = dst;
-      filteredimage = filteredimage.SmoothMedian(9);
+      //filteredimage = filteredimage.SmoothMedian(9);
       return filteredimage.Convert<Hsv, Byte>();
     }
     public static VectorOfVectorOfPoint FindAllContours(Image<Hsv, Byte> sourse)

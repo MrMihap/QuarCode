@@ -134,6 +134,7 @@ namespace recognDebug
     void ImageParser_OnImageFiltered(Image<Hsv, byte> sourse)
     {
       sourse.ToBitmap().Save(currentFileName.Replace(".jpg","_pass.png"), System.Drawing.Imaging.ImageFormat.Png);
+      (new Image<Bgr, Byte>(currentFileName)).SmoothMedian(9).ToBitmap().Save(currentFileName.Replace(".jpg", "_pass_blur.png"), System.Drawing.Imaging.ImageFormat.Png);
     }
   }
 }
