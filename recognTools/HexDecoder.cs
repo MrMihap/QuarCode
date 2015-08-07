@@ -233,14 +233,16 @@ namespace recognTools
         mainPoints[i].X += (RotatedImage.Width / 2 + left) - left;
         mainPoints[i].Y += (RotatedImage.Height / 2 + bottom) -bottom;
       }
-      // 3.Вырезаем основной контур(повернутый) из основного изображения
+      // 3.Вырезаем основной контур(повернутый) из обрезанного и повернутого изображения
       bottom = mainPoints.Min(x => x.Y);
       top = mainPoints.Max(x => x.Y);
       left = mainPoints.Min(x => x.X);
       right = mainPoints.Max(x => x.X);
       box = new Rectangle(left, bottom, right - left, top - bottom);
+      // При некорректном контуре падает
       //CroptedImage = RotatedImage.GetSubRect(box);
 
+      //Раскоментировать при победе над багами
       //return CroptedImage;
       RotatedImage.DrawPolyline(mainPoints, true, new Bgr(Color.Red), 2);
       return RotatedImage;
