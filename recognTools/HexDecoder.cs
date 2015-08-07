@@ -168,7 +168,7 @@ namespace recognTools
           for (int j = 1; j < contours.Size && !ready; j++)
           {
 
-            if (Math.Abs(Areas[i] / Areas[j] - 0.33) < 0.069)
+            if (Math.Abs(Areas[i] / Areas[j] - 0.33) < 0.075)
             {
               result.Push(contours[j]);
               result.Push(contours[i]);
@@ -183,7 +183,7 @@ namespace recognTools
     public static Image<Bgr, Byte> CropCodeFromImage(Image<Bgr, Byte> sourse, VectorOfVectorOfPoint Contours)
     {
 
-      Image<Bgr, Byte> CroptedImage;// = sourse.GetSubRect(new Rectangle(0,0, 100,100));
+      Image<Bgr, Byte> CroptedImage;
       int idMain = 0;
       int idBlue = 1;
       if (CvInvoke.ContourArea(Contours[0]) < CvInvoke.ContourArea(Contours[1]))
@@ -194,7 +194,7 @@ namespace recognTools
       Point[] mainPoints = Contours[idMain].ToArray();
       Point[] subPoints = Contours[idBlue].ToArray();
       Image<Bgr, Byte> RotatedImage;
-      // 0.Вырежем основной контур(в целях оптимизации)
+      // 0.Вырежем прямоугольник описанный вокруг основного контура(в целях оптимизации)
       int bottom = mainPoints.Min(x => x.Y);
       int top = mainPoints.Max(x => x.Y);
       int left = mainPoints.Min(x => x.X);
@@ -210,36 +210,39 @@ namespace recognTools
       // 1.2 Ищем угол поворота, который поставит одну над второй
       if (mainLeft.X != subLeft.X)
       {
-        double tg = (mainLeft.Y - subLeft.Y) / (mainLeft.X - subLeft.X);
+        double tg = (mainLeft.Y - subLeft.Y) / (double)(mainLeft.X - subLeft.X);
+
         Angle = Math.Atan(tg) * 180 / Math.PI;
+        // случай перевернутого изображения
+        if (mainLeft.Y > subLeft.Y) Angle += 180;
       }
       // 1.3 Поворачиваем основное изображение на этот угол
       RotatedImage = CroptedImage.Rotate(Angle, new Bgr(Color.White));
-      // 1.4 Поворачиваем контур на этот угол
+      // 2 Поворачиваем контур на этот угол
 
       for (int i = 0; i < Contours[idMain].Size; i++)
       {
-        // переход в систему координат центра изображения
-        mainPoints[i].X -= center.X;
-        mainPoints[i].Y -= center.Y;
+        // переход в систему координат центра отрезанного изображения из основного
+        mainPoints[i].X -= (RotatedImage.Width / 2 + left);
+        mainPoints[i].Y -= (RotatedImage.Height / 2 + bottom);
         // умножение на матрицу поворота
-        mainPoints[i].X = (int)(mainPoints[i].X * Math.Cos(Angle) - mainPoints[i].Y * Math.Sin(Angle));
-        mainPoints[i].Y = (int)(mainPoints[i].X * Math.Sin(Angle) + mainPoints[i].Y * Math.Cos(Angle));
-        // обратный переход в координаты изображения
-        mainPoints[i].X += center.X;
-        mainPoints[i].Y += center.Y;
+        Point old = mainPoints[i];
+        mainPoints[i].X = (int)(old.X * Math.Cos(Angle) - old.Y * Math.Sin(Angle));
+        mainPoints[i].Y = (int)(-old.X * Math.Sin(Angle) + old.Y * Math.Cos(Angle));
+        // обратный переход в координаты отрезанного изображения 
+        mainPoints[i].X += (RotatedImage.Width / 2 + left) - left;
+        mainPoints[i].Y += (RotatedImage.Height / 2 + bottom) -bottom;
       }
-      // 2.Вырезаем основной контур
+      // 3.Вырезаем основной контур(повернутый) из основного изображения
       bottom = mainPoints.Min(x => x.Y);
       top = mainPoints.Max(x => x.Y);
       left = mainPoints.Min(x => x.X);
       right = mainPoints.Max(x => x.X);
       box = new Rectangle(left, bottom, right - left, top - bottom);
       //CroptedImage = RotatedImage.GetSubRect(box);
-      // 3.Поворачиваем на найденый угол угол
 
-      // 4.Вставляем повернтуый контур в новое изображение
       //return CroptedImage;
+      RotatedImage.DrawPolyline(mainPoints, true, new Bgr(Color.Red), 2);
       return RotatedImage;
     }
 

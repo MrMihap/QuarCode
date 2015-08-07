@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using System.IO;
+using System.Media;
 
 using Emgu.CV;
 using Emgu.CV.Structure;
@@ -103,14 +104,23 @@ namespace recognDebug
       //debug mode
       //packet processing
       ImageParser.OnImageFiltered += ImageParser_OnImageFiltered;
-      if (Directory.Exists(dirname)) 
+      ImageParser.OnHexImageCropted += ImageParser_OnHexImageCropted;
+      if (Directory.Exists(dirname))
       {
         foreach (string fileName in Directory.GetFiles(dirname))
         {
           currentFileName = fileName;
           ImageParser.RecieveImage(new Image<Bgr, Byte>(fileName));
+          SystemSounds.Beep.Play();
+
         }
       }
+    }
+
+    void ImageParser_OnHexImageCropted(Image<Bgr, byte> sourse)
+    {
+      sourse.ToBitmap().Save(currentFileName.Replace(".jpg", "_passCrop.png"), System.Drawing.Imaging.ImageFormat.Png);
+     
     }
 
     void ImageParser_OnImageFiltered(Image<Hsv, byte> sourse)
