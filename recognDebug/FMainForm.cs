@@ -69,8 +69,9 @@ namespace recognDebug
     private void FMainForm_Load(object sender, EventArgs e)
     {
       ImageParser.AddDevDataReciever(this as object);
-      RawImageBox.SizeMode = PictureBoxSizeMode.StretchImage;
-      FilteredImageBox.SizeMode = PictureBoxSizeMode.StretchImage;
+      RawImageBox.SizeMode = PictureBoxSizeMode.Zoom;
+      FilteredImageBox.SizeMode = PictureBoxSizeMode.Zoom;
+      cropImageBox.SizeMode = PictureBoxSizeMode.Zoom;
     }
 
     private void ExitButton_Click(object sender, EventArgs e)

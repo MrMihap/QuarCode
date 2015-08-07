@@ -188,7 +188,7 @@
             | System.Windows.Forms.AnchorStyles.Left)));
       this.cropImageBox.Location = new System.Drawing.Point(12, 520);
       this.cropImageBox.Name = "cropImageBox";
-      this.cropImageBox.Size = new System.Drawing.Size(382, 190);
+      this.cropImageBox.Size = new System.Drawing.Size(210, 188);
       this.cropImageBox.TabIndex = 9;
       this.cropImageBox.TabStop = false;
       // 
