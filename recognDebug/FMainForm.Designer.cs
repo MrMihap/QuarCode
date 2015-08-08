@@ -43,13 +43,10 @@
       this.label3 = new System.Windows.Forms.Label();
       this.LastCodeTextBox = new System.Windows.Forms.TextBox();
       this.label4 = new System.Windows.Forms.Label();
-      this.OptionsGroupBox = new System.Windows.Forms.GroupBox();
-      this.cropImageBox = new Emgu.CV.UI.ImageBox();
       ((System.ComponentModel.ISupportInitialize)(this.RawImageBox)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.FilteredImageBox)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.CroptedImageBox)).BeginInit();
       this.menuStrip1.SuspendLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.cropImageBox)).BeginInit();
       this.SuspendLayout();
       // 
       // RawImageBox
@@ -66,17 +63,17 @@
       // 
       this.FilteredImageBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-      this.FilteredImageBox.Location = new System.Drawing.Point(657, 50);
+      this.FilteredImageBox.Location = new System.Drawing.Point(12, 546);
       this.FilteredImageBox.Name = "FilteredImageBox";
-      this.FilteredImageBox.Size = new System.Drawing.Size(659, 460);
+      this.FilteredImageBox.Size = new System.Drawing.Size(181, 137);
       this.FilteredImageBox.TabIndex = 2;
       this.FilteredImageBox.TabStop = false;
       // 
       // CroptedImageBox
       // 
-      this.CroptedImageBox.Location = new System.Drawing.Point(1350, 50);
+      this.CroptedImageBox.Location = new System.Drawing.Point(656, 54);
       this.CroptedImageBox.Name = "CroptedImageBox";
-      this.CroptedImageBox.Size = new System.Drawing.Size(45, 460);
+      this.CroptedImageBox.Size = new System.Drawing.Size(611, 460);
       this.CroptedImageBox.TabIndex = 2;
       this.CroptedImageBox.TabStop = false;
       // 
@@ -141,7 +138,7 @@
       // label2
       // 
       this.label2.AutoSize = true;
-      this.label2.Location = new System.Drawing.Point(654, 31);
+      this.label2.Location = new System.Drawing.Point(13, 530);
       this.label2.Name = "label2";
       this.label2.Size = new System.Drawing.Size(73, 13);
       this.label2.TabIndex = 4;
@@ -150,7 +147,7 @@
       // label3
       // 
       this.label3.AutoSize = true;
-      this.label3.Location = new System.Drawing.Point(1347, 31);
+      this.label3.Location = new System.Drawing.Point(653, 38);
       this.label3.Name = "label3";
       this.label3.Size = new System.Drawing.Size(73, 13);
       this.label3.TabIndex = 5;
@@ -172,33 +169,11 @@
       this.label4.TabIndex = 7;
       this.label4.Text = "LastReconizedCode";
       // 
-      // OptionsGroupBox
-      // 
-      this.OptionsGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-      this.OptionsGroupBox.Location = new System.Drawing.Point(478, 559);
-      this.OptionsGroupBox.Name = "OptionsGroupBox";
-      this.OptionsGroupBox.Size = new System.Drawing.Size(838, 138);
-      this.OptionsGroupBox.TabIndex = 8;
-      this.OptionsGroupBox.TabStop = false;
-      this.OptionsGroupBox.Text = "Options";
-      // 
-      // cropImageBox
-      // 
-      this.cropImageBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
-      this.cropImageBox.Location = new System.Drawing.Point(12, 520);
-      this.cropImageBox.Name = "cropImageBox";
-      this.cropImageBox.Size = new System.Drawing.Size(210, 188);
-      this.cropImageBox.TabIndex = 9;
-      this.cropImageBox.TabStop = false;
-      // 
       // FMainForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.ClientSize = new System.Drawing.Size(1362, 711);
-      this.Controls.Add(this.cropImageBox);
-      this.Controls.Add(this.OptionsGroupBox);
       this.Controls.Add(this.label4);
       this.Controls.Add(this.LastCodeTextBox);
       this.Controls.Add(this.label3);
@@ -216,7 +191,6 @@
       ((System.ComponentModel.ISupportInitialize)(this.CroptedImageBox)).EndInit();
       this.menuStrip1.ResumeLayout(false);
       this.menuStrip1.PerformLayout();
-      ((System.ComponentModel.ISupportInitialize)(this.cropImageBox)).EndInit();
       this.ResumeLayout(false);
       this.PerformLayout();
 
@@ -238,8 +212,6 @@
     private System.Windows.Forms.Label label3;
     private System.Windows.Forms.TextBox LastCodeTextBox;
     private System.Windows.Forms.Label label4;
-    private System.Windows.Forms.GroupBox OptionsGroupBox;
-    private Emgu.CV.UI.ImageBox cropImageBox;
   }
 }
 
