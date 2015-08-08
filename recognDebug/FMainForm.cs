@@ -32,10 +32,10 @@ namespace recognDebug
 
     void IRecieveCroptedImage.Recieve(Image<Bgr, Byte> sourse)
     {
-      if (cropImageBox.InvokeRequired)
-        cropImageBox.BeginInvoke(new Action(() => cropImageBox.Image = sourse));
+      if (CroptedImageBox.InvokeRequired)
+        CroptedImageBox.BeginInvoke(new Action(() => CroptedImageBox.Image = sourse));
       else
-        cropImageBox.Image = sourse;
+        CroptedImageBox.Image = sourse;
     }
 
     void IRecieveFilteredImage.Recieve(Image<Hsv, Byte> sourse)
@@ -72,7 +72,7 @@ namespace recognDebug
       ImageParser.AddDevDataReciever(this as object);
       RawImageBox.SizeMode = PictureBoxSizeMode.Zoom;
       FilteredImageBox.SizeMode = PictureBoxSizeMode.Zoom;
-      cropImageBox.SizeMode = PictureBoxSizeMode.Zoom;
+      CroptedImageBox.SizeMode = PictureBoxSizeMode.Zoom;
     }
 
     private void ExitButton_Click(object sender, EventArgs e)
@@ -107,7 +107,7 @@ namespace recognDebug
       ImageParser.OnHexImageCropted += ImageParser_OnHexImageCropted;
       if (Directory.Exists(dirname))
       {
-        foreach (string fileName in Directory.GetFiles(dirname))
+        foreach (string fileName in Directory.GetFiles(dirname).Where(d=> !d.Contains("pass")))
         {
           currentFileName = fileName;
           ImageParser.RecieveImage(new Image<Bgr, Byte>(fileName));
@@ -120,13 +120,13 @@ namespace recognDebug
     void ImageParser_OnHexImageCropted(Image<Bgr, byte> sourse)
     {
       sourse.ToBitmap().Save(currentFileName.Replace(".jpg", "_passCrop.png"), System.Drawing.Imaging.ImageFormat.Png);
-     
+      
     }
 
     void ImageParser_OnImageFiltered(Image<Hsv, byte> sourse)
     {
-      sourse.ToBitmap().Save(currentFileName.Replace(".jpg","_pass.png"), System.Drawing.Imaging.ImageFormat.Png);
-      (new Image<Bgr, Byte>(currentFileName)).SmoothMedian(9).ToBitmap().Save(currentFileName.Replace(".jpg", "_pass_blur.png"), System.Drawing.Imaging.ImageFormat.Png);
+      //sourse.ToBitmap().Save(currentFileName.Replace(".jpg","_pass.png"), System.Drawing.Imaging.ImageFormat.Png);
+      //(new Image<Bgr, Byte>(currentFileName)).SmoothMedian(9).ToBitmap().Save(currentFileName.Replace(".jpg", "_pass_blur.png"), System.Drawing.Imaging.ImageFormat.Png);
     }
   }
 }
