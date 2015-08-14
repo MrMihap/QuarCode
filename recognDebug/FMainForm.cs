@@ -16,6 +16,7 @@ using Emgu.CV.Structure;
 using Emgu.CV.Util;
 
 using recognTools;
+using Quarcode.Core;
 
 namespace recognDebug
 {
@@ -145,5 +146,22 @@ namespace recognDebug
       sourse.ToBitmap().Save(currentFileName.Replace(".jpg","_pass.png"), System.Drawing.Imaging.ImageFormat.Png);
       //(new Image<Bgr, Byte>(currentFileName)).SmoothMedian(9).ToBitmap().Save(currentFileName.Replace(".jpg", "_pass_blur.png"), System.Drawing.Imaging.ImageFormat.Png);
     }
+
+    private void DecodeTestButton_Click(object sender, EventArgs e)
+    {
+      const int testCount = 3000;
+      int CompareCount = 0;
+      for (int i = 0; i < testCount; i++)
+      {
+        string value = CCoder.genMsg();
+        List<bool> array = CCoder.EnCode(value, 72);
+        int ticks = Environment.TickCount;
+        string result = CCoder.DeCode(array);
+        ticks = Environment.TickCount - ticks;
+        string subvalue = result.Substring(0, 12);
+        if (subvalue.Contains(value)) CompareCount++;
+      }
+    }
+
   }
 }

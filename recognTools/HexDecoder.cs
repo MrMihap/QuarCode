@@ -98,7 +98,7 @@ namespace recognTools
       // 3.To HSV
       Image<Bgr, Byte> filteredimage = new Image<Bgr, byte>(sourse.ToBitmap());
       filteredimage.Data = dst;
-      filteredimage = filteredimage.SmoothMedian(9);
+      filteredimage = filteredimage.SmoothMedian(5);
       return filteredimage.Convert<Hsv, Byte>();
     }
 

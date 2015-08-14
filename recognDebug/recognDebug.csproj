@@ -92,6 +92,10 @@
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Quarcode\Quarcode.csproj">
+      <Project>{2237956e-d1c0-43c4-9890-bdba16bf3090}</Project>
+      <Name>Quarcode</Name>
+    </ProjectReference>
     <ProjectReference Include="..\recognTools\recognTools.csproj">
       <Project>{89a2175a-855b-4e24-b455-628f348cbf19}</Project>
       <Name>recognTools</Name>

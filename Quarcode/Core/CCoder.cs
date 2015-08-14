@@ -65,11 +65,13 @@ namespace Quarcode.Core
     {
       String result = null;
       int cap = 0;
-      for (int i = 0; i < 12; i++)
+      for (int i = 0; i < array.Count / 6; i++)
       {
         cap = 0;
         for (int j = 0; j < 6; j++)
-        if (array[i * 6 + j]) cap += (int)Math.Pow((double)2, (double)j);
+        {
+          if (array[i * 6 + j]) cap += (int)Math.Pow((double)2, (double)j);
+        }
         if (cap >= 0 && cap <= 25) { result += (char)(cap + 97); continue; }
         if (cap >= 26 && cap <= 51) { result += (char)(cap + 39); continue; }
         if (cap >= 52 && cap <= 61) { result += (char)(cap - 4); continue; }
@@ -128,7 +130,7 @@ namespace Quarcode.Core
         sb.AppendFormat("{0:x2}", dataMd5[i]);
       return sb.ToString();
     }
-
+    
     #region Colors
     public static List<Color> ByteTrueColors = new List<Color>();
     public static List<Color> ByteFalseColors = new List<Color>();

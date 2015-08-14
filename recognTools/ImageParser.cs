@@ -36,7 +36,9 @@ namespace recognTools
       public static void RecieveImage(Image<Bgr, Byte> sourse)
       {
         // 0. Scale
-        sourse.Resize(0.5, Inter.Linear);
+        int WorkWidth = 1000;
+        double reSize = WorkWidth / (double) sourse.Width;
+        sourse = sourse.Resize(reSize, Inter.Linear);
         // 1. Recieve
         OnImageRecieved(sourse.SmoothMedian(9));
 
@@ -65,7 +67,7 @@ namespace recognTools
 
       public static void RecieveImageAsync(Image<Bgr, Byte> sourse)
       {
-        throw new NotImplementedException("will write");
+        throw new NotImplementedException("will be inplemented soon");
       }
 
     }

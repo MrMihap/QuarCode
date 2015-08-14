@@ -43,6 +43,9 @@
       this.label3 = new System.Windows.Forms.Label();
       this.LastCodeTextBox = new System.Windows.Forms.TextBox();
       this.label4 = new System.Windows.Forms.Label();
+      this.тестToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.DecodeTestButton = new System.Windows.Forms.ToolStripMenuItem();
+      this.общийТестToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       ((System.ComponentModel.ISupportInitialize)(this.RawImageBox)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.FilteredImageBox)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.CroptedImageBox)).BeginInit();
@@ -81,6 +84,7 @@
       // 
       this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.файлToolStripMenuItem,
+            this.тестToolStripMenuItem,
             this.secondExitButton});
       this.menuStrip1.Location = new System.Drawing.Point(0, 0);
       this.menuStrip1.Name = "menuStrip1";
@@ -169,6 +173,28 @@
       this.label4.TabIndex = 7;
       this.label4.Text = "LastReconizedCode";
       // 
+      // тестToolStripMenuItem
+      // 
+      this.тестToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.DecodeTestButton,
+            this.общийТестToolStripMenuItem});
+      this.тестToolStripMenuItem.Name = "тестToolStripMenuItem";
+      this.тестToolStripMenuItem.Size = new System.Drawing.Size(43, 20);
+      this.тестToolStripMenuItem.Text = "Тест";
+      // 
+      // DecodeTestButton
+      // 
+      this.DecodeTestButton.Name = "DecodeTestButton";
+      this.DecodeTestButton.Size = new System.Drawing.Size(169, 22);
+      this.DecodeTestButton.Text = "Декодинг данных";
+      this.DecodeTestButton.Click += new System.EventHandler(this.DecodeTestButton_Click);
+      // 
+      // общийТестToolStripMenuItem
+      // 
+      this.общийТестToolStripMenuItem.Name = "общийТестToolStripMenuItem";
+      this.общийТестToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
+      this.общийТестToolStripMenuItem.Text = "Общий тест";
+      // 
       // FMainForm
       // 
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -212,6 +238,9 @@
     private System.Windows.Forms.Label label3;
     private System.Windows.Forms.TextBox LastCodeTextBox;
     private System.Windows.Forms.Label label4;
+    private System.Windows.Forms.ToolStripMenuItem тестToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem DecodeTestButton;
+    private System.Windows.Forms.ToolStripMenuItem общийТестToolStripMenuItem;
   }
 }
 
