@@ -98,7 +98,7 @@ namespace recognTools
       // 3.To HSV
       Image<Bgr, Byte> filteredimage = new Image<Bgr, byte>(sourse.ToBitmap());
       filteredimage.Data = dst;
-      //filteredimage = filteredimage.SmoothMedian(9);
+      filteredimage = filteredimage.SmoothMedian(9);
       return filteredimage.Convert<Hsv, Byte>();
     }
 
@@ -167,7 +167,6 @@ namespace recognTools
         {
           for (int j = 1; j < contours.Size && !ready; j++)
           {
-
             if (Math.Abs(Areas[i] / Areas[j] - 0.33) < 0.1)
             {
               result.Push(contours[j]);
@@ -182,7 +181,6 @@ namespace recognTools
 
     public static Image<Bgr, Byte> CropCodeFromImage(Image<Bgr, Byte> sourse, VectorOfVectorOfPoint Contours)
     {
-
       Image<Bgr, Byte> CroptedImage;
       int idMain = 0;
       int idBlue = 1;
@@ -228,7 +226,7 @@ namespace recognTools
       // 1.3 Поворачиваем основное изображение на этот угол
       /*DEBUG*/
       //sourse.Draw(contourRectangle, new Bgr(Color.Blue), 3);
-      RotatedImage = CroptedImage.Rotate(Angle * 180 / Math.PI, new Bgr(Color.White), true);
+      RotatedImage = CroptedImage.Rotate(Angle * 180 / Math.PI, new Bgr(Color.White), false);
       
       // 2 Поворачиваем контур на этот угол
 
@@ -245,8 +243,9 @@ namespace recognTools
         mainPoints[i].X = (int)(old.X * Math.Cos(Angle) - old.Y * Math.Sin(Angle));
         mainPoints[i].Y = (int)(+old.X * Math.Sin(Angle) + old.Y * Math.Cos(Angle));
         // обратный переход в координаты отрезанного изображения 
-        mainPoints[i].X += center.X;
-        mainPoints[i].Y += center.Y;
+        mainPoints[i].X += center.X + (RotatedImage.Width - CroptedImage.Width)/2;
+        mainPoints[i].Y += center.Y + (RotatedImage.Height - CroptedImage.Height)/2;
+        
       }
       // 3.Вырезаем основной контур(повернутый) из обрезанного и повернутого изображения
       bottom = mainPoints.Min(x => x.Y);
@@ -256,13 +255,20 @@ namespace recognTools
       box = new Rectangle(left, bottom, right - left, top - bottom);
       // При некорректном контуре падает
       //Раскоментировать при победе над багами
-      CroptedImage = RotatedImage.GetSubRect(box);
-
+      if(left < 0 || right < 0 || top > RotatedImage.Height || right > RotatedImage.Width)
+      {
+        RotatedImage.DrawPolyline(mainPoints, true, new Bgr(Color.Red), 2);
+        return RotatedImage;
+      }
+      else
+      {
+        CroptedImage = RotatedImage.GetSubRect(box);
+      }
       //Раскоментировать при победе над багами
       return CroptedImage;
-      //RotatedImage.DrawPolyline(mainPoints, true, new Bgr(Color.Red), 2);
-      return RotatedImage;
     }
+
+
 
   }
 }

@@ -61,6 +61,23 @@ namespace Quarcode.Core
 
     }
 
+    public static string DeCode(List<bool> array)
+    {
+      String result = null;
+      int cap = 0;
+      for (int i = 0; i < 12; i++)
+      {
+        cap = 0;
+        for (int j = 0; j < 6; j++)
+        if (array[i * 6 + j]) cap += (int)Math.Pow((double)2, (double)j);
+        if (cap >= 0 && cap <= 25) { result += (char)(cap + 97); continue; }
+        if (cap >= 26 && cap <= 51) { result += (char)(cap + 39); continue; }
+        if (cap >= 52 && cap <= 61) { result += (char)(cap - 4); continue; }
+
+      }
+      return result;
+    }
+
     public static Color GetColorFor(PointType pointType)
     {
       switch (pointType)

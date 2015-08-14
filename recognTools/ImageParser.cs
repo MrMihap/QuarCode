@@ -63,5 +63,10 @@ namespace recognTools
 
       }
 
+      public static void RecieveImageAsync(Image<Bgr, Byte> sourse)
+      {
+        throw new NotImplementedException("will write");
+      }
+
     }
 }
