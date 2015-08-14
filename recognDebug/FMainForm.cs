@@ -24,6 +24,10 @@ namespace recognDebug
     string dirname = @"../../../testimg/";
     private string currentFileName;
 
+    int CropCount = 0;
+    int RecognCount = 0;
+    int TotalCount = 0;
+
     public FMainForm()
     {
       InitializeComponent();
@@ -106,27 +110,39 @@ namespace recognDebug
       //packet processing
       ImageParser.OnImageFiltered += ImageParser_OnImageFiltered;
       ImageParser.OnHexImageCropted += ImageParser_OnHexImageCropted;
+      ImageParser.OnHexCodeRecognized += ImageParser_OnHexCodeRecognized;
+      int tickCount = Environment.TickCount;
       if (Directory.Exists(dirname))
       {
-        foreach (string fileName in Directory.GetFiles(dirname))
+        foreach (string fileName in Directory.GetFiles(dirname).Where(x => x.Contains("scene") && x.Contains(".jpg")))
         {
           currentFileName = fileName;
           ImageParser.RecieveImage(new Image<Bgr, Byte>(fileName));
-          SystemSounds.Beep.Play();
+          TotalCount++;
+
+          //SystemSounds.Beep.Play();
 
         }
       }
+      tickCount = Environment.TickCount - tickCount;
+      MessageBox.Show("Total time: " + (tickCount / 1000.0).ToString() + "\n Cropted: " + CropCount.ToString() + 
+        "\n Recogned: " + RecognCount.ToString() + " \n From Total items :" + TotalCount.ToString());
+    }
+
+    void ImageParser_OnHexCodeRecognized(string code)
+    {
+      RecognCount++;
     }
 
     void ImageParser_OnHexImageCropted(Image<Bgr, byte> sourse)
     {
       sourse.ToBitmap().Save(currentFileName.Replace(".jpg", "_passCrop.png"), System.Drawing.Imaging.ImageFormat.Png);
-     
+      CropCount++;
     }
 
     void ImageParser_OnImageFiltered(Image<Hsv, byte> sourse)
     {
-      //sourse.ToBitmap().Save(currentFileName.Replace(".jpg","_pass.png"), System.Drawing.Imaging.ImageFormat.Png);
+      sourse.ToBitmap().Save(currentFileName.Replace(".jpg","_pass.png"), System.Drawing.Imaging.ImageFormat.Png);
       //(new Image<Bgr, Byte>(currentFileName)).SmoothMedian(9).ToBitmap().Save(currentFileName.Replace(".jpg", "_pass_blur.png"), System.Drawing.Imaging.ImageFormat.Png);
     }
   }

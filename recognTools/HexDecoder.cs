@@ -26,7 +26,7 @@ namespace recognTools
     {
       // 1.Gauss 
       //sourse.SmoothGaussian(7);
-      sourse = sourse.SmoothMedian(9);
+      //sourse = sourse.SmoothMedian(9);
       // 2.Color filter
       byte[, ,] data = sourse.Data;
 
@@ -40,7 +40,7 @@ namespace recognTools
       //const byte treshhold = 15;
       const int grayMax = 110; // превышение этого уровня по любому каналу означет отсутствие черного
       const byte zeroLevel = 70;//уровень выше которого цвет проверяется на отклонение от серого
-      const byte colorDif = 35; // максимальное отклонение между цветами
+      const byte colorDif = 30; // максимальное отклонение между цветами
       for (int i = sourse.Rows - 1; i >= 0; i--)
       {
         for (int j = sourse.Cols - 1; j >= 0; j--)
@@ -168,7 +168,7 @@ namespace recognTools
           for (int j = 1; j < contours.Size && !ready; j++)
           {
 
-            if (Math.Abs(Areas[i] / Areas[j] - 0.33) < 0.075)
+            if (Math.Abs(Areas[i] / Areas[j] - 0.33) < 0.1)
             {
               result.Push(contours[j]);
               result.Push(contours[i]);
