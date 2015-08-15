@@ -25,7 +25,7 @@ namespace Quarcode.Core
     /// <summary>
     /// Builds 6 bit byte from List of bool
     /// </summary>
-    /// <param name="array">Sourse list of bool values</param>
+    /// <param name="array">source list of bool values</param>
     public byte6(List<bool> array)
     {
       if (array.Count != 6) throw new Exception("invalid array param");

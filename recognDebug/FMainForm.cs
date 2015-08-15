@@ -35,21 +35,21 @@ namespace recognDebug
       
     }
 
-    void IRecieveCroptedImage.Recieve(Image<Bgr, Byte> sourse)
+    void IRecieveCroptedImage.Recieve(Image<Bgr, Byte> source)
     {
 
       if (CroptedImageBox.InvokeRequired)
-        CroptedImageBox.BeginInvoke(new Action(() => CroptedImageBox.Image = sourse));
+        CroptedImageBox.BeginInvoke(new Action(() => CroptedImageBox.Image = source));
       else
-        CroptedImageBox.Image = sourse;
+        CroptedImageBox.Image = source;
     }
 
-    void IRecieveFilteredImage.Recieve(Image<Hsv, Byte> sourse)
+    void IRecieveFilteredImage.Recieve(Image<Hsv, Byte> source)
     {
       if (FilteredImageBox.InvokeRequired)
-        FilteredImageBox.BeginInvoke(new Action(() => FilteredImageBox.Image = sourse));
+        FilteredImageBox.BeginInvoke(new Action(() => FilteredImageBox.Image = source));
       else
-        FilteredImageBox.Image = sourse;
+        FilteredImageBox.Image = source;
     }
 
     void IRecieveFoundContours.Recieve(VectorOfVectorOfPoint contourList)
@@ -57,12 +57,12 @@ namespace recognDebug
         CvInvoke.DrawContours(RawImageBox.Image, contourList, -1, new Bgr(Color.Green).MCvScalar, 3);
     }
 
-    void IRecieveRawImage.Recieve(Image<Bgr, Byte> sourse) 
+    void IRecieveRawImage.Recieve(Image<Bgr, Byte> source) 
     {
       if (RawImageBox.InvokeRequired)
-        RawImageBox.BeginInvoke(new Action(() => RawImageBox.Image = sourse));
+        RawImageBox.BeginInvoke(new Action(() => RawImageBox.Image = source));
       else
-        RawImageBox.Image = sourse;
+        RawImageBox.Image = source;
     }
 
     void IRecieveRecognizedCode.Recieve(string code) 
@@ -135,15 +135,15 @@ namespace recognDebug
       RecognCount++;
     }
 
-    void ImageParser_OnHexImageCropted(Image<Bgr, byte> sourse)
+    void ImageParser_OnHexImageCropted(Image<Bgr, byte> source)
     {
-      sourse.ToBitmap().Save(currentFileName.Replace(".jpg", "_passCrop.png"), System.Drawing.Imaging.ImageFormat.Png);
+      source.ToBitmap().Save(currentFileName.Replace(".jpg", "_passCrop.png"), System.Drawing.Imaging.ImageFormat.Png);
       CropCount++;
     }
 
-    void ImageParser_OnImageFiltered(Image<Hsv, byte> sourse)
+    void ImageParser_OnImageFiltered(Image<Hsv, byte> source)
     {
-      sourse.ToBitmap().Save(currentFileName.Replace(".jpg","_pass.png"), System.Drawing.Imaging.ImageFormat.Png);
+      source.ToBitmap().Save(currentFileName.Replace(".jpg","_pass.png"), System.Drawing.Imaging.ImageFormat.Png);
       //(new Image<Bgr, Byte>(currentFileName)).SmoothMedian(9).ToBitmap().Save(currentFileName.Replace(".jpg", "_pass_blur.png"), System.Drawing.Imaging.ImageFormat.Png);
     }
 

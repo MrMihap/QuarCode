@@ -19,11 +19,11 @@ namespace recognTools
   }
   public interface IRecieveRawImage
   {
-    void Recieve(Image<Bgr, Byte> sourse);
+    void Recieve(Image<Bgr, Byte> source);
   }
   public interface IRecieveFilteredImage
   {
-    void Recieve(Image<Hsv, Byte> sourse);
+    void Recieve(Image<Hsv, Byte> source);
   }
   public interface IRecieveFoundContours
   {
@@ -31,6 +31,6 @@ namespace recognTools
   }
   public interface IRecieveCroptedImage
   {
-    void Recieve(Image<Bgr, Byte> sourse);
+    void Recieve(Image<Bgr, Byte> source);
   }
 }

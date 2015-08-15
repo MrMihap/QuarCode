@@ -16,7 +16,7 @@ namespace Quarcode.View
   {
     public event GenerateMsgQueryDelegate OnMsgGenerateQuery;
     private SViewState viewState = new SViewState();
-    private volatile Bitmap sourseImage = null;
+    private volatile Bitmap sourceImage = null;
     public FimgView()
     {
       InitializeComponent();
@@ -25,7 +25,7 @@ namespace Quarcode.View
     }
     void IViewInterfaces.RecieveImg(Bitmap bmp)
     {
-      sourseImage = bmp;
+      sourceImage = bmp;
       Size s = new System.Drawing.Size();
       s.Height = 700;
       s.Width = s.Height;

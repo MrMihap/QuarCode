@@ -19,14 +19,14 @@ namespace recognTools
     /// <summary>
     /// Пытается найти валидируемый код на обрезанном по контору гекс кода изображении
     /// </summary>
-    /// <param name="sourse">Cropted Hex Image</param>
+    /// <param name="source">Cropted Hex Image</param>
     /// <returns> возвращает прочитанный валидированный код или null</returns>
-    public static string TryDecode(Image<Bgr, Byte> sourse)
+    public static string TryDecode(Image<Bgr, Byte> source)
     {
       int threshold = 120;
       int r, g, b;
-      CPointsMatrix matrix = new CPointsMatrix(sourse.Height);
-      byte[, ,] dst = sourse.Data;
+      CPointsMatrix matrix = new CPointsMatrix(source.Height);
+      byte[, ,] dst = source.Data;
       List<bool> bitlist = new List<bool>();
       for (int i = 0; i < 136; i++)
       {
@@ -40,23 +40,23 @@ namespace recognTools
 
       }
       string fullResult = CCoder.DeCode(bitlist);
-      string messegeCandidate = fullResult.Substring(0, 12);
+      string messageCandidate = fullResult.Substring(0, 12);
       string md5 = fullResult.Substring(12, 10);
-      if (CCoder.GetMd5Sum(messegeCandidate).Substring(0, 10).Equals(md5))
-        return messegeCandidate;
+      if (CCoder.GetMd5Sum(messageCandidate).Substring(0, 10).Equals(md5))
+        return messageCandidate;
       else
         return null;
     }
-    public static Image<Hsv, Byte> Filter(Image<Bgr, Byte> sourse)
+    public static Image<Hsv, Byte> Filter(Image<Bgr, Byte> source)
     {
       // 1.Gauss 
-      //sourse.SmoothGaussian(7);
-      //sourse = sourse.SmoothMedian(9);
+      //source.SmoothGaussian(7);
+      //source = source.SmoothMedian(9);
       // 2.Color filter
-      byte[, ,] data = sourse.Data;
+      byte[, ,] data = source.Data;
 
-      Image<Bgr, Byte> TMP = new Image<Bgr, byte>(sourse.Width, sourse.Height);
-      //sourse.Dispose();
+      Image<Bgr, Byte> TMP = new Image<Bgr, byte>(source.Width, source.Height);
+      //source.Dispose();
       byte[, ,] dst = TMP.Data;
 
       bool IsBlack;
@@ -128,7 +128,7 @@ namespace recognTools
       return filteredimage.Convert<Hsv, Byte>();
     }
 
-    public static VectorOfVectorOfPoint FindAllContours(Image<Hsv, Byte> sourse)
+    public static VectorOfVectorOfPoint FindAllContours(Image<Hsv, Byte> source)
     {
       Image<Gray, Byte> maskHsvBlack;
       Image<Gray, Byte> maskHsvBlue;
@@ -137,7 +137,7 @@ namespace recognTools
       Hsv blackVal_min = new Hsv(0, 0, 100); Hsv blackVal_max = new Hsv(360, 255, 255);
 
       // borders
-      maskHsvBlack = sourse.InRange(blackVal_min, blackVal_max);
+      maskHsvBlack = source.InRange(blackVal_min, blackVal_max);
       maskHsvBlack.Erode(3).Dilate(3);
       maskHsvBlack = maskHsvBlack.Not();
 
@@ -147,7 +147,7 @@ namespace recognTools
 
       Image<Gray, Byte> cannyBlack = maskHsvBlack.Canny(cannyThreshold, cannyThresholdLinking);
       VectorOfVectorOfPoint borders = new VectorOfVectorOfPoint();//list of all borders
-      int minimumArea = sourse.Height * sourse.Width / 80;
+      int minimumArea = source.Height * source.Width / 80;
       using (VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint())
       {
         CvInvoke.FindContours(cannyBlack, contours, null, RetrType.List, ChainApproxMethod.ChainApproxSimple);
@@ -177,11 +177,11 @@ namespace recognTools
       return result;
     }
 
-    public static VectorOfVectorOfPoint FilterAllContours(VectorOfVectorOfPoint sourse)
+    public static VectorOfVectorOfPoint FilterAllContours(VectorOfVectorOfPoint source)
     {
       VectorOfVectorOfPoint result = new VectorOfVectorOfPoint();
       bool ready = false;
-      VectorOfVectorOfPoint contours = sourse;
+      VectorOfVectorOfPoint contours = source;
       double[] Areas = new double[contours.Size];
       for (int i = 0; i < contours.Size; i++)
       {
@@ -205,7 +205,7 @@ namespace recognTools
       return result;
     }
 
-    public static Image<Bgr, Byte> CropCodeFromImage(Image<Bgr, Byte> sourse, VectorOfVectorOfPoint Contours)
+    public static Image<Bgr, Byte> CropCodeFromImage(Image<Bgr, Byte> source, VectorOfVectorOfPoint Contours)
     {
       Image<Bgr, Byte> CroptedImage;
       int idMain = 0;
@@ -233,7 +233,7 @@ namespace recognTools
       contourRectangle[3] = mainPoints.Where(p => p.X == right).First();
 
       Rectangle box = new Rectangle(left, bottom, right - left, top - bottom);
-      CroptedImage = sourse;//.GetSubRect(box);
+      CroptedImage = source;//.GetSubRect(box);
       // 1.Ищем угол поворота относительно вертикали для вертикального выравнивания контуров
       double Angle = 0;
       // 1.1.найдем две точки : самую левую основного контура и самую левую синего  контура
@@ -251,7 +251,7 @@ namespace recognTools
       if (mainLeft.Y > subLeft.Y) Angle -= Math.PI / 2;
       // 1.3 Поворачиваем основное изображение на этот угол
       /*DEBUG*/
-      //sourse.Draw(contourRectangle, new Bgr(Color.Blue), 3);
+      //source.Draw(contourRectangle, new Bgr(Color.Blue), 3);
       RotatedImage = CroptedImage.Rotate(Angle * 180 / Math.PI, new Bgr(Color.White), false);
 
       // 2 Поворачиваем контур на этот угол
