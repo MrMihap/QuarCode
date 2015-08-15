@@ -7,6 +7,25 @@ using System.Drawing;
 using System.Security.Cryptography;
 namespace Quarcode.Core
 {
+  public class byte6
+  {
+    public byte value;
+    public List<bool> ToList()
+    {
+      List<bool> Result = new List<bool>();
+      return Result;
+    }
+
+    public byte6()
+    {
+    }
+
+    public byte6 (int num) 
+    {
+      value = (byte)num; 
+    }
+    
+  }
   public static class CCoder
   {
 
@@ -63,6 +82,7 @@ namespace Quarcode.Core
 
     public static string DeCode(List<bool> array)
     {
+      InitCharBytes();
       String result = null;
       int cap = 0;
       for (int i = 0; i < array.Count / 6; i++)
@@ -130,7 +150,49 @@ namespace Quarcode.Core
         sb.AppendFormat("{0:x2}", dataMd5[i]);
       return sb.ToString();
     }
-    
+
+    private static Dictionary<byte6, char> CharBytes = new Dictionary<byte, char>();
+    private static Dictionary<char, byte6> ByteChars = new Dictionary<char, byte>();
+
+    private static void InitCharBytes()
+    {
+      byte lowNum = 48;
+      byte lowTitle = 97;
+      byte lowLittle = 65;
+
+      byte hightNum = 58;
+      byte hightTitle = 123;
+      byte hightLittle = 91;
+
+      CharBytes.Clear();
+
+      for (byte i = lowNum; i < hightNum; i++)
+      {
+        CharBytes.Add(i, (char)i);
+      }
+      for (byte i = lowLittle; i < hightLittle; i++)
+      {
+        CharBytes.Add(i, (char)i);
+      }
+      for (byte i = lowTitle; i < hightTitle; i++)
+      {
+        CharBytes.Add(i, (char)i);
+      }
+
+      for (byte i = lowNum; i < hightNum; i++)
+      {
+       // ByteChars.Add(i, (char)i);
+      }
+      for (byte i = lowLittle; i < hightLittle; i++)
+      {
+       // ByteChars.Add(i, (char)i);
+      }
+      for (byte i = lowTitle; i < hightTitle; i++)
+      {
+       // ByteChars.Add(i, (char)i);
+      }
+    }
+
     #region Colors
     public static List<Color> ByteTrueColors = new List<Color>();
     public static List<Color> ByteFalseColors = new List<Color>();
