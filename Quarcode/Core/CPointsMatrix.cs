@@ -57,7 +57,10 @@ namespace Quarcode.Core
       Height = 1700;
       InitMatrix();
     }
-
+    /// <summary>
+    /// Init this matrix with selected height proportion
+    /// </summary>
+    /// <param name="height">Height of matrix</param>
     public CPointsMatrix(int height)
     {
       Width = height;

@@ -4,10 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+
 using Emgu.CV;
 using Emgu.CV.Structure;
 using Emgu.CV.Util;
 using Emgu.CV.CvEnum;
+
+using Quarcode.Core;
 namespace recognTools
 {
   class HexDecoder
@@ -20,7 +23,29 @@ namespace recognTools
     /// <returns> возвращает прочитанный валидированный код или null</returns>
     public static string TryDecode(Image<Bgr, Byte> sourse)
     {
-      return null;
+      int threshold = 120;
+      int r, g, b;
+      CPointsMatrix matrix = new CPointsMatrix(sourse.Height);
+      byte[, ,] dst = sourse.Data;
+      List<bool> bitlist = new List<bool>();
+      for (int i = 0; i < 136; i++)
+      {
+        b = dst[(int)matrix.Points[i].x, (int)matrix.Points[i].y, 0];
+        g = dst[(int)matrix.Points[i].x, (int)matrix.Points[i].y, 1];
+        r = dst[(int)matrix.Points[i].x, (int)matrix.Points[i].y, 2];
+        if(b > threshold && g > threshold && r > threshold)
+          bitlist.Add(false);
+        else
+          bitlist.Add(true);
+
+      }
+      string fullResult = CCoder.DeCode(bitlist);
+      string messegeCandidate = fullResult.Substring(0, 12);
+      string md5 = fullResult.Substring(12, 10);
+      if (CCoder.GetMd5Sum(messegeCandidate).Substring(0, 10).Equals(md5))
+        return messegeCandidate;
+      else
+        return null;
     }
     public static Image<Hsv, Byte> Filter(Image<Bgr, Byte> sourse)
     {
@@ -31,6 +56,7 @@ namespace recognTools
       byte[, ,] data = sourse.Data;
 
       Image<Bgr, Byte> TMP = new Image<Bgr, byte>(sourse.Width, sourse.Height);
+      //sourse.Dispose();
       byte[, ,] dst = TMP.Data;
 
       bool IsBlack;
@@ -41,9 +67,9 @@ namespace recognTools
       const int grayMax = 110; // превышение этого уровня по любому каналу означет отсутствие черного
       const byte zeroLevel = 70;//уровень выше которого цвет проверяется на отклонение от серого
       const byte colorDif = 30; // максимальное отклонение между цветами
-      for (int i = sourse.Rows - 1; i >= 0; i--)
+      for (int i = TMP.Rows - 1; i >= 0; i--)
       {
-        for (int j = sourse.Cols - 1; j >= 0; j--)
+        for (int j = TMP.Cols - 1; j >= 0; j--)
         {
           IsBlack = true;
           // 0 - blue
@@ -96,7 +122,7 @@ namespace recognTools
       }
 
       // 3.To HSV
-      Image<Bgr, Byte> filteredimage = new Image<Bgr, byte>(sourse.ToBitmap());
+      Image<Bgr, Byte> filteredimage = new Image<Bgr, byte>(TMP.ToBitmap());
       filteredimage.Data = dst;
       filteredimage = filteredimage.SmoothMedian(5);
       return filteredimage.Convert<Hsv, Byte>();
@@ -199,19 +225,19 @@ namespace recognTools
 
       int left = mainPoints.Min(x => x.X);
       contourRectangle[1] = mainPoints.Where(p => p.X == left).First();
-      
+
       int top = mainPoints.Max(x => x.Y);
       contourRectangle[2] = mainPoints.Where(p => p.Y == top).First();
 
       int right = mainPoints.Max(x => x.X);
       contourRectangle[3] = mainPoints.Where(p => p.X == right).First();
-      
+
       Rectangle box = new Rectangle(left, bottom, right - left, top - bottom);
       CroptedImage = sourse;//.GetSubRect(box);
       // 1.Ищем угол поворота относительно вертикали для вертикального выравнивания контуров
       double Angle = 0;
       // 1.1.найдем две точки : самую левую основного контура и самую левую синего  контура
-      Point mainLeft = (from p in mainPoints orderby p.X  select p).FirstOrDefault();
+      Point mainLeft = (from p in mainPoints orderby p.X select p).FirstOrDefault();
       Point subLeft = (from p in subPoints orderby p.X select p).FirstOrDefault();
       Point center = new Point(CroptedImage.Width / 2, CroptedImage.Height / 2);
       // 1.2 Ищем угол поворота, который поставит одну над второй
@@ -222,12 +248,12 @@ namespace recognTools
         Angle = Math.Atan(tg);
       }
       // случай перевернутого изображения
-      if (mainLeft.Y > subLeft.Y) Angle -= Math.PI/2;
+      if (mainLeft.Y > subLeft.Y) Angle -= Math.PI / 2;
       // 1.3 Поворачиваем основное изображение на этот угол
       /*DEBUG*/
       //sourse.Draw(contourRectangle, new Bgr(Color.Blue), 3);
       RotatedImage = CroptedImage.Rotate(Angle * 180 / Math.PI, new Bgr(Color.White), false);
-      
+
       // 2 Поворачиваем контур на этот угол
 
       Point oldCenter = new Point(center.X, center.Y);
@@ -239,13 +265,13 @@ namespace recognTools
         mainPoints[i].X -= center.X;
         mainPoints[i].Y -= center.Y;
         // умножение на матрицу поворота
-        Point old = new Point( mainPoints[i].X, mainPoints[i].Y);
+        Point old = new Point(mainPoints[i].X, mainPoints[i].Y);
         mainPoints[i].X = (int)(old.X * Math.Cos(Angle) - old.Y * Math.Sin(Angle));
         mainPoints[i].Y = (int)(+old.X * Math.Sin(Angle) + old.Y * Math.Cos(Angle));
         // обратный переход в координаты отрезанного изображения 
-        mainPoints[i].X += center.X + (RotatedImage.Width - CroptedImage.Width)/2;
-        mainPoints[i].Y += center.Y + (RotatedImage.Height - CroptedImage.Height)/2;
-        
+        mainPoints[i].X += center.X + (RotatedImage.Width - CroptedImage.Width) / 2;
+        mainPoints[i].Y += center.Y + (RotatedImage.Height - CroptedImage.Height) / 2;
+
       }
       // 3.Вырезаем основной контур(повернутый) из обрезанного и повернутого изображения
       bottom = mainPoints.Min(x => x.Y);
@@ -255,7 +281,7 @@ namespace recognTools
       box = new Rectangle(left, bottom, right - left, top - bottom);
       // При некорректном контуре падает
       //Раскоментировать при победе над багами
-      if(left < 0 || right < 0 || top > RotatedImage.Height || right > RotatedImage.Width)
+      if (left < 0 || right < 0 || top > RotatedImage.Height || right > RotatedImage.Width)
       {
         RotatedImage.DrawPolyline(mainPoints, true, new Bgr(Color.Red), 2);
         return RotatedImage;

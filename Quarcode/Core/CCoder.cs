@@ -113,7 +113,11 @@ namespace Quarcode.Core
       {
         List<bool> debug = array.GetRange(i * 6, 6);
         byte6 debug2 = new byte6(debug);
-        char Litera = CharBytes[debug2];
+        char Litera;
+        if (CharBytes.ContainsKey(debug2))
+          Litera = CharBytes[debug2];
+        else
+          Litera = '!';
         result[i] = Litera;
 
       }
@@ -201,10 +205,9 @@ namespace Quarcode.Core
       {
         CharBytes.Add(new byte6(CharBytes.Count), (char)i);
       }
-
       foreach (byte6 key in CharBytes.Keys)
       {
-        ByteChars.Add( CharBytes[key], key);
+        ByteChars.Add(CharBytes[key], key);
       }
     }
 
