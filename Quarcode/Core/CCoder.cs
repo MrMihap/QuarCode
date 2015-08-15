@@ -10,94 +10,115 @@ namespace Quarcode.Core
   public class byte6
   {
     public byte value;
-    public List<bool> ToList()
-    {
-      List<bool> Result = new List<bool>();
-      return Result;
-    }
 
     public byte6()
     {
     }
-
-    public byte6 (int num) 
+    public byte6(int num)
     {
-      value = (byte)num; 
+      value = (byte)num;
     }
-    
+    public byte6(byte num)
+    {
+      value = num;
+    }
+    /// <summary>
+    /// Builds 6 bit byte from List of bool
+    /// </summary>
+    /// <param name="array">Sourse list of bool values</param>
+    public byte6(List<bool> array)
+    {
+      if (array.Count != 6) throw new Exception("invalid array param");
+      value = 0;
+      for (int i = 0; i < 6; i++)
+      {
+        value += array[5 - i] ? (byte)Math.Pow(2, i) : (byte)0;
+      }
+    }
+    public List<bool> ToList()
+    {
+      List<bool> Result = new List<bool>();
+      byte subvalue = value;
+      for (int i = 0; i < 6; i++)
+      {
+        Result.Add(subvalue % 2 == 1 ? true : false);
+        subvalue /= 2;
+      }
+      Result.Reverse();
+      return Result;
+    }
+    public static bool operator == (byte6 left, byte6 right)
+    {
+      if(left.value == right.value) return true;
+      return false;
+    }
+    public static bool operator !=(byte6 left, byte6 right)
+    {
+      if (left.value == right.value) return false;
+      return true;
+    }
+    public override bool Equals(object obj)
+    {
+      if (obj is byte6)
+        if ((obj as byte6).value == this.value)
+          return true;
+        else
+          return false;
+      return base.Equals(obj);
+    }
+    public override int GetHashCode()
+    {
+      return value;
+    }
   }
+
   public static class CCoder
   {
-
     private static Random rand = new Random();
 
-    public static List<bool> EnCode(String Message, int ResultLength)
+    public static List<bool> EnCode(String Message, int ResultLength = 72)
     {
-      // lowChars 97-122
-      // highChars 65 - 90
-      // nums 48 - 57
+      InitCharBytes();
       if (ResultLength < 72) throw new IndexOutOfRangeException("too low target array");
-      Boolean[] bin_msg = new Boolean[72];
-      Byte x;
-      List<Boolean> tmp = new List<Boolean>();
 
+      char[] bytearray = Message.ToCharArray();
+      List<Boolean> Result = new List<Boolean>();
       for (int i = 0; i < 12; i++)
       {
-        x = (byte)Message[i];
-
-        if (char.IsLower(Message[i])) x = (byte)(x - (byte)97);
-        else
-        {
-          if (char.IsUpper(Message[i])) x = (byte)(x - (byte)36); //x-65+26
-          else if (char.IsDigit(Message[i])) x = (byte)(x + (byte)4); //x-48+26+26
-        }
-        for (int j = 0; j <= 5; j++) bin_msg[i * 6 + 5 - j] = Convert.ToBoolean(x & (int)Math.Pow(2, j));
+        Result.AddRange(ByteChars[bytearray[i]].ToList());
       }
-      for (int i = 0; i < bin_msg.Length; i++) tmp.Add(bin_msg[i]);
-
       //укладка хэш функции
       string md5 = GetMd5Sum(Message);
+      bytearray = md5.ToCharArray();
+
       for (int i = 0; i < 10; i++)
       {
-        x = (byte)md5[i];
-
-        if (char.IsLower(md5[i])) x = (byte)(x - (byte)97);
-        else
-        {
-          if (char.IsUpper(md5[i])) x = (byte)(x - (byte)36); //x-65+26
-          else if (char.IsDigit(md5[i])) x = (byte)(x + (byte)4); //x-48+26+26
-        }
-        for (int j = 0; j <= 5; j++)
-          tmp.Add(Convert.ToBoolean(x & (int)Math.Pow(2, j)));
+        Result.AddRange(new byte6(bytearray[i]).ToList());
       }
       //нехватающие байты
 
       for (int i = 0; i < 4; i++)
       {
-        tmp.Add(true);
+        Result.Add(true);
       }
-      return tmp;
+      return Result;
 
     }
 
     public static string DeCode(List<bool> array)
     {
       InitCharBytes();
-      String result = null;
-      int cap = 0;
-      for (int i = 0; i < array.Count / 6; i++)
+      char[] result = new char[22];
+      for (int i = 0; i < 22; i++)
       {
-        cap = 0;
-        for (int j = 0; j < 6; j++)
-        {
-          if (array[i * 6 + j]) cap += (int)Math.Pow((double)2, (double)j);
-        }
-        if (cap >= 0 && cap <= 25) { result += (char)(cap + 97); continue; }
-        if (cap >= 26 && cap <= 51) { result += (char)(cap + 39); continue; }
-        if (cap >= 52 && cap <= 61) { result += (char)(cap - 4); continue; }
+        List<bool> debug = array.GetRange(i * 6, 6);
+        byte6 debug2 = new byte6(debug);
+        char Litera = CharBytes[debug2];
+        result[i] = Litera;
 
       }
-      return result;
+      return new string(result);
+      
     }
 
     public static Color GetColorFor(PointType pointType)
@@ -151,11 +172,12 @@ namespace Quarcode.Core
       return sb.ToString();
     }
 
-    private static Dictionary<byte6, char> CharBytes = new Dictionary<byte, char>();
-    private static Dictionary<char, byte6> ByteChars = new Dictionary<char, byte>();
+    private static Dictionary<byte6, char> CharBytes = new Dictionary<byte6, char>();
+    private static Dictionary<char, byte6> ByteChars = new Dictionary<char, byte6>();
 
     private static void InitCharBytes()
     {
+
       byte lowNum = 48;
       byte lowTitle = 97;
       byte lowLittle = 65;
@@ -165,31 +187,24 @@ namespace Quarcode.Core
       byte hightLittle = 91;
 
       CharBytes.Clear();
+      ByteChars.Clear();
 
       for (byte i = lowNum; i < hightNum; i++)
       {
-        CharBytes.Add(i, (char)i);
+        CharBytes.Add(new byte6(CharBytes.Count), (char)i);
       }
       for (byte i = lowLittle; i < hightLittle; i++)
       {
-        CharBytes.Add(i, (char)i);
+        CharBytes.Add(new byte6(CharBytes.Count), (char)i);
       }
       for (byte i = lowTitle; i < hightTitle; i++)
       {
-        CharBytes.Add(i, (char)i);
+        CharBytes.Add(new byte6(CharBytes.Count), (char)i);
       }
 
-      for (byte i = lowNum; i < hightNum; i++)
+      foreach (byte6 key in CharBytes.Keys)
       {
-       // ByteChars.Add(i, (char)i);
-      }
-      for (byte i = lowLittle; i < hightLittle; i++)
-      {
-       // ByteChars.Add(i, (char)i);
-      }
-      for (byte i = lowTitle; i < hightTitle; i++)
-      {
-       // ByteChars.Add(i, (char)i);
+        ByteChars.Add( CharBytes[key], key);
       }
     }
 

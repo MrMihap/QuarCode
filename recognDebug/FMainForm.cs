@@ -151,6 +151,15 @@ namespace recognDebug
     {
       const int testCount = 3000;
       int CompareCount = 0;
+      for (int i = 0; i < 64; i++)
+      {
+        byte6 x = new byte6(i);
+        List<bool> debug = x.ToList();
+        byte6 y = new byte6(debug);
+        if (x != y) MessageBox.Show("Error");
+
+      }
+     
       for (int i = 0; i < testCount; i++)
       {
         string value = CCoder.genMsg();
@@ -161,6 +170,7 @@ namespace recognDebug
         string subvalue = result.Substring(0, 12);
         if (subvalue.Contains(value)) CompareCount++;
       }
+      MessageBox.Show("Test: \nFrom" + testCount.ToString() + " Succes " + CompareCount.ToString());
     }
 
   }
