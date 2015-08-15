@@ -24,20 +24,37 @@ namespace recognTools
     public static string TryDecode(Image<Bgr, Byte> source)
     {
       int threshold = 120;
-      int r, g, b;
+      int r = 0, g = 0, b = 0;
       CPointsMatrix matrix = new CPointsMatrix(source.Height);
       byte[, ,] dst = source.Data;
       List<bool> bitlist = new List<bool>();
+
+      // K.O.S.T.J.L methods here
+
+      // выраниваем гекс по центру
+      PointF[] data = Vector.ToSystemPointsF(matrix.Points.ToArray());
+      for (int i = 0; i < data.Length; i++)
+      {
+        data[i].Y = source.Height - data[i].Y;
+      }
+      PointF shift = new PointF(data[0].X - source.Width/2 , data[0].Y - source.Height / 2);
+
+      for (int i = 0; i < data.Length; i++)
+      {
+        data[i].X -= shift.X;
+        data[i].Y -= shift.Y;
+      }
+      // end
       for (int i = 0; i < 136; i++)
       {
-        b = dst[(int)matrix.Points[i].x, (int)matrix.Points[i].y, 0];
-        g = dst[(int)matrix.Points[i].x, (int)matrix.Points[i].y, 1];
-        r = dst[(int)matrix.Points[i].x, (int)matrix.Points[i].y, 2];
-        if(b > threshold && g > threshold && r > threshold)
+        source.Draw(new Ellipse(data[i], new SizeF(3, 3), 1.5f), new Bgr(Color.Red), 1);
+        b = dst[(int)data[i].X, (int)data[i].Y, 0];
+        g = dst[(int)data[i].X, (int)data[i].Y, 1];
+        r = dst[(int)data[i].X, (int)data[i].Y, 2];
+        if (b > threshold && g > threshold && r > threshold)
           bitlist.Add(false);
         else
           bitlist.Add(true);
-
       }
       string fullResult = CCoder.DeCode(bitlist);
       string messageCandidate = fullResult.Substring(0, 12);
