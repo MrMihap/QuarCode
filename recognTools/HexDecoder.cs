@@ -226,68 +226,85 @@ namespace recognTools
     // Альтернативная функция вырезания
     public static Image<Bgr, Byte> CropImage(Image<Bgr, Byte> source, VectorOfVectorOfPoint contours)
     {
-      //approx contours
-      //add any checking logic if needed
-      VectorOfVectorOfPoint approxContours = new VectorOfVectorOfPoint();
-      for (int i = 0; i < contours.Size; i++)
+      //additional reordering contours
+      VectorOfPoint code_contour = new VectorOfPoint();
+      VectorOfPoint blue_contour = new VectorOfPoint();
+
+      if (contours.Size > 2)
       {
-        using (VectorOfPoint contour = contours[i])
-        using (VectorOfPoint approxContour = new VectorOfPoint())
-        {
-          CvInvoke.ApproxPolyDP(contour, approxContour, CvInvoke.ArcLength(contour, true) * 0.10, true);
-          approxContours.Push(approxContour);
-        }
+        code_contour = contours[1];
+        blue_contour = contours[2];
+      }
+      else
+      {
+        code_contour = contours[0];
+        blue_contour = contours[1];
       }
 
-      //find center
-      MCvMoments moments = CvInvoke.Moments(approxContours[0]);
-      Point gravityCenter = new Point((int)(moments.M10 / moments.M00), (int)(moments.M01 / moments.M00));
+      // Approximation 
+      CvInvoke.ApproxPolyDP(code_contour, code_contour, CvInvoke.ArcLength(code_contour, true) * 0.10, true);
+      CvInvoke.ApproxPolyDP(blue_contour, blue_contour, CvInvoke.ArcLength(blue_contour, true) * 0.10, true);
+
+      // Centers of contours
+
+      MCvMoments moments = CvInvoke.Moments(code_contour);
+      Point Code_gravityCenter = new Point((int)(moments.M10 / moments.M00), (int)(moments.M01 / moments.M00));
+      moments = CvInvoke.Moments(blue_contour);
+      Point Blue_gravityCenter = new Point((int)(moments.M10 / moments.M00), (int)(moments.M01 / moments.M00));
+      
+      //define code area
+      Image<Bgr,Byte> CodeField = source.Copy(CvInvoke.BoundingRectangle(code_contour));
 
       //corners
-      Point[] corners_mainBox = approxContours[0].ToArray();
+      Point[] corners_mainBox = code_contour.ToArray();
 
       //sort corners
-
       List<Point> left = new List<Point>();
       List<Point> right = new List<Point>();
       for (int i = 0; i < corners_mainBox.Length; i++)
       {
-        if (corners_mainBox[i].X < gravityCenter.X)
+        if (corners_mainBox[i].X < Code_gravityCenter.X)
           left.Add(corners_mainBox[i]);
         else
           right.Add(corners_mainBox[i]);
       }
-      PointF[] corners = new PointF[4];
+
+
+      PointF[] corners = new PointF[4]; //matrix with starting Points
       // top-left top-right bottom-right bottom-left
-
       corners[0] = left[0].Y < left[1].Y ? left[0] : left[1]; //top-left
-      corners[3] = left[0].Y > left[1].Y ? left[0] : left[1]; //bottom-left
-
       corners[1] = right[0].Y < right[1].Y ? right[0] : right[1]; //top-right
       corners[2] = right[0].Y > right[1].Y ? right[0] : right[1]; //bottom-right
+      corners[3] = left[0].Y > left[1].Y ? left[0] : left[1]; //bottom-left
 
       //create matrixes
-
-
-      float[,] target = {
-                          {0,0},
-                          {CvInvoke.BoundingRectangle(approxContours[0]).Width, 0}, 
-                          {CvInvoke.BoundingRectangle(approxContours[0]).Width, (CvInvoke.BoundingRectangle(approxContours[0])).Height},
-                          {0, CvInvoke.BoundingRectangle(approxContours[0]).Height},
-                       };
-
-      PointF[] targetPF = new PointF[4];
-      for (int i = 0; i < 4; i++)
-      {
-        targetPF[i].X = target[i, 0]; targetPF[i].Y = target[i, 1];
-      }
+      PointF[] targetPF = {
+                            new PointF(0,0),
+                            new PointF(CvInvoke.BoundingRectangle(code_contour).Width, 0),
+                            new PointF(CvInvoke.BoundingRectangle(code_contour).Width, (CvInvoke.BoundingRectangle(code_contour)).Height),
+                            new PointF(0, CvInvoke.BoundingRectangle(code_contour).Height),
+                          }; //matrix with destination Points
+      
+      //rotate crop
+      Image<Bgr, Byte> newcroppimg = source.Copy(CvInvoke.BoundingRectangle(code_contour));
+      /*
+      double dy = Blue_gravityCenter.Y - Code_gravityCenter.Y;
+      double dx = Blue_gravityCenter.X - Code_gravityCenter.X;
+      double theta = Math.Atan2(dy, dx);
+      double eps = 0.0001;
+      if (Math.Abs(theta - 0.5 * Math.PI) < eps) newcroppimg.Rotate(0.5*Math.PI, new PointF((float)(0.5* newcroppimg.Width), (float)(0.5*newcroppimg.Height)), Inter.Area, new Bgr(Color.Black), true);
+      
+      */
+      
 
       //crop image
       Mat TransformMat = CvInvoke.GetPerspectiveTransform(corners, targetPF); //transformation matrix itself
-      Mat newcroppimg = new Mat();
-      Size ROI = CvInvoke.BoundingRectangle(approxContours[0]).Size;
+      //Image<Bgr, Byte> newcroppimg = new Image<Bgr, Byte>((int)targetPF[2].X, (int)targetPF[2].Y);
+      
+      Size ROI = CvInvoke.BoundingRectangle(code_contour).Size;
       CvInvoke.WarpPerspective(source, newcroppimg, TransformMat, ROI); //transformation itself
-      return newcroppimg.ToImage<Bgr, Byte>();
+      
+      return newcroppimg;
     }
     
 

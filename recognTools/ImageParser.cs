@@ -56,7 +56,7 @@ namespace recognTools
         if (fltContours.Size < 2) { return;  throw new Exception("не найдены два рапозноваемых контура"); }
         
         // 5.Crop true Orinted HexImage
-        Image<Bgr, Byte> CropMatrix = HexDecoder.CropCodeFromImage(source, fltContours);
+        Image<Bgr, Byte> CropMatrix = HexDecoder.CropImage(source, fltContours);
         if (OnHexImageCropted != null) OnHexImageCropted(CropMatrix);
         // 6.Parse Image for Code
         string result = HexDecoder.TryDecode(CropMatrix);
