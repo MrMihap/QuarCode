@@ -255,6 +255,7 @@ namespace recognTools
       double Angle = 0;
       // 1.1.найдем две точки : самую левую основного контура и самую левую синего  контура
       Point mainLeft = (from p in mainPoints orderby p.X select p).FirstOrDefault();
+      Point mainBottom = (from p in mainPoints orderby p.Y descending select p).FirstOrDefault();
       Point subLeft = (from p in subPoints orderby p.X select p).FirstOrDefault();
       Point center = new Point(CroptedImage.Width / 2, CroptedImage.Height / 2);
       // 1.2 Ищем угол поворота, который поставит одну над второй
@@ -262,10 +263,32 @@ namespace recognTools
       {
         double tg = -(mainLeft.Y - subLeft.Y) / (double)(mainLeft.X - subLeft.X);
 
-        Angle = Math.Atan(tg);
+        Angle = Math.Atan(tg) + Math.PI/2;
       }
+      #region вертикальное выравнивание
       // случай перевернутого изображения
-      if (mainLeft.Y > subLeft.Y) Angle -= Math.PI / 2;
+      mainLeft.X -= center.X;
+      mainLeft.Y -= center.Y;
+      // умножение на матрицу поворота
+      Point old = new Point(mainLeft.X, mainLeft.Y);
+      mainLeft.X = (int)(old.X * Math.Cos(Angle) - old.Y * Math.Sin(Angle));
+      mainLeft.Y = (int)(+old.X * Math.Sin(Angle) + old.Y * Math.Cos(Angle));
+      // обратный переход в координаты отрезанного изображения 
+      mainLeft.X += center.X ;
+      mainLeft.Y += center.Y;
+      // случай перевернутого изображения
+      subLeft.X -= center.X;
+      subLeft.Y -= center.Y;
+      // умножение на матрицу поворота
+      old = new Point(subLeft.X, subLeft.Y);
+      subLeft.X = (int)(old.X * Math.Cos(Angle) - old.Y * Math.Sin(Angle));
+      subLeft.Y = (int)(+old.X * Math.Sin(Angle) + old.Y * Math.Cos(Angle));
+      // обратный переход в координаты отрезанного изображения 
+      subLeft.X += center.X;
+      subLeft.Y += center.Y;
+      if (mainLeft.Y > subLeft.Y)
+        Angle -= Math.PI;
+      #endregion
       // 1.3 Поворачиваем основное изображение на этот угол
       /*DEBUG*/
       //source.Draw(contourRectangle, new Bgr(Color.Blue), 3);
@@ -282,7 +305,7 @@ namespace recognTools
         mainPoints[i].X -= center.X;
         mainPoints[i].Y -= center.Y;
         // умножение на матрицу поворота
-        Point old = new Point(mainPoints[i].X, mainPoints[i].Y);
+        old = new Point(mainPoints[i].X, mainPoints[i].Y);
         mainPoints[i].X = (int)(old.X * Math.Cos(Angle) - old.Y * Math.Sin(Angle));
         mainPoints[i].Y = (int)(+old.X * Math.Sin(Angle) + old.Y * Math.Cos(Angle));
         // обратный переход в координаты отрезанного изображения 
