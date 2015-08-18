@@ -222,6 +222,77 @@ namespace recognTools
       return result;
     }
 
+
+    // Альтернативная функция вырезания
+    public static Image<Bgr, Byte> CropImage(Image<Bgr, Byte> source, VectorOfVectorOfPoint contours)
+    {
+      //approx contours
+      //add any checking logic if needed
+      VectorOfVectorOfPoint approxContours = new VectorOfVectorOfPoint();
+      for (int i = 0; i < contours.Size; i++)
+      {
+        using (VectorOfPoint contour = contours[i])
+        using (VectorOfPoint approxContour = new VectorOfPoint())
+        {
+          CvInvoke.ApproxPolyDP(contour, approxContour, CvInvoke.ArcLength(contour, true) * 0.10, true);
+          approxContours.Push(approxContour);
+        }
+      }
+
+      //find center
+      MCvMoments moments = CvInvoke.Moments(approxContours[0]);
+      Point gravityCenter = new Point((int)(moments.M10 / moments.M00), (int)(moments.M01 / moments.M00));
+
+      //corners
+      Point[] corners_mainBox = approxContours[0].ToArray();
+
+      //sort corners
+
+      List<Point> left = new List<Point>();
+      List<Point> right = new List<Point>();
+      for (int i = 0; i < corners_mainBox.Length; i++)
+      {
+        if (corners_mainBox[i].X < gravityCenter.X)
+          left.Add(corners_mainBox[i]);
+        else
+          right.Add(corners_mainBox[i]);
+      }
+      PointF[] corners = new PointF[4];
+      // top-left top-right bottom-right bottom-left
+
+      corners[0] = left[0].Y < left[1].Y ? left[0] : left[1]; //top-left
+      corners[3] = left[0].Y > left[1].Y ? left[0] : left[1]; //bottom-left
+
+      corners[1] = right[0].Y < right[1].Y ? right[0] : right[1]; //top-right
+      corners[2] = right[0].Y > right[1].Y ? right[0] : right[1]; //bottom-right
+
+      //create matrixes
+
+
+      float[,] target = {
+                          {0,0},
+                          {CvInvoke.BoundingRectangle(approxContours[0]).Width, 0}, 
+                          {CvInvoke.BoundingRectangle(approxContours[0]).Width, (CvInvoke.BoundingRectangle(approxContours[0])).Height},
+                          {0, CvInvoke.BoundingRectangle(approxContours[0]).Height},
+                       };
+
+      PointF[] targetPF = new PointF[4];
+      for (int i = 0; i < 4; i++)
+      {
+        targetPF[i].X = target[i, 0]; targetPF[i].Y = target[i, 1];
+      }
+
+      //crop image
+      Mat TransformMat = CvInvoke.GetPerspectiveTransform(corners, targetPF); //transformation matrix itself
+      Mat newcroppimg = new Mat();
+      Size ROI = CvInvoke.BoundingRectangle(approxContours[0]).Size;
+      CvInvoke.WarpPerspective(source, newcroppimg, TransformMat, ROI); //transformation itself
+      return newcroppimg.ToImage<Bgr, Byte>();
+    }
+    
+
+
+
     public static Image<Bgr, Byte> CropCodeFromImage(Image<Bgr, Byte> source, VectorOfVectorOfPoint Contours)
     {
       Image<Bgr, Byte> CroptedImage;
