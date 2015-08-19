@@ -112,6 +112,11 @@ namespace recognDebug
       ImageParser.OnImageFiltered += ImageParser_OnImageFiltered;
       ImageParser.OnHexImageCropted += ImageParser_OnHexImageCropted;
       ImageParser.OnHexCodeRecognized += ImageParser_OnHexCodeRecognized;
+      Task fileReadAsync = new Task(ReadFileAsync);
+      fileReadAsync.Start();
+    }
+    void ReadFileAsync()
+    {
       int tickCount = Environment.TickCount;
       if (Directory.Exists(dirname))
       {
@@ -120,16 +125,12 @@ namespace recognDebug
           currentFileName = fileName;
           ImageParser.RecieveImage(new Image<Bgr, Byte>(fileName));
           TotalCount++;
-
-          //SystemSounds.Beep.Play();
-
         }
       }
       tickCount = Environment.TickCount - tickCount;
-      MessageBox.Show("Total time: " + (tickCount / 1000.0).ToString() + "\n Cropted: " + CropCount.ToString() + 
+      MessageBox.Show("Total time: " + (tickCount / 1000.0).ToString() + "\n Cropted: " + CropCount.ToString() +
         "\n Recogned: " + RecognCount.ToString() + " \n From Total items :" + TotalCount.ToString());
     }
-
     void ImageParser_OnHexCodeRecognized(string code)
     {
       RecognCount++;
