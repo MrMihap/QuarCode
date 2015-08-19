@@ -23,7 +23,7 @@ namespace recognTools
     /// <returns> возвращает прочитанный валидированный код или null</returns>
     public static string TryDecode(Image<Bgr, Byte> source)
     {
-      int threshold = 140;
+      int threshold = 110;
       int r = 0, g = 0, b = 0;
       CPointsMatrix matrix = new CPointsMatrix(source.Height);
       byte[, ,] dst = source.Data;
@@ -70,6 +70,7 @@ namespace recognTools
       else
         return null;
     }
+
     public static Image<Hsv, Byte> Filter(Image<Bgr, Byte> source)
     {
       // 1.Gauss 
@@ -154,7 +155,6 @@ namespace recognTools
     public static VectorOfVectorOfPoint FindAllContours(Image<Hsv, Byte> source)
     {
       Image<Gray, Byte> maskHsvBlack;
-      Image<Gray, Byte> maskHsvBlue;
 
       Hsv blueVal_min = new Hsv(0, 50, 125); Hsv blueVal_max = new Hsv(359.9, 255, 255);
       Hsv blackVal_min = new Hsv(0, 0, 100); Hsv blackVal_max = new Hsv(360, 255, 255);
@@ -192,12 +192,7 @@ namespace recognTools
           }
         }
       }
-
-      VectorOfVectorOfPoint result = borders;
-
-
-
-      return result;
+      return borders;
     }
 
     public static VectorOfVectorOfPoint FilterAllContours(VectorOfVectorOfPoint source)
@@ -298,7 +293,7 @@ namespace recognTools
       // 1.3 Поворачиваем основное изображение на этот угол
       /*DEBUG*/
       //source.Draw(contourRectangle, new Bgr(Color.Blue), 3);
-      RotatedImage = CroptedImage.Rotate(Angle * 180 / Math.PI, new Bgr(Color.White), false);
+      RotatedImage = new Image<Bgr, byte>(CroptedImage.Rotate(Angle * 180 / Math.PI, new Bgr(Color.White), false).Bitmap);
 
       // 2 Поворачиваем контур на этот угол
       RotateContour(mainPoints, Angle, center,
@@ -310,6 +305,11 @@ namespace recognTools
       left = mainPoints.Min(x => x.X);
       right = mainPoints.Max(x => x.X);
       box = new Rectangle(left, bottom, right - left, top - bottom);
+         VectorOfVectorOfPoint contoursRoteated = new VectorOfVectorOfPoint();
+      contoursRoteated.Push(new VectorOfPoint());
+      contoursRoteated.Push(new VectorOfPoint());
+      contoursRoteated[0].Push(mainPoints);
+      contoursRoteated[1].Push(mainPoints);
       // При некорректном контуре падает
       if (left < 0 || right < 0 || top > RotatedImage.Height || right > RotatedImage.Width)
       {
@@ -318,8 +318,19 @@ namespace recognTools
       }
       else
       {
+        return CropImage(RotatedImage, contoursRoteated);
         CroptedImage = RotatedImage.GetSubRect(box);
       }
+      for (int i = 0; i < mainPoints.Length; i++)
+      {
+        mainPoints[i].X -= left;
+        mainPoints[i].Y -= bottom;
+        if (mainPoints[i].X > box.Width) mainPoints[i].X = box.Width;
+        if (mainPoints[i].Y > box.Height) mainPoints[i].Y = box.Height;
+      }
+   
+      return CropImage(CroptedImage, contoursRoteated);
+
       VectorOfPoint ApproxRect = new VectorOfPoint();
       Contours[idMain].Clear();
       Contours[idMain].Push(mainPoints);
@@ -372,7 +383,13 @@ namespace recognTools
 
       return newcroppimg;
     }
-    // Альтернативная функция вырезания
+
+    /// <summary>
+    /// Альтернативная функция вырезания
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="contours"></param>
+    /// <returns></returns>
     public static Image<Bgr, Byte> CropImage(Image<Bgr, Byte> source, VectorOfVectorOfPoint contours)
     {
       //additional reordering contours
@@ -434,16 +451,7 @@ namespace recognTools
                           }; //matrix with destination Points
 
       //rotate crop
-      Image<Bgr, Byte> newcroppimg = source.Copy(CvInvoke.BoundingRectangle(code_contour));
-      /*
-      double dy = Blue_gravityCenter.Y - Code_gravityCenter.Y;
-      double dx = Blue_gravityCenter.X - Code_gravityCenter.X;
-      double theta = Math.Atan2(dy, dx);
-      double eps = 0.0001;
-      if (Math.Abs(theta - 0.5 * Math.PI) < eps) newcroppimg.Rotate(0.5*Math.PI, new PointF((float)(0.5* newcroppimg.Width), (float)(0.5*newcroppimg.Height)), Inter.Area, new Bgr(Color.Black), true);
-      
-      */
-
+      Image<Bgr, Byte> newcroppimg = new Image<Bgr, byte>(source.GetSubRect(box).Bitmap);
 
       //crop image
       Mat TransformMat = CvInvoke.GetPerspectiveTransform(corners, targetPF); //transformation matrix itself
