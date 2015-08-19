@@ -23,7 +23,7 @@ namespace recognTools
     /// <returns> возвращает прочитанный валидированный код или null</returns>
     public static string TryDecode(Image<Bgr, Byte> source)
     {
-      int threshold = 120;
+      int threshold = 140;
       int r = 0, g = 0, b = 0;
       CPointsMatrix matrix = new CPointsMatrix(source.Height);
       byte[, ,] dst = source.Data;
@@ -37,7 +37,7 @@ namespace recognTools
       {
         data[i].Y = source.Height - data[i].Y;
       }
-      PointF shift = new PointF(data[0].X - source.Width/2 , data[0].Y - source.Height / 2);
+      PointF shift = new PointF(data[0].X - source.Width / 2, data[0].Y - source.Height / 2);
 
       for (int i = 0; i < data.Length; i++)
       {
@@ -48,13 +48,19 @@ namespace recognTools
       for (int i = 0; i < 136; i++)
       {
         source.Draw(new Ellipse(data[i], new SizeF(3, 3), 1.5f), new Bgr(Color.Red), 1);
-        b = dst[(int)data[i].X, (int)data[i].Y, 0];
-        g = dst[(int)data[i].X, (int)data[i].Y, 1];
-        r = dst[(int)data[i].X, (int)data[i].Y, 2];
+        int ii = (int)data[i].Y;
+        int jj = (int)data[i].X;
+        b = dst[ii, jj, 0];
+        g = dst[ii, jj, 1];
+        r = dst[ii, jj, 2];
         if (b > threshold && g > threshold && r > threshold)
           bitlist.Add(false);
         else
           bitlist.Add(true);
+        if (b > threshold && g > threshold && r > threshold)
+          source.Draw(new Ellipse(data[i], new SizeF(1, 1), 1.5f), new Bgr(Color.Black), 1);
+        else
+          source.Draw(new Ellipse(data[i], new SizeF(1, 1), 1.5f), new Bgr(Color.White), 1);
       }
       string fullResult = CCoder.DeCode(bitlist);
       string messageCandidate = fullResult.Substring(0, 12);
@@ -263,7 +269,7 @@ namespace recognTools
       {
         double tg = -(mainLeft.Y - subLeft.Y) / (double)(mainLeft.X - subLeft.X);
 
-        Angle = Math.Atan(tg) + Math.PI/2;
+        Angle = Math.Atan(tg) + Math.PI / 2;
       }
       #region вертикальное выравнивание
       // случай перевернутого изображения
@@ -274,7 +280,7 @@ namespace recognTools
       mainLeft.X = (int)(old.X * Math.Cos(Angle) - old.Y * Math.Sin(Angle));
       mainLeft.Y = (int)(+old.X * Math.Sin(Angle) + old.Y * Math.Cos(Angle));
       // обратный переход в координаты отрезанного изображения 
-      mainLeft.X += center.X ;
+      mainLeft.X += center.X;
       mainLeft.Y += center.Y;
       // случай перевернутого изображения
       subLeft.X -= center.X;
@@ -295,24 +301,9 @@ namespace recognTools
       RotatedImage = CroptedImage.Rotate(Angle * 180 / Math.PI, new Bgr(Color.White), false);
 
       // 2 Поворачиваем контур на этот угол
+      RotateContour(mainPoints, Angle, center,
+        new Point(center.X + (RotatedImage.Width - CroptedImage.Width) / 2, center.Y + (RotatedImage.Height - CroptedImage.Height) / 2));
 
-      Point oldCenter = new Point(center.X, center.Y);
-      //center.X = (int)(oldCenter.X * Math.Cos(Angle/180) - oldCenter.Y * Math.Sin(Angle/180));
-      //center.Y = (int)(oldCenter.X * Math.Sin(Angle/180) + oldCenter.Y * Math.Cos(Angle/180));
-      for (int i = 0; i < Contours[idMain].Size; i++)
-      {
-        // переход в систему координат центра отрезанного изображения из основного
-        mainPoints[i].X -= center.X;
-        mainPoints[i].Y -= center.Y;
-        // умножение на матрицу поворота
-        old = new Point(mainPoints[i].X, mainPoints[i].Y);
-        mainPoints[i].X = (int)(old.X * Math.Cos(Angle) - old.Y * Math.Sin(Angle));
-        mainPoints[i].Y = (int)(+old.X * Math.Sin(Angle) + old.Y * Math.Cos(Angle));
-        // обратный переход в координаты отрезанного изображения 
-        mainPoints[i].X += center.X + (RotatedImage.Width - CroptedImage.Width) / 2;
-        mainPoints[i].Y += center.Y + (RotatedImage.Height - CroptedImage.Height) / 2;
-
-      }
       // 3.Вырезаем основной контур(повернутый) из обрезанного и повернутого изображения
       bottom = mainPoints.Min(x => x.Y);
       top = mainPoints.Max(x => x.Y);
@@ -320,7 +311,6 @@ namespace recognTools
       right = mainPoints.Max(x => x.X);
       box = new Rectangle(left, bottom, right - left, top - bottom);
       // При некорректном контуре падает
-      //Раскоментировать при победе над багами
       if (left < 0 || right < 0 || top > RotatedImage.Height || right > RotatedImage.Width)
       {
         RotatedImage.DrawPolyline(mainPoints, true, new Bgr(Color.Red), 2);
@@ -330,11 +320,157 @@ namespace recognTools
       {
         CroptedImage = RotatedImage.GetSubRect(box);
       }
-      //Раскоментировать при победе над багами
-      return CroptedImage;
+      VectorOfPoint ApproxRect = new VectorOfPoint();
+      Contours[idMain].Clear();
+      Contours[idMain].Push(mainPoints);
+      // Approximation 
+      CvInvoke.ApproxPolyDP(Contours[idMain], ApproxRect, CvInvoke.ArcLength(Contours[idMain], true) * 0.15, true);
+
+      MCvMoments moments = CvInvoke.Moments(ApproxRect);
+      Point Code_gravityCenter = new Point((int)(moments.M10 / moments.M00), (int)(moments.M01 / moments.M00));
+
+      //corners
+      Point[] corners_mainBox = ApproxRect.ToArray();
+
+      //sort corners
+      List<Point> leftl = new List<Point>();
+      List<Point> rightl = new List<Point>();
+      for (int i = 0; i < corners_mainBox.Length; i++)
+      {
+        if (corners_mainBox[i].X < Code_gravityCenter.X)
+          leftl.Add(corners_mainBox[i]);
+        else
+          rightl.Add(corners_mainBox[i]);
+      }
+
+
+      //matrix with starting Points
+      // top-left top-right bottom-right bottom-left
+      PointF[] corners = new PointF[4];
+      corners[0] = leftl[0].Y < leftl[1].Y ? leftl[0] : leftl[1]; //top-left
+      corners[1] = rightl[0].Y < rightl[1].Y ? rightl[0] : rightl[1]; //top-right
+      corners[2] = rightl[0].Y > rightl[1].Y ? rightl[0] : rightl[1]; //bottom-right
+      corners[3] = leftl[0].Y > leftl[1].Y ? leftl[0] : leftl[1]; //bottom-left
+      //create matrixes
+      box = CvInvoke.BoundingRectangle(ApproxRect);
+      PointF[] targetPF = {
+                            new PointF(0,0),
+                            new PointF(box.Width, 0),
+                            new PointF(box.Width, box.Width),
+                            new PointF(0,box.Width),
+                          }; //matrix with destination Points
+
+      //rotate crop
+      Image<Bgr, Byte> newcroppimg = CroptedImage.Clone();
+
+      //transformation matrix 
+      Mat TransformMat = CvInvoke.GetPerspectiveTransform(corners, targetPF);
+
+      Size ROI = box.Size;
+      //transformation
+      CvInvoke.WarpPerspective(CroptedImage, newcroppimg, TransformMat, ROI);
+
+      return newcroppimg;
+    }
+    // Альтернативная функция вырезания
+    public static Image<Bgr, Byte> CropImage(Image<Bgr, Byte> source, VectorOfVectorOfPoint contours)
+    {
+      //additional reordering contours
+      VectorOfPoint code_contour;
+      VectorOfPoint blue_contour;
+
+      if (contours.Size > 2)
+      {
+        code_contour = contours[1];
+        blue_contour = contours[2];
+      }
+      else
+      {
+        code_contour = contours[0];
+        blue_contour = contours[1];
+      }
+
+      // Approximation 
+      CvInvoke.ApproxPolyDP(code_contour, code_contour, CvInvoke.ArcLength(code_contour, true) * 0.10, true);
+      CvInvoke.ApproxPolyDP(blue_contour, blue_contour, CvInvoke.ArcLength(blue_contour, true) * 0.10, true);
+
+      // Centers of contours
+
+      MCvMoments moments = CvInvoke.Moments(code_contour);
+      Point Code_gravityCenter = new Point((int)(moments.M10 / moments.M00), (int)(moments.M01 / moments.M00));
+      moments = CvInvoke.Moments(blue_contour);
+      Point Blue_gravityCenter = new Point((int)(moments.M10 / moments.M00), (int)(moments.M01 / moments.M00));
+
+
+      //corners
+      Point[] corners_mainBox = code_contour.ToArray();
+
+      //sort corners
+      List<Point> left = new List<Point>();
+      List<Point> right = new List<Point>();
+      for (int i = 0; i < corners_mainBox.Length; i++)
+      {
+        if (corners_mainBox[i].X < Code_gravityCenter.X)
+          left.Add(corners_mainBox[i]);
+        else
+          right.Add(corners_mainBox[i]);
+      }
+
+
+      PointF[] corners = new PointF[4]; //matrix with starting Points
+      // top-left top-right bottom-right bottom-left
+      corners[0] = left[0].Y < left[1].Y ? left[0] : left[1]; //top-left
+      corners[1] = right[0].Y < right[1].Y ? right[0] : right[1]; //top-right
+      corners[2] = right[0].Y > right[1].Y ? right[0] : right[1]; //bottom-right
+      corners[3] = left[0].Y > left[1].Y ? left[0] : left[1]; //bottom-left
+
+      //create matrixes
+      Rectangle box = CvInvoke.BoundingRectangle(code_contour);
+      PointF[] targetPF = {
+                            new PointF(0,0),
+                            new PointF(box.Width, 0),
+                            new PointF(box.Width, box.Width),
+                            new PointF(0,box.Width),
+                          }; //matrix with destination Points
+
+      //rotate crop
+      Image<Bgr, Byte> newcroppimg = source.Copy(CvInvoke.BoundingRectangle(code_contour));
+      /*
+      double dy = Blue_gravityCenter.Y - Code_gravityCenter.Y;
+      double dx = Blue_gravityCenter.X - Code_gravityCenter.X;
+      double theta = Math.Atan2(dy, dx);
+      double eps = 0.0001;
+      if (Math.Abs(theta - 0.5 * Math.PI) < eps) newcroppimg.Rotate(0.5*Math.PI, new PointF((float)(0.5* newcroppimg.Width), (float)(0.5*newcroppimg.Height)), Inter.Area, new Bgr(Color.Black), true);
+      
+      */
+
+
+      //crop image
+      Mat TransformMat = CvInvoke.GetPerspectiveTransform(corners, targetPF); //transformation matrix itself
+      //Image<Bgr, Byte> newcroppimg = new Image<Bgr, Byte>((int)targetPF[2].X, (int)targetPF[2].Y);
+
+      Size ROI = CvInvoke.BoundingRectangle(code_contour).Size;
+      CvInvoke.WarpPerspective(source, newcroppimg, TransformMat, ROI); //transformation itself
+
+      return newcroppimg;
     }
 
+    private static void RotateContour(Point[] src, double Angle, Point firstC, Point secondC)
+    {
+      for (int i = 0; i < src.Length; i++)
+      {
+        // переход в систему координат центра 
+        src[i].X -= firstC.X;
+        src[i].Y -= firstC.Y;
+        // умножение на матрицу поворота
+        Point old = new Point(src[i].X, src[i].Y);
+        src[i].X = (int)(old.X * Math.Cos(Angle) - old.Y * Math.Sin(Angle));
+        src[i].Y = (int)(+old.X * Math.Sin(Angle) + old.Y * Math.Cos(Angle));
+        // обратный переход в координаты нового центра 
+        src[i].X += secondC.X;
+        src[i].Y += secondC.Y;
 
-
+      }
+    }
   }
 }
