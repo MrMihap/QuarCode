@@ -38,7 +38,7 @@ namespace recognTools
         // 0. Scale
         int WorkWidth = 1000;
         double reSize = WorkWidth / (double) source.Width;
-        source = source.Resize(reSize, Inter.Linear);
+        source = source.Resize(reSize, Inter.Lanczos4);
         // 1. Recieve
         OnImageRecieved(source.SmoothMedian(9));
 
@@ -62,7 +62,6 @@ namespace recognTools
         string result = HexDecoder.TryDecode(CropMatrix);
         if (result != null)
           if (OnHexCodeRecognized != null) OnHexCodeRecognized(result);
-
       }
 
       public static void RecieveImageAsync(Image<Bgr, Byte> source)
