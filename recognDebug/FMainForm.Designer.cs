@@ -37,15 +37,15 @@
       this.connectToCamStream = new System.Windows.Forms.ToolStripMenuItem();
       this.LoadSingleImgButton = new System.Windows.Forms.ToolStripMenuItem();
       this.ExitButton = new System.Windows.Forms.ToolStripMenuItem();
+      this.тестToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.DecodeTestButton = new System.Windows.Forms.ToolStripMenuItem();
+      this.общийТестToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.secondExitButton = new System.Windows.Forms.ToolStripMenuItem();
       this.label1 = new System.Windows.Forms.Label();
       this.label2 = new System.Windows.Forms.Label();
       this.label3 = new System.Windows.Forms.Label();
       this.LastCodeTextBox = new System.Windows.Forms.TextBox();
       this.label4 = new System.Windows.Forms.Label();
-      this.тестToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-      this.DecodeTestButton = new System.Windows.Forms.ToolStripMenuItem();
-      this.общийТестToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       ((System.ComponentModel.ISupportInitialize)(this.RawImageBox)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.FilteredImageBox)).BeginInit();
       ((System.ComponentModel.ISupportInitialize)(this.CroptedImageBox)).BeginInit();
@@ -58,7 +58,7 @@
             | System.Windows.Forms.AnchorStyles.Left)));
       this.RawImageBox.Location = new System.Drawing.Point(12, 54);
       this.RawImageBox.Name = "RawImageBox";
-      this.RawImageBox.Size = new System.Drawing.Size(638, 460);
+      this.RawImageBox.Size = new System.Drawing.Size(513, 309);
       this.RawImageBox.TabIndex = 2;
       this.RawImageBox.TabStop = false;
       // 
@@ -74,9 +74,9 @@
       // 
       // CroptedImageBox
       // 
-      this.CroptedImageBox.Location = new System.Drawing.Point(656, 54);
+      this.CroptedImageBox.Location = new System.Drawing.Point(531, 54);
       this.CroptedImageBox.Name = "CroptedImageBox";
-      this.CroptedImageBox.Size = new System.Drawing.Size(611, 460);
+      this.CroptedImageBox.Size = new System.Drawing.Size(752, 420);
       this.CroptedImageBox.TabIndex = 2;
       this.CroptedImageBox.TabStop = false;
       // 
@@ -122,6 +122,28 @@
       this.ExitButton.Size = new System.Drawing.Size(269, 22);
       this.ExitButton.Text = "Выход";
       this.ExitButton.Click += new System.EventHandler(this.ExitButton_Click);
+      // 
+      // тестToolStripMenuItem
+      // 
+      this.тестToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.DecodeTestButton,
+            this.общийТестToolStripMenuItem});
+      this.тестToolStripMenuItem.Name = "тестToolStripMenuItem";
+      this.тестToolStripMenuItem.Size = new System.Drawing.Size(43, 20);
+      this.тестToolStripMenuItem.Text = "Тест";
+      // 
+      // DecodeTestButton
+      // 
+      this.DecodeTestButton.Name = "DecodeTestButton";
+      this.DecodeTestButton.Size = new System.Drawing.Size(169, 22);
+      this.DecodeTestButton.Text = "Декодинг данных";
+      this.DecodeTestButton.Click += new System.EventHandler(this.DecodeTestButton_Click);
+      // 
+      // общийТестToolStripMenuItem
+      // 
+      this.общийТестToolStripMenuItem.Name = "общийТестToolStripMenuItem";
+      this.общийТестToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
+      this.общийТестToolStripMenuItem.Text = "Общий тест";
       // 
       // secondExitButton
       // 
@@ -172,28 +194,6 @@
       this.label4.Size = new System.Drawing.Size(103, 13);
       this.label4.TabIndex = 7;
       this.label4.Text = "LastReconizedCode";
-      // 
-      // тестToolStripMenuItem
-      // 
-      this.тестToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.DecodeTestButton,
-            this.общийТестToolStripMenuItem});
-      this.тестToolStripMenuItem.Name = "тестToolStripMenuItem";
-      this.тестToolStripMenuItem.Size = new System.Drawing.Size(43, 20);
-      this.тестToolStripMenuItem.Text = "Тест";
-      // 
-      // DecodeTestButton
-      // 
-      this.DecodeTestButton.Name = "DecodeTestButton";
-      this.DecodeTestButton.Size = new System.Drawing.Size(169, 22);
-      this.DecodeTestButton.Text = "Декодинг данных";
-      this.DecodeTestButton.Click += new System.EventHandler(this.DecodeTestButton_Click);
-      // 
-      // общийТестToolStripMenuItem
-      // 
-      this.общийТестToolStripMenuItem.Name = "общийТестToolStripMenuItem";
-      this.общийТестToolStripMenuItem.Size = new System.Drawing.Size(169, 22);
-      this.общийТестToolStripMenuItem.Text = "Общий тест";
       // 
       // FMainForm
       // 

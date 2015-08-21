@@ -23,8 +23,9 @@ namespace recognTools
     /// <returns> возвращает прочитанный валидированный код или null</returns>
     public static string TryDecode(Image<Bgr, Byte> source)
     {
-      int threshold = 110;
+      int threshold = 130;
       int r = 0, g = 0, b = 0;
+      source.SmoothMedian(5);
       CPointsMatrix matrix = new CPointsMatrix(source.Height);
       byte[, ,] dst = source.Data;
       List<bool> bitlist = new List<bool>();
@@ -41,18 +42,37 @@ namespace recognTools
 
       for (int i = 0; i < data.Length; i++)
       {
-        data[i].X -= shift.X;
+        data[i].X -= shift.X - 5;
         data[i].Y -= shift.Y;
       }
       // end
       for (int i = 0; i < 136; i++)
       {
+
         source.Draw(new Ellipse(data[i], new SizeF(3, 3), 1.5f), new Bgr(Color.Red), 1);
+        source.Draw(i.ToString(), new Point((int)data[i].X, (int)data[i].Y), FontFace.HersheyDuplex, 0.4, new Bgr(Color.Black), thickness: 1);
         int ii = (int)data[i].Y;
         int jj = (int)data[i].X;
-        b = dst[ii, jj, 0];
-        g = dst[ii, jj, 1];
-        r = dst[ii, jj, 2];
+        b = 0;
+        g = 0;
+        r = 0;
+        for (int ishift = -2; ishift <= 2; ishift++)
+        {
+          for (int jshift = -2; jshift <= 2; jshift++)
+          {
+            b += dst[ii + ishift, jj + jshift, 0];
+            g += dst[ii + ishift, jj + jshift, 1];
+            r += dst[ii + ishift, jj + jshift, 2];
+          }
+        }
+        b /= 25;
+        g /= 25;
+        r /= 25;
+        
+        //debug
+        if (i == 11)
+        {
+        }
         if (b > threshold && g > threshold && r > threshold)
           bitlist.Add(false);
         else
@@ -60,12 +80,14 @@ namespace recognTools
         if (b > threshold && g > threshold && r > threshold)
           source.Draw(new Ellipse(data[i], new SizeF(1, 1), 1.5f), new Bgr(Color.Black), 1);
         else
-          source.Draw(new Ellipse(data[i], new SizeF(1, 1), 1.5f), new Bgr(Color.White), 1);
+          source.Draw(new Ellipse(data[i], new SizeF(1, 1), 1.5f), new Bgr(Color.Chocolate), 1);
       }
       string fullResult = CCoder.DeCode(bitlist);
       string messageCandidate = fullResult.Substring(0, 12);
-      string md5 = fullResult.Substring(12, 10);
-      if (CCoder.GetMd5Sum(messageCandidate).Substring(0, 10).Equals(md5))
+      string md5Part = fullResult.Substring(12, 10);
+      string md5Calc = CCoder.GetMd5Sum(messageCandidate).Substring(0, 10);
+
+      if (md5Calc.Equals(md5Part))
         return messageCandidate;
       else
         return null;
@@ -115,14 +137,8 @@ namespace recognTools
             IsBlack = false;
           if (r > grayMax)
             IsBlack = false;
-          /*if (IsBlack)
-          {
-              int debug = 0;
-          }*/
           if (b >= zeroLevel || g >= zeroLevel || r >= zeroLevel)
           {
-            //IsBlack = false;
-
             //too many blue
             if (b > r + colorDif || b > g + colorDif)
               IsBlack = false;
@@ -132,7 +148,6 @@ namespace recognTools
             //too many red
             if (r > b + colorDif || r > g + colorDif)
               IsBlack = false;
-
           }
           if (IsBlack)
           {
@@ -305,7 +320,7 @@ namespace recognTools
       left = mainPoints.Min(x => x.X);
       right = mainPoints.Max(x => x.X);
       box = new Rectangle(left, bottom, right - left, top - bottom);
-         VectorOfVectorOfPoint contoursRoteated = new VectorOfVectorOfPoint();
+      VectorOfVectorOfPoint contoursRoteated = new VectorOfVectorOfPoint();
       contoursRoteated.Push(new VectorOfPoint());
       contoursRoteated.Push(new VectorOfPoint());
       contoursRoteated[0].Push(mainPoints);
@@ -328,7 +343,7 @@ namespace recognTools
         if (mainPoints[i].X > box.Width) mainPoints[i].X = box.Width;
         if (mainPoints[i].Y > box.Height) mainPoints[i].Y = box.Height;
       }
-   
+
       return CropImage(CroptedImage, contoursRoteated);
 
       VectorOfPoint ApproxRect = new VectorOfPoint();

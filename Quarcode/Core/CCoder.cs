@@ -10,7 +10,6 @@ namespace Quarcode.Core
   public class byte6
   {
     public byte value;
-
     public byte6()
     {
     }
@@ -75,6 +74,7 @@ namespace Quarcode.Core
   public static class CCoder
   {
     private static Random rand = new Random();
+    private static bool IsDictInited = false; 
 
     public static List<bool> EnCode(String Message, int ResultLength = 72)
     {
@@ -93,7 +93,17 @@ namespace Quarcode.Core
 
       for (int i = 0; i < 10; i++)
       {
-        Result.AddRange(new byte6(bytearray[i]).ToList());
+        byte6 currentByte;
+        if (ByteChars.Keys.Contains(bytearray[i]))
+        {
+          currentByte = ByteChars[bytearray[i]];
+        }
+        else
+        {
+          throw new FormatException("Invalid Symbol in Message");
+        }
+        List<bool> debug = currentByte.ToList();
+        Result.AddRange(debug);
       }
       //нехватающие байты
 
@@ -107,6 +117,7 @@ namespace Quarcode.Core
 
     public static string DeCode(List<bool> array)
     {
+      
       InitCharBytes();
       char[] result = new char[22];
       for (int i = 0; i < 22; i++)
@@ -178,10 +189,13 @@ namespace Quarcode.Core
 
     private static Dictionary<byte6, char> CharBytes = new Dictionary<byte6, char>();
     private static Dictionary<char, byte6> ByteChars = new Dictionary<char, byte6>();
-
+    
     private static void InitCharBytes()
     {
-
+      if (IsDictInited)
+        return;
+      else
+        IsDictInited = true;
       byte lowNum = 48;
       byte lowTitle = 97;
       byte lowLittle = 65;

@@ -39,7 +39,7 @@ namespace recognDebug
     {
 
       if (CroptedImageBox.InvokeRequired)
-        CroptedImageBox.BeginInvoke(new Action(() => CroptedImageBox.Image = source));
+        CroptedImageBox.BeginInvoke(new Action(() => CroptedImageBox.Image = new Image<Bgr, byte>(source.Bitmap)));
       else
         CroptedImageBox.Image = source;
     }
@@ -47,7 +47,7 @@ namespace recognDebug
     void IRecieveFilteredImage.Recieve(Image<Hsv, Byte> source)
     {
       if (FilteredImageBox.InvokeRequired)
-        FilteredImageBox.BeginInvoke(new Action(() => FilteredImageBox.Image = source));
+        FilteredImageBox.BeginInvoke(new Action(() => FilteredImageBox.Image = new Image<Bgr, byte>(source.Bitmap)));
       else
         FilteredImageBox.Image = source;
     }
@@ -60,7 +60,7 @@ namespace recognDebug
     void IRecieveRawImage.Recieve(Image<Bgr, Byte> source) 
     {
       if (RawImageBox.InvokeRequired)
-        RawImageBox.BeginInvoke(new Action(() => RawImageBox.Image = source));
+        RawImageBox.BeginInvoke(new Action(() => RawImageBox.Image = new Image<Bgr, byte> (source.Bitmap)));
       else
         RawImageBox.Image = source;
     }
