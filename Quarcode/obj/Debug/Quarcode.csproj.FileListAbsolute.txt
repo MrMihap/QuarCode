@@ -23,3 +23,4 @@ C:\Users\Админ\Documents\GitHub\QuarCode\Quarcode\obj\Debug\Quarcode.Proper
 C:\Users\Админ\Documents\GitHub\QuarCode\Quarcode\obj\Debug\Quarcode.csproj.GenerateResource.Cache
 C:\Users\Админ\Documents\GitHub\QuarCode\Quarcode\obj\Debug\Quarcode.exe
 C:\Users\Админ\Documents\GitHub\QuarCode\Quarcode\obj\Debug\Quarcode.pdb
+C:\Users\Михаил\Documents\GitHub\QuarCode\Quarcode\bin\Debug\img\HexFrame.png

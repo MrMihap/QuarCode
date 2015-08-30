@@ -42,7 +42,7 @@ namespace recognTools
 
       for (int i = 0; i < data.Length; i++)
       {
-        data[i].X -= shift.X - 5;
+        data[i].X -= shift.X - 8;
         data[i].Y -= shift.Y;
       }
       // end

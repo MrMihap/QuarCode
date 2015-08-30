@@ -39,6 +39,7 @@ namespace recognTools
         int WorkWidth = 1000;
         double reSize = WorkWidth / (double) source.Width;
         source = source.Resize(reSize, Inter.Lanczos4);
+
         // 1. Recieve
         OnImageRecieved(source.SmoothMedian(9));
 

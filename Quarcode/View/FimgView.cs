@@ -25,15 +25,14 @@ namespace Quarcode.View
     }
     void IViewInterfaces.RecieveImg(Bitmap bmp)
     {
-      sourceImage = bmp;
-      Size s = new System.Drawing.Size();
-      s.Height = 700;
-      s.Width = s.Height;
+      sourceImage = bmp.Clone() as Bitmap;
+      Size s = sourceImage.Size;
       Bitmap ScaledImage = new Bitmap(bmp, s);
       if (qrImgPictureBox.InvokeRequired)
-        qrImgPictureBox.BeginInvoke(new Action<Bitmap>((x) => { qrImgPictureBox.Image = x; qrImgPictureBox.Refresh(); }), ScaledImage);
+        qrImgPictureBox.BeginInvoke(new Action<Bitmap>((x) => { qrImgPictureBox.Size = s; qrImgPictureBox.Image = x; qrImgPictureBox.Refresh(); }), ScaledImage);
       else
       {
+        qrImgPictureBox.Size = s;
         qrImgPictureBox.Image = ScaledImage;
         qrImgPictureBox.Refresh();
       }
@@ -73,8 +72,6 @@ namespace Quarcode.View
           CImgBuilder.saveToFile((Bitmap)qrImgPictureBox.Image, dialog.FileName);
           break;
       }
-
-      MessageBox.Show("functinal will be implemented soon");
     }
 
     private void RandomStringButton_Click(object sender, EventArgs e)

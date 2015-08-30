@@ -7,11 +7,14 @@ using Quarcode.View;
 using Quarcode.Interfaces;
 using System.Xml;
 using System.IO;
+using System.Drawing;
 namespace Quarcode.Core
 {
-  class CApplicationController : IDisposable
+  public delegate void OnImageReadyDelegate(Bitmap image);
+  public class CApplicationController : IDisposable
   {
     public FimgView viewForm;
+    public event OnImageReadyDelegate OnImageReady;
     private CPointsMatrix pointsMatrix;
     private IViewInterfaces View;
     public CApplicationController()
@@ -26,17 +29,25 @@ namespace Quarcode.Core
         View = viewForm as IViewInterfaces;
         //свяжем интерфейс с контроллером
         View.OnMsgGenerateQuery += RecieveMessage;
+
       }
       catch(Exception e)
       {
 
       }
     }
-    void RecieveMessage(SViewState viewState)
+    
+    void View_OnMsgGenerateQuery(SViewState viewState)
+    {
+    }
+
+    public void RecieveMessage(SViewState viewState)
     {
       if (viewState.ReRand)
         pointsMatrix.GenNoise(viewState.radius);
-      View.RecieveImg(CImgBuilder.GenBMPQRfromMatrix(this.pointsMatrix, viewState));
+      Bitmap bmp = CImgBuilder.GenBMPQRfromMatrix(this.pointsMatrix, viewState);
+      View.RecieveImg(bmp);
+      if (OnImageReady != null) OnImageReady(bmp);
     }
 
     private void XMLConfigoader(string path)

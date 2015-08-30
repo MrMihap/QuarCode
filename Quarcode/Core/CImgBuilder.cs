@@ -8,7 +8,7 @@ using System.Drawing.Imaging;
 
 namespace Quarcode.Core
 {
-  static class CImgBuilder
+  public static class CImgBuilder
   {
     public static Bitmap GenBMPQRfromMatrix(CPointsMatrix matrix, SViewState viewState)
     {
@@ -72,7 +72,15 @@ namespace Quarcode.Core
         //END DEBUG
 #endif
       }
-      return bmp;
+      Bitmap fullimage = new Bitmap(@"img\HexFrame.png");
+      using (Graphics gr = Graphics.FromImage(fullimage))
+      {
+        gr.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
+        double resize = (596.0 - 16 * 2.0 ) / (bmp.Width);
+        Bitmap resizedBmp = new Bitmap(bmp, new Size((int)(bmp.Width * resize), (int)(bmp.Height * resize)));
+        gr.DrawImage(resizedBmp, new Point(16, 16));
+      }
+      return fullimage;
     }
 
     private static void DrawBytes(Graphics gr, CPointsMatrix matrix, SViewState viewState)

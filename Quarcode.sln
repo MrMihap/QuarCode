@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "recognDebug", "recognDebug\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "recognTools", "recognTools\recognTools.csproj", "{89A2175A-855B-4E24-B455-628F348CBF19}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "imgbuilderconsole", "imgbuilderconsole\imgbuilderconsole.csproj", "{A2FE92B1-FCB9-4910-BDD9-2CF706A2682A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +27,10 @@ Global
 		{89A2175A-855B-4E24-B455-628F348CBF19}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{89A2175A-855B-4E24-B455-628F348CBF19}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{89A2175A-855B-4E24-B455-628F348CBF19}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2FE92B1-FCB9-4910-BDD9-2CF706A2682A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2FE92B1-FCB9-4910-BDD9-2CF706A2682A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2FE92B1-FCB9-4910-BDD9-2CF706A2682A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2FE92B1-FCB9-4910-BDD9-2CF706A2682A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
