@@ -17,14 +17,15 @@ namespace Quarcode.Core
     public event OnImageReadyDelegate OnImageReady;
     private CPointsMatrix pointsMatrix;
     private IViewInterfaces View;
+    private bool IsConfigLoaded = false;
     public CApplicationController()
     {
       //для начала загружаем конфиг из файла
       try
       {
         XMLConfigoader("config.xml");
-
-        pointsMatrix = new CPointsMatrix(3000);
+        Console.WriteLine("succes cfg load / parsing ");
+        pointsMatrix = new CPointsMatrix(10000);
         viewForm = new FimgView();
         View = viewForm as IViewInterfaces;
         //свяжем интерфейс с контроллером
@@ -33,20 +34,34 @@ namespace Quarcode.Core
       }
       catch(Exception e)
       {
-
+        Console.WriteLine("Application Controller Ctor Fail: " + e.Message + ", " + e.InnerException);
+        if (File.Exists("config.xml"))
+          Console.WriteLine("Exist chek test pass succses");
+        else
+          Console.WriteLine("Exist chek test faild");
+        Console.WriteLine("App current directory is: " + Environment.CurrentDirectory);
+        Console.WriteLine("Begin file scan in app directory:");
+        foreach (string name in Directory.GetFiles(Environment.CurrentDirectory))
+        {
+          Console.WriteLine(name);
+        }
+        Console.WriteLine("File scan end");
       }
     }
-    
-    void View_OnMsgGenerateQuery(SViewState viewState)
-    {
-    }
 
+      
     public void RecieveMessage(SViewState viewState)
     {
+      if (!IsConfigLoaded)
+      {
+        Console.WriteLine("config not loaded, app failed");
+        return;
+      }
       if (viewState.ReRand)
         pointsMatrix.GenNoise(viewState.radius);
+
       Bitmap bmp = CImgBuilder.GenBMPQRfromMatrix(this.pointsMatrix, viewState);
-      View.RecieveImg(bmp);
+      if(View != null) View.RecieveImg(bmp);
       if (OnImageReady != null) OnImageReady(bmp);
     }
 
@@ -83,6 +98,7 @@ namespace Quarcode.Core
             break;
         }
       }
+      IsConfigLoaded = true;
     }
 
     void IDisposable.Dispose()

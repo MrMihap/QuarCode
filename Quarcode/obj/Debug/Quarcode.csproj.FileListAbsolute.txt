@@ -12,7 +12,6 @@ C:\Users\Михаил\Documents\GitHub\QuarCode\Quarcode\obj\Debug\Quarcode.exe
 C:\Users\Михаил\Documents\GitHub\QuarCode\Quarcode\obj\Debug\Quarcode.pdb
 C:\Users\Михаил\Documents\GitHub\QuarCode\Quarcode\obj\Debug\Quarcode.View.FimgView.resources
 C:\Users\Михаил\Documents\GitHub\QuarCode\Quarcode\bin\Debug\config.xml
-C:\Users\Михаил\Documents\GitHub\QuarCode\Quarcode\obj\Debug\Quarcode.csprojResolveAssemblyReference.cache
 C:\Users\Админ\Documents\GitHub\QuarCode\Quarcode\bin\Debug\config.xml
 C:\Users\Админ\Documents\GitHub\QuarCode\Quarcode\bin\Debug\Quarcode.exe.config
 C:\Users\Админ\Documents\GitHub\QuarCode\Quarcode\bin\Debug\Quarcode.exe
@@ -23,4 +22,10 @@ C:\Users\Админ\Documents\GitHub\QuarCode\Quarcode\obj\Debug\Quarcode.Proper
 C:\Users\Админ\Documents\GitHub\QuarCode\Quarcode\obj\Debug\Quarcode.csproj.GenerateResource.Cache
 C:\Users\Админ\Documents\GitHub\QuarCode\Quarcode\obj\Debug\Quarcode.exe
 C:\Users\Админ\Documents\GitHub\QuarCode\Quarcode\obj\Debug\Quarcode.pdb
-C:\Users\Михаил\Documents\GitHub\QuarCode\Quarcode\bin\Debug\img\HexFrame.png
+C:\Users\Михаил\Documents\GitHub\QuarCode\Quarcode\bin\Debug\Svg.dll
+C:\Users\Михаил\Documents\GitHub\QuarCode\Quarcode\bin\Debug\Svg.pdb
+C:\Users\Михаил\Documents\GitHub\QuarCode\Quarcode\bin\Debug\Svg.xml
+C:\Users\Михаил\Documents\GitHub\QuarCode\Quarcode\bin\Debug\System.Drawing.dll
+C:\Users\Михаил\Documents\GitHub\QuarCode\Quarcode\bin\Debug\System.Windows.Forms.dll
+C:\Users\Михаил\Documents\GitHub\QuarCode\Quarcode\obj\Debug\Quarcode.csprojResolveAssemblyReference.cache
+C:\Users\Михаил\Documents\GitHub\QuarCode\Quarcode\bin\Debug\img\HexFrame.jpg
