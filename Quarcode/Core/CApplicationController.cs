@@ -8,6 +8,7 @@ using Quarcode.Interfaces;
 using System.Xml;
 using System.IO;
 using System.Drawing;
+using System.Windows.Forms;
 namespace Quarcode.Core
 {
   public delegate void OnImageReadyDelegate(Bitmap image);
@@ -23,29 +24,35 @@ namespace Quarcode.Core
       //для начала загружаем конфиг из файла
       try
       {
-        XMLConfigoader("config.xml");
-        Console.WriteLine("succes cfg load / parsing ");
-        pointsMatrix = new CPointsMatrix(10000);
-        viewForm = new FimgView();
-        View = viewForm as IViewInterfaces;
-        //свяжем интерфейс с контроллером
-        View.OnMsgGenerateQuery += RecieveMessage;
+        XMLConfigoader(Path.GetDirectoryName(Application.ExecutablePath) + "/config.xml");
+        CLogger.WriteLine("succes cfg load / parsing ");
+        pointsMatrix = new CPointsMatrix(3000);
 
+        if (!IsRunningOnMono())
+        {
+          viewForm = new FimgView();
+          View = viewForm as IViewInterfaces;
+          //свяжем интерфейс с контроллером
+          View.OnMsgGenerateQuery += RecieveMessage;
+        }
       }
       catch(Exception e)
       {
-        Console.WriteLine("Application Controller Ctor Fail: " + e.Message + ", " + e.InnerException);
-        if (File.Exists("config.xml"))
-          Console.WriteLine("Exist chek test pass succses");
+        CLogger.WriteLine("Application Controller Ctor Fail: " + e.Message + ", " + e.InnerException, true);
+        string searchPath = Path.GetDirectoryName(Application.ExecutablePath);
+        if (File.Exists(searchPath + "/config.xml"))
+          CLogger.WriteLine("Exist chek test pass succses", true);
         else
-          Console.WriteLine("Exist chek test faild");
-        Console.WriteLine("App current directory is: " + Environment.CurrentDirectory);
-        Console.WriteLine("Begin file scan in app directory:");
-        foreach (string name in Directory.GetFiles(Environment.CurrentDirectory))
         {
-          Console.WriteLine(name);
+          CLogger.WriteLine("Exist chek test faild", true);
+          CLogger.WriteLine("App current directory is: " + searchPath, true);
+          CLogger.WriteLine("Begin file scan in app directory:", true);
+          foreach (string name in Directory.GetFiles(searchPath))
+          {
+            CLogger.WriteLine(name, true);
+          }
+          CLogger.WriteLine("File scan end", true);
         }
-        Console.WriteLine("File scan end");
       }
     }
 
@@ -54,7 +61,7 @@ namespace Quarcode.Core
     {
       if (!IsConfigLoaded)
       {
-        Console.WriteLine("config not loaded, app failed");
+        CLogger.WriteLine("config not loaded, app failed", true);
         return;
       }
       if (viewState.ReRand)
@@ -67,7 +74,8 @@ namespace Quarcode.Core
 
     private void XMLConfigoader(string path)
     {
-      if(!File.Exists(path)) throw new Exception("config file not found");
+      if(!File.Exists(path))
+        CLogger.WriteLine("config file not found", true);
       XmlDocument doc = new XmlDocument();
       doc.Load(path);
 
@@ -104,6 +112,10 @@ namespace Quarcode.Core
     void IDisposable.Dispose()
     {
       
+    }
+    public static bool IsRunningOnMono()
+    {
+      return Type.GetType("Mono.Runtime") != null;
     }
   }
 }

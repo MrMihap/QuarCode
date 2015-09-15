@@ -54,6 +54,7 @@
   <ItemGroup>
     <Compile Include="Core\CApplicationController.cs" />
     <Compile Include="Core\CCoder.cs" />
+    <Compile Include="Core\CLogger.cs" />
     <Compile Include="Core\Common.cs" />
     <Compile Include="Core\delegates.cs" />
     <Compile Include="Core\CImgBuilder.cs" />

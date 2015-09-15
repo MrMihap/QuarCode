@@ -31,7 +31,6 @@ namespace imgbuilderconsole
       }
       if (args.Length >= 2)
       {
-        Console.WriteLine("0..");
         CApplicationController controller = new CApplicationController();
         SViewState viewState = new SViewState();
         viewState.DrawCellBorder = true;
@@ -42,18 +41,19 @@ namespace imgbuilderconsole
         viewState.Message = args[0];
         viewState.radius = 30;
         saveFilePath = args[1];
-        Console.WriteLine("1");
         //if (saveFilePath.Length > 0 && (saveFilePath[saveFilePath.Length - 1] != '\\' || saveFilePath[saveFilePath.Length - 1] != '/'))
         //{
         //  Console.WriteLine("1.1");
         //  saveFilePath += @"\";
         //}
-        Console.WriteLine("2");
+        if (!Directory.Exists(saveFilePath))
+        {
+          CLogger.WriteLine("path not exists: " + saveFilePath, true);
+          return -1;
+        }
         if (args.Length == 3)
           saveFileName = args[2] + ".png";
-        Console.WriteLine("3");
         controller.OnImageReady += controller_OnImageReady;
-        Console.WriteLine("4");
         controller.RecieveMessage(viewState);
       }
       //Console.ReadKey();
@@ -62,8 +62,9 @@ namespace imgbuilderconsole
 
     void controller_OnImageReady(System.Drawing.Bitmap image)
     {
-      Console.WriteLine("build success");
+      CLogger.WriteLine("build success");
       CImgBuilder.saveToFile(image, @saveFilePath + @saveFileName);
+      CLogger.WriteLine("save success");
     }
   }
 

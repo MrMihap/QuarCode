@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Windows.Forms;
+using System.IO;
 
 namespace Quarcode.Core
 {
@@ -13,45 +15,34 @@ namespace Quarcode.Core
     public static Bitmap GenBMPQRfromMatrix(CPointsMatrix matrix, SViewState viewState)
     {
       Bitmap bmp;
-      Console.WriteLine("6.1");
       if (matrix == null)
       {
-        Console.WriteLine("FataL bug : matrix is null");
+        CLogger.WriteLine("FataL bug : matrix is null", true);
       }
       try
       {
-        Console.WriteLine("6.1.1");
-        Console.WriteLine(matrix.Width.ToString());
-        Console.WriteLine("6.1.2");
         bmp = new Bitmap(matrix.Width, matrix.Height, PixelFormat.Format32bppArgb);
-        Console.WriteLine("6.2");
       }
       catch(Exception e)
       {
-        Console.WriteLine("6.3 : " + e.Message);
+        CLogger.WriteLine("6.3 : " + e.Message, true);
         if(e.InnerException != null)
-          Console.WriteLine("6.3 inner: " + e.InnerException.Message);
+          CLogger.WriteLine("6.3 inner: " + e.InnerException.Message, true);
         return new Bitmap(1, 1);
       }
       using (Graphics gr = Graphics.FromImage(bmp))
       {
-        Console.WriteLine("6.3..");
-
         gr.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
         gr.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.HighQuality;
         gr.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-        Console.WriteLine("6.3.2");
         gr.FillRectangle(new SolidBrush(CCoder.GetColorFor(PointType.Logo)), 0, 0, matrix.Width, matrix.Height);
-        Console.WriteLine("6.4");
 
         DrawBorderBackground(gr, matrix, viewState);
         DrawBytes(gr, matrix, viewState);
         DrawLogo(gr, matrix, viewState);
         DrawPoints(gr, matrix, viewState);
         //DrawLogoPoints(gr, matrix, viewState);
-        Console.WriteLine("6.5");
-
-      
+              
         //Отрисовка места под логотип
         //gr.FillPolygon(new SolidBrush(Color.WhiteSmoke), Vector.ToSystemPointsF(matrix.LogoBorderPoints.ToArray()));
 #if DEBUG
@@ -87,18 +78,17 @@ namespace Quarcode.Core
         //END DEBUG
 #endif
       }
-      Console.WriteLine("6.7");
 
-      Bitmap fullimage = new Bitmap(@"img/HexFrame.jpg");
-      Console.WriteLine("Succes HexFrame loading");
+      Bitmap fullimage = new Bitmap(Path.GetDirectoryName(Application.ExecutablePath) + @"/img/HexFrame.jpg");
+      CLogger.WriteLine("Succes HexFrame loading");
       using (Graphics gr = Graphics.FromImage(fullimage))
       {
         gr.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
         double resize = (596.0 - 16 * 2.0 ) / (bmp.Width);
         Bitmap resizedBmp = new Bitmap(bmp, new Size((int)(bmp.Width * resize), (int)(bmp.Height * resize)));
-        Console.WriteLine("Succes qr resize to HexFrame");
+        //CLogger.WriteLine("Succes qr resize to HexFrame");
         gr.DrawImage(resizedBmp, new Point(16, 16));
-        Console.WriteLine("Succes drawing exist qr bitmap on hexframe");
+        CLogger.WriteLine("Succes drawing exist qr bitmap on hexframe");
       }
       return fullimage;
     }
@@ -233,7 +223,7 @@ namespace Quarcode.Core
 
     public static void saveToFile(Bitmap img, string filepath)
     {
-      Console.WriteLine("saving path is: " + filepath);
+      CLogger.WriteLine("saving path is: " + filepath);
       using (Graphics gr = Graphics.FromImage(img))
       {
         gr.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
