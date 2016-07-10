@@ -127,7 +127,7 @@ namespace Quarcode.Core
       File.WriteAllText("binout.txt", new string(bincode)); 
       InitCharBytes();
       char[] result = new char[26];
-      for (int i = 0; i < 22; i++)
+      for (int i = 0; i < 26; i++)
       {
         List<bool> debug = array.GetRange(i * 6, 6);
         int[] binlist = new int[6];
@@ -138,10 +138,17 @@ namespace Quarcode.Core
             binlist[j] = 0;
         // код символа получаем переводом из двоичной в десятичую систему
         int val = 32 * binlist[0] + 16 * binlist[1] + 8 * binlist[2] + 4 * binlist[3] + 2 * binlist[4] + 1 * binlist[5];
-        result[i] = ' ';
+        result[i] = '*';
         if (val <= 9)
           result[i] = (char)('0' + val);
+        if (val > 9 && val <= 9 + 'Z' - 'A' + 1)
+          result[i] = (char)('A' + val - (9 + 1));
+        if (val > 9 + 'Z' - 'A' + 1 && val <= 9 + 'Z' - 'A' + 'z' - 'a' + 2)
+          result[i] = (char)('a' + val - (9 + 'Z' - 'A' + 2));
+        if (val == 62)
+          result[i] = '_';
       }
+      string code = new string(result);
       return new string(result);
 
     }

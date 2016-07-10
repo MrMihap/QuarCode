@@ -111,9 +111,11 @@ namespace recognTools
         source.Draw(i.ToString(), new Point((int)data[i].X, (int)data[i].Y), FontFace.HersheyDuplex, 0.4, new Bgr(Color.Black), thickness: 1);
       }
       string fullResult = CCoder.DeCode(bitlist);
-      string messageCandidate = fullResult.Substring(0, 15);
-      string md5Part = fullResult.Substring(15, 10);
-      string md5Calc = CCoder.GetMd5Sum(messageCandidate).Substring(0, 10);
+      string messageCandidate = fullResult.Substring(0, 16);
+      //string md5Part = fullResult.Substring(16, 10);
+      //страшный костыль. в силу кривой генерации на серваке сверяются только первые 9 символов
+      string md5Part = fullResult.Substring(16, 9);
+      string md5Calc = CCoder.GetMd5Sum(messageCandidate).Substring(1, 9);
 
       if (md5Calc.Equals(md5Part))
         return messageCandidate;

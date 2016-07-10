@@ -22,7 +22,7 @@ namespace recognDebug
 {
   public partial class FMainForm : Form, IRecieveCroptedImage, IRecieveFilteredImage, IRecieveFoundContours, IRecieveRawImage, IRecieveRecognizedCode
   {
-    string dirname = @"../../../testimg/";
+    string dirname = @"../../../testimg/new";
     private string currentFileName;
 
     int CropCount = 0;
@@ -32,7 +32,7 @@ namespace recognDebug
     public FMainForm()
     {
       InitializeComponent();
-      
+
     }
 
     void IRecieveCroptedImage.Recieve(Image<Bgr, Byte> source)
@@ -54,18 +54,18 @@ namespace recognDebug
 
     void IRecieveFoundContours.Recieve(VectorOfVectorOfPoint contourList)
     {
-        CvInvoke.DrawContours(RawImageBox.Image, contourList, -1, new Bgr(Color.Green).MCvScalar, 3);
+      CvInvoke.DrawContours(RawImageBox.Image, contourList, -1, new Bgr(Color.Green).MCvScalar, 3);
     }
 
-    void IRecieveRawImage.Recieve(Image<Bgr, Byte> source) 
+    void IRecieveRawImage.Recieve(Image<Bgr, Byte> source)
     {
       if (RawImageBox.InvokeRequired)
-        RawImageBox.BeginInvoke(new Action(() => RawImageBox.Image = new Image<Bgr, byte> (source.Bitmap)));
+        RawImageBox.BeginInvoke(new Action(() => RawImageBox.Image = new Image<Bgr, byte>(source.Bitmap)));
       else
         RawImageBox.Image = source;
     }
 
-    void IRecieveRecognizedCode.Recieve(string code) 
+    void IRecieveRecognizedCode.Recieve(string code)
     {
       if (LastCodeTextBox.InvokeRequired)
         LastCodeTextBox.BeginInvoke(new Action(() => LastCodeTextBox.Text = code));
@@ -81,7 +81,7 @@ namespace recognDebug
       CroptedImageBox.SizeMode = PictureBoxSizeMode.Zoom;
 
       //подключение к камере при старте
-     // connectToCamStream_Click(this, null);
+      // connectToCamStream_Click(this, null);
     }
 
     private void ExitButton_Click(object sender, EventArgs e)
@@ -123,7 +123,7 @@ namespace recognDebug
       int tickCount = Environment.TickCount;
       if (Directory.Exists(dirname))
       {
-        foreach (string fileName in Directory.GetFiles(dirname).Where(x => x.Contains("scene") && x.Contains(".jpg")))
+        foreach (string fileName in Directory.GetFiles(dirname).Where(x => x.Contains(".png") || x.Contains(".jpg")))
         {
           currentFileName = fileName;
           ImageParser.RecieveImage(new Image<Bgr, Byte>(fileName));
@@ -142,13 +142,15 @@ namespace recognDebug
 
     void ImageParser_OnHexImageCropted(Image<Bgr, byte> source)
     {
-      source.ToBitmap().Save(currentFileName.Replace(".jpg", "_passCrop.png"), System.Drawing.Imaging.ImageFormat.Png);
+      if (currentFileName.Contains(".jpg"))
+        source.ToBitmap().Save(currentFileName.Replace(".jpg", "_passCrop.png"), System.Drawing.Imaging.ImageFormat.Png);
       CropCount++;
     }
 
     void ImageParser_OnImageFiltered(Image<Hsv, byte> source)
     {
-      source.ToBitmap().Save(currentFileName.Replace(".jpg","_pass.png"), System.Drawing.Imaging.ImageFormat.Png);
+      if (currentFileName.Contains(".jpg"))
+        source.ToBitmap().Save(currentFileName.Replace(".jpg", "_pass.png"), System.Drawing.Imaging.ImageFormat.Png);
       //(new Image<Bgr, Byte>(currentFileName)).SmoothMedian(9).ToBitmap().Save(currentFileName.Replace(".jpg", "_pass_blur.png"), System.Drawing.Imaging.ImageFormat.Png);
     }
 
@@ -164,7 +166,7 @@ namespace recognDebug
         if (x != y) MessageBox.Show("Error");
 
       }
-     
+
       for (int i = 0; i < testCount; i++)
       {
         string value = CCoder.genMsg();
