@@ -54,8 +54,6 @@
       // 
       // RawImageBox
       // 
-      this.RawImageBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
       this.RawImageBox.Location = new System.Drawing.Point(12, 54);
       this.RawImageBox.Name = "RawImageBox";
       this.RawImageBox.Size = new System.Drawing.Size(513, 309);
@@ -68,15 +66,18 @@
             | System.Windows.Forms.AnchorStyles.Left)));
       this.FilteredImageBox.Location = new System.Drawing.Point(12, 546);
       this.FilteredImageBox.Name = "FilteredImageBox";
-      this.FilteredImageBox.Size = new System.Drawing.Size(181, 137);
+      this.FilteredImageBox.Size = new System.Drawing.Size(513, 137);
       this.FilteredImageBox.TabIndex = 2;
       this.FilteredImageBox.TabStop = false;
       // 
       // CroptedImageBox
       // 
+      this.CroptedImageBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
       this.CroptedImageBox.Location = new System.Drawing.Point(531, 54);
       this.CroptedImageBox.Name = "CroptedImageBox";
-      this.CroptedImageBox.Size = new System.Drawing.Size(752, 420);
+      this.CroptedImageBox.Size = new System.Drawing.Size(752, 629);
       this.CroptedImageBox.TabIndex = 2;
       this.CroptedImageBox.TabStop = false;
       // 

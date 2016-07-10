@@ -26,9 +26,9 @@ namespace recognTools
       int threshold = 130;
       int r = 0, g = 0, b = 0;
       source.SmoothMedian(5);
-      CPointsMatrix matrixold = new CPointsMatrix(source.Height);
+      //CPointsMatrix matrixold = new CPointsMatrix(source.Height);
       //if (BitMatrix == null)
-        BitMatrix = new CPointsMatrix2();
+      BitMatrix = new CPointsMatrix2();
       byte[, ,] dst = source.Data;
       List<bool> bitlist = new List<bool>();
 
@@ -69,8 +69,7 @@ namespace recognTools
       for (int i = 0; i < BitMatrix.bitPoints.Count; i++)
       {
 
-        source.Draw(new Ellipse(data[i], new SizeF(3, 3), 1.5f), new Bgr(Color.Red), 1);
-        source.Draw(i.ToString(), new Point((int)data[i].X, (int)data[i].Y), FontFace.HersheyDuplex, 0.4, new Bgr(Color.Black), thickness: 1);
+       
         int ii = (int)data[i].Y;
         int jj = (int)data[i].X;
         b = 0;
@@ -78,18 +77,18 @@ namespace recognTools
         r = 0;
         try
         {
-          for (int ishift = -2; ishift <= 2; ishift++)
+          for (int ishift = -1; ishift <= 1; ishift++)
           {
-            for (int jshift = -2; jshift <= 2; jshift++)
+            for (int jshift = -1; jshift <= 1; jshift++)
             {
               b += dst[ii + ishift, jj + jshift, 0];
               g += dst[ii + ishift, jj + jshift, 1];
               r += dst[ii + ishift, jj + jshift, 2];
             }
           }
-          b /= 25;
-          g /= 25;
-          r /= 25;
+          b /= 9;
+          g /= 9;
+          r /= 9;
         }
         catch(Exception e)
         {
@@ -102,14 +101,18 @@ namespace recognTools
           bitlist.Add(false);
         else
           bitlist.Add(true);
+
         if (b > threshold && g > threshold && r > threshold)
           source.Draw(new Ellipse(data[i], new SizeF(1, 1), 1.5f), new Bgr(Color.Black), 1);
         else
-          source.Draw(new Ellipse(data[i], new SizeF(1, 1), 1.5f), new Bgr(Color.Chocolate), 1);
+          source.Draw(new Ellipse(data[i], new SizeF(1, 1), 1.5f), new Bgr(Color.White), 1);
+
+        source.Draw(new Ellipse(data[i], new SizeF(3, 3), 1.5f), new Bgr(Color.Red), 1);
+        source.Draw(i.ToString(), new Point((int)data[i].X, (int)data[i].Y), FontFace.HersheyDuplex, 0.4, new Bgr(Color.Black), thickness: 1);
       }
       string fullResult = CCoder.DeCode(bitlist);
-      string messageCandidate = fullResult.Substring(0, 12);
-      string md5Part = fullResult.Substring(12, 10);
+      string messageCandidate = fullResult.Substring(0, 15);
+      string md5Part = fullResult.Substring(15, 10);
       string md5Calc = CCoder.GetMd5Sum(messageCandidate).Substring(0, 10);
 
       if (md5Calc.Equals(md5Part))
@@ -519,6 +522,25 @@ namespace recognTools
         src[i].Y += secondC.Y;
 
       }
+    }
+    public string Md5Sum(string strToEncrypt)
+    {
+      System.Text.UTF8Encoding ue = new System.Text.UTF8Encoding();
+      byte[] bytes = ue.GetBytes(strToEncrypt);
+
+      // encrypt bytes
+      System.Security.Cryptography.MD5CryptoServiceProvider md5 = new System.Security.Cryptography.MD5CryptoServiceProvider();
+      byte[] hashBytes = md5.ComputeHash(bytes);
+
+      // Convert the encrypted bytes back to a string (base 16)
+      string hashString = "";
+
+      for (int i = 0; i < hashBytes.Length; i++)
+      {
+        hashString += System.Convert.ToString(hashBytes[i], 16).PadLeft(2, '0');
+      }
+
+      return hashString.PadLeft(32, '0');
     }
   }
 }

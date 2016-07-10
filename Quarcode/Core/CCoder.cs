@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 using System.Security.Cryptography;
+using System.IO;
 namespace Quarcode.Core
 {
   public class byte6
@@ -46,9 +47,9 @@ namespace Quarcode.Core
       Result.Reverse();
       return Result;
     }
-    public static bool operator == (byte6 left, byte6 right)
+    public static bool operator ==(byte6 left, byte6 right)
     {
-      if(left.value == right.value) return true;
+      if (left.value == right.value) return true;
       return false;
     }
     public static bool operator !=(byte6 left, byte6 right)
@@ -74,7 +75,7 @@ namespace Quarcode.Core
   public static class CCoder
   {
     private static Random rand = new Random();
-    private static bool IsDictInited = false; 
+    private static bool IsDictInited = false;
 
     public static List<bool> EnCode(String Message, int ResultLength = 72)
     {
@@ -117,23 +118,32 @@ namespace Quarcode.Core
 
     public static string DeCode(List<bool> array)
     {
-      
+      char[] bincode = new char[array.Count()];
+      for(int i = 0; i < array.Count; i++)
+      {
+        bincode[i] = (array[i]) ? '1' : '0';
+      }
+      File.Delete("binout.txt");
+      File.WriteAllText("binout.txt", new string(bincode)); 
       InitCharBytes();
-      char[] result = new char[22];
-      //for (int i = 0; i < 22; i++)
-      //{
-      //  List<bool> debug = array.GetRange(i * 6, 6);
-      //  byte6 debug2 = new byte6(debug);
-      //  char Litera;
-      //  if (CharBytes.ContainsKey(debug2))
-      //    Litera = CharBytes[debug2];
-      //  else
-      //    Litera = '!';
-      //  result[i] = Litera;
-
-      //}
+      char[] result = new char[26];
+      for (int i = 0; i < 22; i++)
+      {
+        List<bool> debug = array.GetRange(i * 6, 6);
+        int[] binlist = new int[6];
+        for (int j = 0; j < 6; j++)
+          if (debug[j])
+            binlist[j] = 1;
+          else
+            binlist[j] = 0;
+        // код символа получаем переводом из двоичной в десятичую систему
+        int val = 32 * binlist[0] + 16 * binlist[1] + 8 * binlist[2] + 4 * binlist[3] + 2 * binlist[4] + 1 * binlist[5];
+        result[i] = ' ';
+        if (val <= 9)
+          result[i] = (char)('0' + val);
+      }
       return new string(result);
-      
+
     }
 
     public static Color GetColorFor(PointType pointType)
@@ -189,7 +199,7 @@ namespace Quarcode.Core
 
     private static Dictionary<byte6, char> CharBytes = new Dictionary<byte6, char>();
     private static Dictionary<char, byte6> ByteChars = new Dictionary<char, byte6>();
-    
+
     private static void InitCharBytes()
     {
       if (IsDictInited)

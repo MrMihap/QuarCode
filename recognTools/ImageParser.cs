@@ -64,8 +64,8 @@ namespace recognTools
         string result = HexDecoder.TryDecode(CropMatrix);
         if (result != null)
           if (OnHexCodeRecognized != null) OnHexCodeRecognized(result);
-        //source.Dispose();
-        //filtredsource.Dispose();
+        source.Dispose();
+        filtredsource.Dispose();
         //CropMatrix.Dispose();
       }
 
