@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
-
+using System.IO;
 namespace Quarcode.Core
 {
   /// <summary>
@@ -39,6 +39,7 @@ namespace Quarcode.Core
         externalGexses[i + 1] = new externalGexBlock(Center + Vector.Rotate(mainGexRingDefault, -Math.PI / 3 * i), L, i + 1);
         externalBorders[i] = new externalBorder(Center + Vector.Rotate(mainGexRingDefault, -Math.PI / 3 * i), L, i);
       }
+      ExportToFile("out.txt");
     }
 
     public Vector[] AsArray()
@@ -65,12 +66,34 @@ namespace Quarcode.Core
      // ResultArray.AddRange(LogoInternal.AsArray());
       return ResultArray.ToArray();
     }
+   
     public Vector[] AsArrayLogo()
     {
       List<Vector> ResultArray = new List<Vector>();
       ResultArray.AddRange(LogoInternal.AsArray());
       ResultArray.AddRange(LogoExternal.AsArray());
       return ResultArray.ToArray();
+    }
+
+    public void ExportToFile(string Path)
+    {
+      using (StreamWriter sw = new StreamWriter(Path))
+      {
+        Vector[] data = this.AsArray();
+        int n = data.Length;
+        for (int i = 0; i < data.Length; i++)
+          sw.WriteLine(i.ToString() + " " + data[i].x + " " + data[i].y);
+       
+        data = this.AsArrayLogo();
+        for (int i = 0; i < data.Length; i++)
+          sw.WriteLine((i + n).ToString() + " " + data[i].x + " " + data[i].y);
+        sw.WriteLine("*******************************");
+        data = this.AsArrayBorder();
+        for (int i = 0; i < data.Length; i++)
+        {
+          sw.WriteLine(data[i].x + " " + data[i].y);
+        }
+      }
     }
   }
 }

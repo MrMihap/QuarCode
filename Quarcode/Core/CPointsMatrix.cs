@@ -86,6 +86,7 @@ namespace Quarcode.Core
 
       GenNoise();
       InitDrawData();
+      gex.ExportToFile("out2.txt");
     }
 
     public Vector[] AroundAverageGexAt(int idx)

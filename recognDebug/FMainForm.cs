@@ -131,6 +131,7 @@ namespace recognDebug
       MessageBox.Show("Total time: " + (tickCount / 1000.0).ToString() + "\n Cropted: " + CropCount.ToString() +
         "\n Recogned: " + RecognCount.ToString() + " \n From Total items :" + TotalCount.ToString());
     }
+
     void ImageParser_OnHexCodeRecognized(string code)
     {
       RecognCount++;

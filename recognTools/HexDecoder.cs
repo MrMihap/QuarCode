@@ -26,14 +26,15 @@ namespace recognTools
       int threshold = 130;
       int r = 0, g = 0, b = 0;
       source.SmoothMedian(5);
-      CPointsMatrix matrix = new CPointsMatrix(source.Height);
+      CPointsMatrix matrixold = new CPointsMatrix(source.Height);
+      CPointsMatrix2 matrix= new CPointsMatrix2();
       byte[, ,] dst = source.Data;
       List<bool> bitlist = new List<bool>();
 
       // K.O.S.T.J.L methods here
 
       // выраниваем гекс по центру
-      PointF[] data = Vector.ToSystemPointsF(matrix.Points.ToArray());
+      PointF[] data = Vector.ToSystemPointsF(matrixold.Points.ToArray());
       for (int i = 0; i < data.Length; i++)
       {
         data[i].Y = source.Height - data[i].Y;
@@ -42,7 +43,7 @@ namespace recognTools
 
       for (int i = 0; i < data.Length; i++)
       {
-        data[i].X -= shift.X - 8;
+        data[i].X -= shift.X  - 10;
         data[i].Y -= shift.Y;
       }
       // end

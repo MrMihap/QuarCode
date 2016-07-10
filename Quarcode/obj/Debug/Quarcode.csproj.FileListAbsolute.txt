@@ -27,5 +27,6 @@ C:\Users\Михаил\Documents\GitHub\QuarCode\Quarcode\bin\Debug\Svg.pdb
 C:\Users\Михаил\Documents\GitHub\QuarCode\Quarcode\bin\Debug\Svg.xml
 C:\Users\Михаил\Documents\GitHub\QuarCode\Quarcode\bin\Debug\System.Drawing.dll
 C:\Users\Михаил\Documents\GitHub\QuarCode\Quarcode\bin\Debug\System.Windows.Forms.dll
-C:\Users\Михаил\Documents\GitHub\QuarCode\Quarcode\obj\Debug\Quarcode.csprojResolveAssemblyReference.cache
 C:\Users\Михаил\Documents\GitHub\QuarCode\Quarcode\bin\Debug\img\HexFrame.jpg
+C:\Users\Михаил\Documents\GitHub\QuarCode\Quarcode\bin\Debug\Core\bitPoints.txt
+C:\Users\Михаил\Documents\GitHub\QuarCode\Quarcode\obj\Debug\Quarcode.csprojResolveAssemblyReference.cache

@@ -56,6 +56,7 @@
     <Compile Include="Core\CCoder.cs" />
     <Compile Include="Core\CLogger.cs" />
     <Compile Include="Core\Common.cs" />
+    <Compile Include="Core\CPointsMatrix2.cs" />
     <Compile Include="Core\delegates.cs" />
     <Compile Include="Core\CImgBuilder.cs" />
     <Compile Include="Core\SGexes.cs" />
@@ -102,6 +103,9 @@
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="Core\bitPoints.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="img\HexFrame.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
