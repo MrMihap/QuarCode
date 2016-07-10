@@ -120,18 +120,18 @@ namespace Quarcode.Core
       
       InitCharBytes();
       char[] result = new char[22];
-      for (int i = 0; i < 22; i++)
-      {
-        List<bool> debug = array.GetRange(i * 6, 6);
-        byte6 debug2 = new byte6(debug);
-        char Litera;
-        if (CharBytes.ContainsKey(debug2))
-          Litera = CharBytes[debug2];
-        else
-          Litera = '!';
-        result[i] = Litera;
+      //for (int i = 0; i < 22; i++)
+      //{
+      //  List<bool> debug = array.GetRange(i * 6, 6);
+      //  byte6 debug2 = new byte6(debug);
+      //  char Litera;
+      //  if (CharBytes.ContainsKey(debug2))
+      //    Litera = CharBytes[debug2];
+      //  else
+      //    Litera = '!';
+      //  result[i] = Litera;
 
-      }
+      //}
       return new string(result);
       
     }

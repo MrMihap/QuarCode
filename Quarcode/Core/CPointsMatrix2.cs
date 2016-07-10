@@ -30,13 +30,21 @@ namespace Quarcode.Core
           string[] words = line.Split(' ');
           if (words.Length != 2) throw new FileLoadException("wrong Points File");
           double x = 0, y = 0;
-          double.TryParse(words[0], out x);
-          double.TryParse(words[1], out y);
+          if (!double.TryParse(words[0], out x))
+          {
+            words[0] = words[0].Replace(".", ",");
+            double.TryParse(words[0], out x);
+          }
+          if (!double.TryParse(words[1], out y))
+          {
+            words[1] = words[1].Replace(".", ",");
+            double.TryParse(words[1], out y);
+          }
           PointF p = new PointF((float)x, (float)y);
-          if (PointCount > 60)  
+          //if (PointCount > 60)  
             bitPoints.Add(p);
-          else
-            borderPoints.Add(p);
+          //else
+          //  borderPoints.Add(p);
           PointCount++;
         }
       }

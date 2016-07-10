@@ -79,6 +79,9 @@ namespace recognDebug
       RawImageBox.SizeMode = PictureBoxSizeMode.Zoom;
       FilteredImageBox.SizeMode = PictureBoxSizeMode.Zoom;
       CroptedImageBox.SizeMode = PictureBoxSizeMode.Zoom;
+
+      //подключение к камере при старте
+     // connectToCamStream_Click(this, null);
     }
 
     private void ExitButton_Click(object sender, EventArgs e)
