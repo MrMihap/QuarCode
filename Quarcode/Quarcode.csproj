@@ -103,6 +103,9 @@
       <SubType>Designer</SubType>
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="Core\bitPoints - Копировать.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Core\bitPoints.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

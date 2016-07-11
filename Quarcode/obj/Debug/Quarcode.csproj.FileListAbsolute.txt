@@ -47,3 +47,4 @@ C:\Users\Михаил\Documents\QuarCode\Quarcode\obj\Debug\Quarcode.Properties.
 C:\Users\Михаил\Documents\QuarCode\Quarcode\obj\Debug\Quarcode.csproj.GenerateResource.Cache
 C:\Users\Михаил\Documents\QuarCode\Quarcode\obj\Debug\Quarcode.exe
 C:\Users\Михаил\Documents\QuarCode\Quarcode\obj\Debug\Quarcode.pdb
+C:\Users\Михаил\Documents\QuarCode\Quarcode\bin\Debug\Core\bitPoints - Копировать.txt
